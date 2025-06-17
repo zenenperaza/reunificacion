@@ -13,9 +13,8 @@
                         <li class="menu-title"> </li>
 
                         <li>
-                            <a href="index.php">
+                            <a href="{{ route('dashboard') }}">
                                 <i class="mdi mdi-view-dashboard-outline"></i>
-                                <span class="badge bg-success rounded-pill float-end">9+</span>
                                 <span> Dashboard </span>
                             </a>
                         </li>
@@ -23,78 +22,59 @@
                         <li class="menu-title mt-2">Apps</li>
 
                          <li>
-                            <a href="#email" data-bs-toggle="collapse">
+                            <a href="#casos" data-bs-toggle="collapse">
                                 <i class="mdi mdi-file-multiple-outline"></i>
                                 <span> Casos </span>
                                 <span class="menu-arrow"></span>
                             </a>
-                            <div class="collapse" id="email">
+                            <div class="collapse" id="casos">
                                 <ul class="nav-second-level">
                                     <li>
-                                        <a href="email-inbox.php">Inbox</a>
+                                        <a href="{{ route('profile.edit') }}">Ver </a>
                                     </li>
                                     <li>
-                                        <a href="email-templates.php">Email Templates</a>
+                                        <a href="{{ route('profile.edit') }}">Informes</a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
 
-                        <li>
-                            <a href="apps-calendar.php">
-                                <i class="mdi mdi-calendar-blank-outline"></i>
-                                <span> Casos </span>
-                            </a>
-                        </li>
+                        <li class="menu-title mt-2">Usuarios</li>
 
-                        <li>
-                            <a href="apps-chat.php">
-                                <i class="mdi mdi-forum-outline"></i>
-                                <span> Chat </span>
+                         <li>
+                            <a href="#usuarios" data-bs-toggle="collapse">
+                                <i class="mdi mdi-account-outline"></i>
+                                <span> Usuario </span>
+                                <span class="menu-arrow"></span>
                             </a>
+                            <div class="collapse" id="usuarios">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a href="{{ route('users.index') }}">Usuarios </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('users.index') }}">Roles</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
 
                 
 
-                        <li>
-                            <a href="#sidebarTasks" data-bs-toggle="collapse">
-                                <i class="mdi mdi-clipboard-outline"></i>
-                                <span> Tasks </span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <div class="collapse" id="sidebarTasks">
-                                <ul class="nav-second-level">
-                                    <li>
-                                        <a href="task-kanban-board.php">Kanban Board</a>
-                                    </li>
-                                    <li>
-                                        <a href="task-details.php">Details</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <li>
-                            <a href="apps-projects.php">
-                                <i class="mdi mdi-briefcase-variant-outline"></i>
-                                <span> Projects </span>
-                            </a>
-                        </li>
+                  
 
                         <li>
                             <a href="#contacts" data-bs-toggle="collapse">
                                 <i class="mdi mdi-book-open-page-variant-outline"></i>
-                                <span> Contacts </span>
+                                <span> Configuracion </span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <div class="collapse" id="contacts">
                                 <ul class="nav-second-level">
                                     <li>
-                                        <a href="contacts-list.php">Members List</a>
+                                        <a href="{{ route('profile.edit') }}">Estados</a>
                                     </li>
-                                    <li>
-                                        <a href="contacts-profile.php">Profile</a>
-                                    </li>
+                                   
                                 </ul>
                             </div>
                         </li>

@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\Auth;
+    $user = Auth::user();
+@endphp
 <!-- Topbar Start -->
 <div class="navbar-custom">
     <ul class="list-unstyled topnav-menu float-end mb-0">
@@ -156,37 +160,40 @@
             </div>
         </li>
 
-        <li class="dropdown notification-list topbar-dropdown">
-            <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#">
-                <img src="{{ asset('assets/images/users/user-1.jpg') }}" alt="user-image" class="rounded-circle">
-                <span class="pro-user-name ms-1">
-                    Nowak <i class="mdi mdi-chevron-down"></i>
-                </span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end profile-dropdown">
-                <div class="dropdown-header noti-title">
-                    <h6 class="text-overflow m-0">¡Bienvenido!</h6>
-                </div>
+      <li class="dropdown notification-list topbar-dropdown">
+    <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#">
+       <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/users/default.jpg') }}" alt="user-image" class="rounded-circle" height="32">
 
-                <a href="" class="dropdown-item notify-item">
-                    <i class="fe-user"></i>
-                    <span>Mi cuenta</span>
-                </a>
+        <span class="pro-user-name ms-1">
+            {{ $user->name ?? 'Invitado' }} <i class="mdi mdi-chevron-down"></i>
+        </span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end profile-dropdown">
+        <div class="dropdown-header noti-title">
+            <h6 class="text-overflow m-0">¡Bienvenido, {{ $user->role->nombre ?? 'Sin rol' }}!</h6>
+        </div>
 
-                <a href="" class="dropdown-item notify-item">
-                    <i class="fe-lock"></i>
-                    <span>Bloquear pantalla</span>
-                </a>
+        <a href="{{ route('profile.edit') }}" class="dropdown-item notify-item">
+            <i class="fe-user"></i>
+            <span>Mi cuenta</span>
+        </a>
 
-                <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item notify-item">
+            <i class="fe-lock"></i>
+            <span>Bloquear pantalla</span>
+        </a>
 
-                <a href="" class="dropdown-item notify-item">
+        <div class="dropdown-divider"></div>
+
+       <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="dropdown-item notify-item">
                     <i class="fe-log-out"></i>
                     <span>Cerrar sesión</span>
-                </a>
-            </div>
-        </li>
-
+                </button>
+            </form>
+    </div>
+</li>
         <li class="dropdown notification-list">
             <a href="javascript:void(0);" class="nav-link right-bar-toggle waves-effect waves-light">
                 <i class="fe-settings noti-icon"></i>

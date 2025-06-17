@@ -11565,9 +11565,13 @@ body {
 #sidebar-menu > ul > li > a:hover, #sidebar-menu > ul > li > a:focus, #sidebar-menu > ul > li > a:active {
   color: var(--ct-menu-item-hover);
   text-decoration: none;
+    font-weight: 600;
+    font-size: medium;
 }
 #sidebar-menu > ul > li > a > span {
   vertical-align: middle;
+    font-weight: 600;
+    font-size: medium;
 }
 #sidebar-menu > ul > li > a i {
   display: inline-block;
@@ -18905,7 +18909,7 @@ body[data-layout-color=dark] .select2-container--open .select2-selection--single
   justify-content: flex-start;
   align-content: flex-start;
   align-items: flex-start;
-  margin-left: 20px;
+  margin-left: 5px;
 }
 
 .simplebar-wrapper {
