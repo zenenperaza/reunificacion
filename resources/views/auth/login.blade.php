@@ -1,4 +1,10 @@
-<x-guest-layout>
+
+                        <x-guest-layout>
+                                <div class="text-center mb-4">   
+                                <img src="assets/images/imagen_rlf.png" alt="" class="mx-auto" style="width: 150px">
+                          
+
+                        </div>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

@@ -3,3 +3,7 @@ php artisan make:migration create_estados_table
 php artisan make:migration create_municipios_table
 php artisan make:migration create_parroquia_table
 php artisan make:migration create_casos_table
+
+2025_06_16_175037_create_estados_table.php
+
+php artisan db:seed

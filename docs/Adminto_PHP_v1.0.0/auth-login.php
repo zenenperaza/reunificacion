@@ -1,22 +1,4 @@
-<?php  //  include 'services/session.php'; ?>
-<?php
-    // $_SESSION['error'] = null;
-    // if(isset($_POST['email'])){
-    //     $email = $_POST['email'];
-    //     if (strlen($email)==0) {
-    //         $_SESSION['error'] =  "Please enter a email";
-    //         $_POST['email'] = null;
-    //     }else{
-    //     if(checkAuth($email)===true){
-    //         header('Location: index.php');
-    //         die();
-    //     }else{
-    //         $_SESSION['error'] =  "Email is not valid";
-    //     }
-    // }
-    // }
 
-?>
 
 <!DOCTYPE html>
 <html lang="en">
