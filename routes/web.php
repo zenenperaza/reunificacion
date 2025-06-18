@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CasoController;
+use App\Http\Controllers\CasoUploadController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +29,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->except(['show']); 
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
+    Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
+
+    Route::resource('casos', CasoController::class);
+    Route::get('casos-data', [CasoController::class, 'data'])->name('casos.data');
+
+Route::post('/casos/upload/imagenes', [CasoUploadController::class, 'uploadImagenes'])->name('casos.upload.imagenes');
+Route::post('/casos/upload/archivos', [CasoUploadController::class, 'uploadArchivos'])->name('casos.upload.archivos');
+
 });
 
 

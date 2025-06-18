@@ -6,6 +6,11 @@
 <script src="{{ asset('assets/libs/jquery.counterup/jquery.counterup.min.js') }}"></script>
 <script src="{{ asset('assets/libs/feather-icons/feather.min.js') }}"></script>
 
+
+   <!-- Plugins js-->
+<script src="{{ asset('assets/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js') }}"></script><!-- Init js-->
+<script src="{{ asset('assets/js/pages/form-wizard.init.js') }}"></script>
+
 <!-- knob plugin -->
 {{-- <script src="{{ asset('assets/libs/jquery-knob/jquery.knob.min.js') }}"></script>
 

@@ -30,7 +30,7 @@
                             <div class="collapse" id="casos">
                                 <ul class="nav-second-level">
                                     <li>
-                                        <a href="{{ route('profile.edit') }}">Ver </a>
+                                        <a href="{{ route('casos.index') }}">Ver </a>
                                     </li>
                                     <li>
                                         <a href="{{ route('profile.edit') }}">Informes</a>
