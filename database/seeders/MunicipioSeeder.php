@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -80,6 +81,38 @@ class MunicipioSeeder extends Seeder
             ['nombre' => 'Pedraza', 'estado_id' => 5],
             ['nombre' => 'Rojas', 'estado_id' => 5],
             ['nombre' => 'Sosa', 'estado_id' => 5],
+
+            // Táchira (estado_id = 20)
+            ['nombre' => 'Andrés Bello', 'estado_id' => 20],
+            ['nombre' => 'Antonio Rómulo Costa', 'estado_id' => 20],
+            ['nombre' => 'Ayacucho', 'estado_id' => 20],
+            ['nombre' => 'Bolívar', 'estado_id' => 20],
+            ['nombre' => 'Cárdenas', 'estado_id' => 20],
+            ['nombre' => 'Córdoba', 'estado_id' => 20],
+            ['nombre' => 'Fernández Feo', 'estado_id' => 20],
+            ['nombre' => 'Francisco de Miranda', 'estado_id' => 20],
+            ['nombre' => 'García de Hevia', 'estado_id' => 20],
+            ['nombre' => 'Guásimos', 'estado_id' => 20],
+            ['nombre' => 'Independencia', 'estado_id' => 20],
+            ['nombre' => 'Jáuregui', 'estado_id' => 20],
+            ['nombre' => 'José María Vargas', 'estado_id' => 20],
+            ['nombre' => 'Junín', 'estado_id' => 20],
+            ['nombre' => 'Libertad', 'estado_id' => 20],
+            ['nombre' => 'Libertador', 'estado_id' => 20],
+            ['nombre' => 'Lobatera', 'estado_id' => 20],
+            ['nombre' => 'Michelena', 'estado_id' => 20],
+            ['nombre' => 'Panamericano', 'estado_id' => 20],
+            ['nombre' => 'Pedro María Ureña', 'estado_id' => 20],
+            ['nombre' => 'Rafael Urdaneta', 'estado_id' => 20],
+            ['nombre' => 'Samuel Darío Maldonado', 'estado_id' => 20],
+            ['nombre' => 'San Cristóbal', 'estado_id' => 20],
+            ['nombre' => 'Seboruco', 'estado_id' => 20],
+            ['nombre' => 'Simón Rodríguez', 'estado_id' => 20],
+            ['nombre' => 'Sucre', 'estado_id' => 20],
+            ['nombre' => 'Torbes', 'estado_id' => 20],
+            ['nombre' => 'Uribante', 'estado_id' => 20],
+            ['nombre' => 'San Judas Tadeo', 'estado_id' => 20],
+
         ];
 
         Municipio::insert($municipios);

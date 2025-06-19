@@ -162,7 +162,7 @@
 
       <li class="dropdown notification-list topbar-dropdown">
     <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#">
-       <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/users/default.jpg') }}" alt="user-image" class="rounded-circle" height="32">
+       <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/small/default.png') }}" alt="user-image" class="rounded-circle" height="32">
 
         <span class="pro-user-name ms-1">
             {{ $user->name ?? 'Invitado' }} <i class="mdi mdi-chevron-down"></i>

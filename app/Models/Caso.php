@@ -15,7 +15,7 @@ class Caso extends Model
         'otras_organizaciones', 'tipo_atencion_programa', 'tipo_atencion', 'beneficiario',
         'estado_mujer', 'edad_beneficiario', 'poblacion_lgbti', 'acompanante',
         'representante_legal', 'pais_procedencia', 'otro_pais', 'nacionalidad_solicitante',
-        'pais_nacimiento', 'otro_pais_nacimiento', 'tipo_documento', 'etnia_indigena',
+        'pais_nacimiento', 'otro_pais_nacimiento', 'tipo_documento', 'etnia_indigena', 'otra_etnia',
         'discapacidad', 'educacion', 'nivel_educativo', 'tipo_institucion',
         'servicio_brindado_cosude', 'servicio_brindado_unicef', 'estado_destino_id',
         'municipio_destino_id', 'parroquia_destino_id', 'direccion_domicilio',

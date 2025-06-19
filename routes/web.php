@@ -22,24 +22,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
 });
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('users', UserController::class)->except(['show']); 
+    Route::resource('users', UserController::class)->except(['show']);
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
 
     Route::resource('casos', CasoController::class);
     Route::get('casos-data', [CasoController::class, 'data'])->name('casos.data');
 
-Route::post('/casos/upload/imagenes', [CasoUploadController::class, 'uploadImagenes'])->name('casos.upload.imagenes');
-Route::post('/casos/upload/archivos', [CasoUploadController::class, 'uploadArchivos'])->name('casos.upload.archivos');
+    Route::get('/get-municipios/{estado_id}', [CasoController::class, 'getMunicipios']);
+    Route::get('/get-parroquias/{municipio_id}', [CasoController::class, 'getParroquias']);
+
+    Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
+
+    Route::post('/casos/upload/imagenes', [CasoUploadController::class, 'uploadImagenes'])->name('casos.upload.imagenes');
+    Route::post('/casos/upload/archivos', [CasoUploadController::class, 'uploadArchivos'])->name('casos.upload.archivos');
 
 });
 
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

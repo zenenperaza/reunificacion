@@ -23,9 +23,9 @@ class CasoController extends Controller
                 $edit = route('casos.edit', $caso->id);
                 $delete = route('casos.destroy', $caso->id);
                 return '
-                    <a href="'.$edit.'" class="btn btn-sm btn-primary"><i class="mdi mdi-pencil"></i></a>
-                    <form action="'.$delete.'" method="POST" style="display:inline-block;" onsubmit="return confirm(\'¿Eliminar este caso?\')">
-                        '.csrf_field().method_field('DELETE').'
+                    <a href="' . $edit . '" class="btn btn-sm btn-primary"><i class="mdi mdi-pencil"></i></a>
+                    <form action="' . $delete . '" method="POST" style="display:inline-block;" onsubmit="return confirm(\'¿Eliminar este caso?\')">
+                        ' . csrf_field() . method_field('DELETE') . '
                         <button class="btn btn-sm btn-danger"><i class="mdi mdi-delete"></i></button>
                     </form>';
             })
@@ -37,21 +37,26 @@ class CasoController extends Controller
     }
 
 
-public function create()
-{
-    $estados = Estado::all();
-    $organizaciones = ['HIAS', 'ACNUR', 'Save the Children', 'IRC', 'Cruz Roja'];
-    $tiposAtencion = ['Reunificación Familiar', 'Atención Psicosocial', 'Gestión de Casos'];
-    $cosude = ['KIT DE HIGIENE PERSONAL', 'TRASLADO(NNA)', 'ATENCIÓN PSICOLÓGICA'];
-    $unicef = ['ALIMENTOS', 'ALBERGUE', 'ATENCIÓN MÉDICA'];
-    $vulnerabilidades = ['NNA No Acompañado', 'Víctima de Violencia', 'Situación de Calle'];
-    $derechos = ['Artículo 26 Derecho a ser criado en una familia', 'Artículo 9 Derecho a vivir con sus padres'];
+    public function create()
+    {
+        $estados = Estado::all();
+        $organizaciones = ['HIAS', 'ACNUR', 'Save the Children', 'IRC', 'Cruz Roja'];
+        $tiposAtencion = ['Reunificación Familiar', 'Atención Psicosocial', 'Gestión de Casos'];
+        $cosude = ['KIT DE HIGIENE PERSONAL', 'TRASLADO(NNA)', 'ATENCIÓN PSICOLÓGICA'];
+        $unicef = ['ALIMENTOS', 'ALBERGUE', 'ATENCIÓN MÉDICA'];
+        $vulnerabilidades = ['NNA No Acompañado', 'Víctima de Violencia', 'Situación de Calle'];
+        $derechos = ['Artículo 26 Derecho a ser criado en una familia', 'Artículo 9 Derecho a vivir con sus padres'];
 
-    return view('caso.create', compact(
-        'estados', 'organizaciones', 'tiposAtencion',
-        'cosude', 'unicef', 'vulnerabilidades', 'derechos'
-    ));
-}
+        return view('caso.create', compact(
+            'estados',
+            'organizaciones',
+            'tiposAtencion',
+            'cosude',
+            'unicef',
+            'vulnerabilidades',
+            'derechos'
+        ));
+    }
 
 
     public function store(Request $request)
@@ -95,7 +100,7 @@ public function create()
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'numero_caso' => 'required|unique:casos,numero_caso,'.$caso->id,
+            'numero_caso' => 'required|unique:casos,numero_caso,' . $caso->id,
             'fecha_atencion' => 'required|date',
             'estado_id' => 'required|exists:estados,id',
             'municipio_id' => 'required|exists:municipios,id',
@@ -119,5 +124,29 @@ public function create()
         $caso->delete();
         return redirect()->route('casos.index')->with('success', 'Caso eliminado correctamente.');
     }
+
+    public function getMunicipios($estado_id)
+    {
+        $municipios = Municipio::where('estado_id', $estado_id)->get();
+        return response()->json($municipios);
+    }
+
+    public function getParroquias($municipio_id)
+    {
+        $parroquias = Parroquia::where('municipio_id', $municipio_id)->get();
+        return response()->json($parroquias);
+    }
+
+
+public function contadorPorEstado($estadoId)
+{
+    $estado = Estado::findOrFail($estadoId);
+    $conteo = Caso::where('estado_id', $estadoId)->count();
+
+    return response()->json([
+        'estado_nombre' => $estado->nombre,
+        'conteo' => $conteo,
+    ]);
 }
 
+}

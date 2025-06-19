@@ -41,6 +41,7 @@ class CasoSeeder extends Seeder
 
             'tipo_documento' => 'Registro Civil',
             'etnia_indigena' => 'Piaroa',
+            'otra_etnia' => null,
             'discapacidad' => 'Ninguna',
 
             'educacion' => 'Sí',

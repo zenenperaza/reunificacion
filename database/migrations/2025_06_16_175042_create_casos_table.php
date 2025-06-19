@@ -48,6 +48,7 @@ return new class extends Migration
 
         $table->string('tipo_documento')->nullable();
         $table->string('etnia_indigena')->nullable();
+        $table->string('otra_etnia')->nullable();
         $table->string('discapacidad')->nullable();
 
         $table->string('educacion')->nullable();
