@@ -138,15 +138,29 @@ class CasoController extends Controller
     }
 
 
-public function contadorPorEstado($estadoId)
-{
-    $estado = Estado::findOrFail($estadoId);
-    $conteo = Caso::where('estado_id', $estadoId)->count();
+    public function contadorPorEstado($estadoId)
+    {
+        $estado = Estado::findOrFail($estadoId);
+        $conteo = Caso::where('estado_id', $estadoId)->count();
 
-    return response()->json([
-        'estado_nombre' => $estado->nombre,
-        'conteo' => $conteo,
-    ]);
+        return response()->json([
+            'estado_nombre' => $estado->nombre,
+            'conteo' => $conteo,
+        ]);
+    }
+
+    public function storeImagen(Request $request)
+{
+    if ($request->hasFile('archivo')) {
+        $file = $request->file('archivo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $path = $file->storeAs('public/archivos', $filename);
+        return response()->json(['ruta' => $path]);
+    }
+
+    return response()->json(['error' => 'Archivo no recibido'], 400);
 }
+
+
 
 }

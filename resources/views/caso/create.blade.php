@@ -600,6 +600,66 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <div class="mt-0">
+                                                    <label class="form-label mb-2">País de nacimiento</label>
+                                                    <select class="form-select" name="pais_nacimiento"
+                                                        id="pais_nacimiento" required>
+                                                        <option value="">Seleccione</option>
+                                                        @php
+                                                            $paises = [
+                                                                'Venezuela',
+                                                                'Argentina',
+                                                                'Bolivia',
+                                                                'Brasil',
+                                                                'Chile',
+                                                                'Colombia',
+                                                                'Costa Rica',
+                                                                'Cuba',
+                                                                'Ecuador',
+                                                                'El Salvador',
+                                                                'Guayana Francesa',
+                                                                'Granada',
+                                                                'Guatemala',
+                                                                'Guayana',
+                                                                'Haití',
+                                                                'Honduras',
+                                                                'Jamaica',
+                                                                'México',
+                                                                'Nicaragua',
+                                                                'Paraguay',
+                                                                'Panamá',
+                                                                'Perú',
+                                                                'Puerto Rico',
+                                                                'República Dominicana',
+                                                                'Surinam',
+                                                                'Uruguay',
+                                                                'Estados Unidos',
+                                                                'Otro País',
+                                                            ];
+                                                        @endphp
+
+                                                        @foreach ($paises as $pais)
+                                                            <option value="{{ $pais }}">{{ $pais }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6" id="otro_pais_nacimiento_container"
+                                                style="display: none;">
+                                                <div class="mt-0">
+                                                    <label for="otro_pais" class="form-label mb-2">Indique otro
+                                                        país de nacimiento</label>
+                                                    <input type="text" class="form-control"
+                                                        name="otro_pais_nacimientos" id="otro_pais_nacimientos">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <div class="mt-3">
@@ -838,11 +898,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-
 
                             </div>
 
@@ -1093,19 +1148,92 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {{-- REMISIONES --}}
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold">Remisiones</label>
+                                            <div class="row">
+                                                @php
+                                                    $remisiones = [
+                                                        'Para EMD ASONACOP',
+                                                        'Para Consejo de Proteccion NNA',
+                                                        'Para Defensoría de NNA',
+                                                        'A programas sociales del estado',
+                                                        'Cita para seguimiento',
+                                                        'Derivar a psiquiatría',
+                                                        'Derivar a Servicios de atención en salud provenciado por otras organizaciones',
+                                                        'Derivar a Servicios de atención Psicosocial',
+                                                        'Para Ministerio Público /Fiscalía especializada',
+                                                        'Para Registro civil',
+                                                        'Para servicios de salud',
+                                                        'Remitir con Informe diagnostico al Consejo de Proteccion NNA',
+                                                        'Para SAIME',
+                                                        'Otras Remisiones',
+                                                        'Sin Remisión',
+                                                    ];
+                                                @endphp
+
+                                                @foreach ($remisiones as $remision)
+                                                    <div class="col-md-4 mb-1">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="remisiones[]" value="{{ $remision }}"
+                                                                id="{{ Str::slug($remision, '_') }}">
+                                                            <label class="form-check-label"
+                                                                for="{{ Str::slug($remision, '_') }}">
+                                                                {{ $remision }}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3" id="bloque_otras_remisiones" style="display: none;">
+                                        <div class="col-md-6">
+                                            <label for="detalle_otras_remisiones" class="form-label">Especifique otras
+                                                remisiones</label>
+                                            <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
+                                                class="form-control">
+                                        </div>
+                                    </div>
 
 
 
-                                    <div class="col-12">
-                                        <div class="row mb-3">
-                                            <label class="form-label mb-2">Imágenes</label>
-                                            <div class="dropzone" id="dropzoneImages"></div>
+
+
+                                    <div class="row mt-3">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h4 class="header-title">Dropzone File Upload</h4>
+                                                        <p class="sub-header">
+                                                            DropzoneJS es una librería que permite subir archivos con
+                                                            arrastrar y soltar, además de vista previa.
+                                                        </p>
+
+                                                        <form action="{{ route('archivos.store') }}" method="post"
+                                                            class="dropzone dz-clickable text-center p-5"
+                                                            id="myAwesomeDropzone">
+                                                            @csrf
+                                                            <div class="dz-message">
+                                                                <i
+                                                                    class="mdi mdi-cloud-upload display-4 text-muted mb-3"></i>
+                                                                <h4>Arrastra archivos aquí o haz clic para subirlos</h4>
+                                                                <p class="text-muted">Este es un ejemplo de Dropzone. Los
+                                                                    archivos seleccionados <strong>no</strong> se subirán
+                                                                    realmente.</p>
+                                                            </div>
+                                                        </form>
+
+                                                        <div class="dropzone-previews mt-3" id="file-previews"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <label class="form-label mb-2">Archivos</label>
-                                            <div class="dropzone" id="dropzoneFiles"></div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1132,7 +1260,7 @@
 @endsection
 
 @section('scripts')
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="{{ asset('assets/libs/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
@@ -1148,9 +1276,11 @@
     <!-- Plugins js-->
     <script src="{{ asset('assets/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js') }}"></script>
 
-    <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
     <script src="{{ asset('assets/libs/dropify/js/dropify.min.js') }}"></script>
     <script src="{{ asset('assets/js/pages/form-fileuploads.init.js') }}"></script>
+
+    <!-- App js -->
+    <script src="{{ asset('assets/js/app.min.js') }}"></script>
 
 
     <script>
@@ -1422,33 +1552,6 @@
         });
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectNacimiento = document.getElementById('pais_nacimiento');
-            const otroNacimientoContainer = document.getElementById('otro_pais_nacimiento_container');
-            const otroNacimientoInput = document.getElementById('otro_pais_nacimiento');
-
-            selectNacimiento.addEventListener('change', function() {
-                if (this.value === 'Otro país nac') {
-                    otroNacimientoContainer.style.display = 'block';
-                    otroNacimientoInput.disabled = false;
-                    otroNacimientoInput.required = true;
-                } else {
-                    otroNacimientoContainer.style.display = 'none';
-                    otroNacimientoInput.disabled = true;
-                    otroNacimientoInput.required = false;
-                    otroNacimientoInput.value = '';
-                }
-            });
-
-            // Ejecutar al cargar por si ya está seleccionado
-            if (selectNacimiento.value === 'Otro país nac') {
-                otroNacimientoContainer.style.display = 'block';
-                otroNacimientoInput.disabled = false;
-                otroNacimientoInput.required = true;
-            }
-        });
-    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1921,6 +2024,46 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#sin_remision').on('change', function() {
+                if ($(this).is(':checked')) {
+                    // Desmarcar todos los demás checkbox excepto "Sin Remisión"
+                    $('input[name="remisiones[]"]').not(this).prop('checked', false);
+                }
+            });
+
+            // Si se marca otro checkbox, desmarcar "Sin Remisión"
+            $('input[name="remisiones[]"]').not('#sin_remision').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#sin_remision').prop('checked', false);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#pais_nacimiento').on('change', function() {
+                const seleccion = $(this).val();
+                const bloque = $('#otro_pais_nacimiento_container');
+                const input = $('#otro_pais_nacimientos');
+
+                if (seleccion === 'Otro País') {
+                    bloque.slideDown();
+                    input.prop('required', true);
+                } else {
+                    bloque.slideUp();
+                    input.val('').prop('required', false);
+                }
+            });
+        });
+    </script>
+
+
+
+
 
 
 
