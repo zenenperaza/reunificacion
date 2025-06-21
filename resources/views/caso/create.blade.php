@@ -6,17 +6,16 @@
     <!-- Plugins css -->
     <link href="{{ asset('assets/libs/mohithg-switchery/switchery.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/multiselect/css/multi-select.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/selectize/css/selectize.bootstrap3.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet"
-        type="text/css" />
+    <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet" type="text/css" />
 
-    <!-- Plugins css -->
+    <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
 
-    <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css') }}" />
+    <!-- Summernote CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
 
-    
-<link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" />
+
+
 @endsection
 
 @section('content')
@@ -71,7 +70,7 @@
                                     class="nav-link rounded-0 pt-2 pb-2">
                                     <i class="mdi mdi-file-image-outline me-1"></i>
                                     <span class="d-none d-sm-inline">Identificación de violencia basada en género
-                                            VBG</span>
+                                        VBG</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -81,6 +80,12 @@
                                     <span class="d-none d-sm-inline">Documentos Adjuntos</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="#tab8" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-check-all me-1"></i>
+                                    <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
+                                </a>
                         </ul>
 
                         <div class="tab-content b-0 mb-0 pt-0">
@@ -97,8 +102,8 @@
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="periodo" class="form-label mb-2">Periodo</label>
-                                                    <input type="text" class="form-control" name="periodo" id="periodo"
-                                                        value="{{ date('Y-m') }}" required readonly>
+                                                    <input type="text" class="form-control" name="periodo"
+                                                        id="periodo" value="{{ date('Y-m') }}" required readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -118,7 +123,8 @@
                                                 <select id="estadoSelect" class="form-select" name="estado_id">
                                                     <option value="">Seleccione</option>
                                                     @foreach ($estados as $estado)
-                                                        <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                                                        <option value="{{ $estado->id }}">{{ $estado->nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -373,7 +379,13 @@
                                                 <select class="form-select" name="tipo_institucion"
                                                     id="tipo_institucion">
                                                     <option value="">Seleccione</option>
-                                                    @foreach (['Pública', 'Privada', 'Privada subsidiada', 'Ninguna institución'] as $tipo)
+                                                    @foreach ([
+            'Pública',
+            'Privada',
+            'Privada subsidiada',
+            'Ninguna
+                                                                        institución',
+        ] as $tipo)
                                                         <option value="{{ $tipo }}">{{ $tipo }}</option>
                                                     @endforeach
                                                 </select>
@@ -933,20 +945,26 @@
                                                     'Violencia sexual / abuso sexual / explotación sexual / VBG / VSBG',
                                                     'Negligencia',
                                                     'Violencia familiar',
-                                                    'No tiene documentos de identidad o de identificación (EV25, acta de nacimiento u otro documento de identificación)',
+                                                    'No tiene documentos de identidad o de identificación (EV25, acta de nacimiento
+                                        u otro documento de identificación)',
                                                     'NNA fuera de la escuela (NFE) / desescolarizados',
                                                     'Acoso escolar',
                                                     'Violencia online (grooming, sextorsión, cyberbullying)',
-                                                    'Aflicción emocional / alteraciones emocionales / trastorno psicosocial / problemas de salud mental / angustia / trastorno de estrés postraumático',
+                                                    'Aflicción emocional / alteraciones emocionales / trastorno psicosocial /
+                                        problemas de salud mental / angustia / trastorno de estrés postraumático',
                                                     'Matrimonio infantil / uniones tempranas',
                                                     'Embarazo adolescente / niña o adolescente madre o niño o adolescente padre',
                                                     'NNA con discapacidades o enfermedad crónica',
-                                                    'NNA privados de cuidados parentales o de sus cuidadores legales o consuetudinarios / NNA que aparentemente no tienen un cuidador principal o circunstancial / orfandad',
-                                                    'Uso o abuso de sustancias psicoactivas / consumo de drogas / dependencia de drogas',
+                                                    'NNA privados de cuidados parentales o de sus cuidadores legales o
+                                        consuetudinarios / NNA que aparentemente no tienen un cuidador principal o
+                                        circunstancial / orfandad',
+                                                    'Uso o abuso de sustancias psicoactivas / consumo de drogas / dependencia de
+                                        drogas',
                                                     'Discriminación a grupos minoritarios (etnias, LGBTIQ+, VIH, etc)',
                                                     'NNA asociados o involucrados con fuerzas o grupos armados irregulares',
                                                     'Niños en situación de calle / mendicidad',
-                                                    'NNA que incurren en hechos punibles (menores de 14 años) / adolescentes en conflicto con la ley penal',
+                                                    'NNA que incurren en hechos punibles (menores de 14 años) / adolescentes en
+                                        conflicto con la ley penal',
                                                     'Trabajo infantil / explotación laboral',
                                                     'NNA víctimas de trata o tráfico',
                                                     'Dificultad o falta de acceso a servicios básicos',
@@ -992,13 +1010,16 @@
                                                     'Artículo 24 Promoción del reconocimiento de hijos e hijas',
                                                     'Artículo 25 Derecho a conocer a su padre y madre y a ser cuidados por ellos',
                                                     'Artículo 26 Derecho a ser criado en una familia',
-                                                    'Artículo 27 Derecho a mantener relaciones personales y contacto directo con el padre y la madre',
+                                                    'Artículo 27 Derecho a mantener relaciones personales y contacto directo con el
+                                        padre y la madre',
                                                     'Artículo 28 Derecho al libre desarrollo de la personalidad',
-                                                    'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades especiales',
+                                                    'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades
+                                        especiales',
                                                     'Artículo 30 Derecho a un nivel de vida adecuado',
                                                     'Artículo 32 Derecho a la integridad personal',
                                                     'Artículo 32-A. Derecho al buen trato',
-                                                    'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación sexual',
+                                                    'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación
+                                        sexual',
                                                     'Artículo 34 Servicios forenses',
                                                     'Artículo 35 Derecho a la libertad de pensamiento, conciencia y religión',
                                                     'Artículo 36 Derechos culturales de las minorías',
@@ -1007,44 +1028,60 @@
                                                     'Artículo 39 Derecho a la libertad de tránsito',
                                                     'Artículo 40 Protección contra el traslado ilícito',
                                                     'Artículo 41 Derecho a la salud y a servicios de salud',
-                                                    'Artículo 42 Responsabilidad del padre, la madre, representantes o responsables en materia de salud',
+                                                    'Artículo 42 Responsabilidad del padre, la madre, representantes o responsables
+                                        en materia de salud',
                                                     'Artículo 43 Derecho a información en materia de salud',
                                                     'Artículo 44 Protección de la maternidad',
                                                     'Artículo 45 Protección del vínculo materno-filial',
                                                     'Artículo 46 Lactancia materna',
                                                     'Artículo 47 Derecho a ser vacunado o vacunada',
                                                     'Artículo 48 Derecho a atención médica de emergencia',
-                                                    'Artículo 49 Permanencia del niño, niña o adolescente junto a su padre, madre, representante o responsable',
+                                                    'Artículo 49 Permanencia del niño, niña o adolescente junto a su padre, madre,
+                                        representante o responsable',
                                                     'Artículo 50 Salud sexual y reproductiva',
-                                                    'Artículo 51 Protección contra sustancias alcohólicas, estupefacientes y psicotrópicas',
+                                                    'Artículo 51 Protección contra sustancias alcohólicas, estupefacientes y
+                                        psicotrópicas',
                                                     'Artículo 52 Derecho a la seguridad social',
                                                     'Artículo 53 Derecho a la educación',
-                                                    'Artículo 54 Obligación del padre, de la madre, representantes o responsables en materia de educación',
+                                                    'Artículo 54 Obligación del padre, de la madre, representantes o responsables en
+                                        materia de educación',
                                                     'Artículo 55 Derecho a participar en el proceso de educación',
-                                                    'Artículo 56 Derecho a ser respetados y respetadas por los educadores y educadoras',
-                                                    'Artículo 57 Disciplina escolar acorde con los derechos y garantías de los niños, niñas y adolescentes',
+                                                    'Artículo 56 Derecho a ser respetados y respetadas por los educadores y
+                                        educadoras',
+                                                    'Artículo 57 Disciplina escolar acorde con los derechos y garantías de los
+                                        niños, niñas y adolescentes',
                                                     'Artículo 58 Vínculo entre la educación y el trabajo',
-                                                    'Artículo 59 Educación para niños, niñas y adolescentes trabajadores y trabajadoras',
+                                                    'Artículo 59 Educación para niños, niñas y adolescentes trabajadores y
+                                        trabajadoras',
                                                     'Artículo 60 Educación de niños, niñas y adolescentes indígenas',
-                                                    'Artículo 61 Educación de niños, niñas y adolescentes con necesidades especiales',
-                                                    'Artículo 62 Difusión de los derechos y garantías de los niños, niñas y adolescentes',
+                                                    'Artículo 61 Educación de niños, niñas y adolescentes con necesidades
+                                        especiales',
+                                                    'Artículo 62 Difusión de los derechos y garantías de los niños, niñas y
+                                        adolescentes',
                                                     'Artículo 63 Derecho al descanso, recreación, esparcimiento, deporte y juego',
-                                                    'Artículo 64 Espacios e instalaciones para el descanso, recreación, esparcimiento, deporte y juego',
-                                                    'Artículo 65 Derecho al honor, reputación, propia imagen, vida privada e intimidad familiar',
+                                                    'Artículo 64 Espacios e instalaciones para el descanso, recreación,
+                                        esparcimiento, deporte y juego',
+                                                    'Artículo 65 Derecho al honor, reputación, propia imagen, vida privada e
+                                        intimidad familiar',
                                                     'Artículo 66 Derecho a la inviolabilidad del hogar y de la correspondencia',
                                                     'Artículo 67 Derecho a la libertad de expresión',
                                                     'Artículo 68 Derecho a la información',
                                                     'Artículo 69 Educación crítica para medios de comunicación',
-                                                    'Artículo 70 Mensajes de los medios de comunicación acordes con necesidades de los niños, niñas y adolescentes',
+                                                    'Artículo 70 Mensajes de los medios de comunicación acordes con necesidades de
+                                        los niños, niñas y adolescentes',
                                                     'Artículo 71 Garantía de mensajes e informaciones adecuadas',
                                                     'Artículo 72 Programaciones dirigidas a niños, niñas y adolescentes',
-                                                    'Artículo 73 Del fomento a la creación, producción y difusión de información dirigida a niños, niñas y adolescentes',
-                                                    'Artículo 74 Envoltura para los medios que contengan informaciones e imágenes inadecuadas para niños, niñas y adolescentes',
-                                                    'Artículo 75 Informaciones e imágenes prohibidas en medios dirigidos a niños, niñas y adolescentes',
+                                                    'Artículo 73 Del fomento a la creación, producción y difusión de información
+                                        dirigida a niños, niñas y adolescentes',
+                                                    'Artículo 74 Envoltura para los medios que contengan informaciones e imágenes
+                                        inadecuadas para niños, niñas y adolescentes',
+                                                    'Artículo 75 Informaciones e imágenes prohibidas en medios dirigidos a niños,
+                                        niñas y adolescentes',
                                                     'Artículo 76 Acceso a espectáculos públicos, salas y lugares de exhibición',
                                                     'Artículo 77 Información sobre espectáculos públicos, exhibiciones y programas',
                                                     'Artículo 78 Prevención contra juegos computarizados y electrónicos nocivos',
-                                                    'Artículo 79 Prohibiciones para la protección de los derechos de información y a un entorno sano',
+                                                    'Artículo 79 Prohibiciones para la protección de los derechos de información y a
+                                        un entorno sano',
                                                     'Artículo 80 Derecho a opinar y a ser oído y oída',
                                                     'Artículo 81 Derecho a participar',
                                                     'Artículo 82 Derecho de reunión',
@@ -1055,8 +1092,10 @@
                                                     'Artículo 87 Derecho a la justicia',
                                                     'Artículo 88 Derecho a la defensa y al debido proceso',
                                                     'Artículo 89 Derecho a un trato humanitario y digno',
-                                                    'Artículo 90 Garantías del o de la adolescente sometido al sistema penal de responsabilidad de adolescentes',
-                                                    'Artículo 91 Deber y derecho de denunciar amenazas y violaciones de los derechos y garantías de los niños, niñas y adolescentes',
+                                                    'Artículo 90 Garantías del o de la adolescente sometido al sistema penal de
+                                        responsabilidad de adolescentes',
+                                                    'Artículo 91 Deber y derecho de denunciar amenazas y violaciones de los derechos
+                                        y garantías de los niños, niñas y adolescentes',
                                                     'Artículo 92 Prevención',
                                                     'Artículo 93 Deberes NNA',
                                                     'Artículo 96 Edad mínima. Parágrafo Tercero',
@@ -1099,10 +1138,14 @@
                                         <div class="row">
                                             @php
                                                 $tipos_violencia = [
-                                                    'Violencia Psicológica (Conductas amenazantes que no necesariamente implican violencia física ni abuso verbal)',
-                                                    'Violencia Física (Todo aquel acto que intenta provocar o provoca dolor o daño físico a la víctima que a través de la agresión)',
-                                                    'Prácticas tradicionales nocivas (Prácticas discriminatorias que las comunidades y las sociedades realizan de manera regular)',
-                                                    'Violencia Sexual (Todo acto sexual realizado contra la voluntad de otra persona)',
+                                                    'Violencia Psicológica (Conductas amenazantes que no necesariamente implican
+                                        violencia física ni abuso verbal)',
+                                                    'Violencia Física (Todo aquel acto que intenta provocar o provoca dolor o daño
+                                        físico a la víctima que a través de la agresión)',
+                                                    'Prácticas tradicionales nocivas (Prácticas discriminatorias que las comunidades
+                                        y las sociedades realizan de manera regular)',
+                                                    'Violencia Sexual (Todo acto sexual realizado contra la voluntad de otra
+                                        persona)',
                                                     'Violencia Vicaría',
                                                     'Violencia Económica (Reducción y privación de recursos económicos)',
                                                     'No se identifica VBG',
@@ -1136,12 +1179,15 @@
                                                     $tipos_vicaria = [
                                                         'Violencia vincular (destruir el vínculo hijo/madre)',
                                                         'Violencia económica (privar de manutención)',
-                                                        'Violencia psicológica y física (agresión directa a NNA, exposición a insultos de desvalorización madre)',
-                                                        'Violencia judicial/administrativa (instrumentalización de entes abruman con demandas)',
+                                                        'Violencia psicológica y física (agresión directa a NNA, exposición a
+                                            insultos de desvalorización madre)',
+                                                        'Violencia judicial/administrativa (instrumentalización de entes abruman con
+                                            demandas)',
                                                         'Negligencia (conductas de descuido a NNA)',
                                                         'Abuso sexual (asociados a VBG)',
                                                         'Muerte (a NNA vinculadas a la VBG padres/parejas)',
-                                                        'Institucional (por no manejo de perspectiva de género por sesgo androadultocéntrico)',
+                                                        'Institucional (por no manejo de perspectiva de género por sesgo
+                                            androadultocéntrico)',
                                                     ];
                                                 @endphp
 
@@ -1175,7 +1221,8 @@
                                                         'A programas sociales del estado',
                                                         'Cita para seguimiento',
                                                         'Derivar a psiquiatría',
-                                                        'Derivar a Servicios de atención en salud provenciado por otras organizaciones',
+                                                        'Derivar a Servicios de atención en salud provenciado por otras
+                                            organizaciones',
                                                         'Derivar a Servicios de atención Psicosocial',
                                                         'Para Ministerio Público /Fiscalía especializada',
                                                         'Para Registro civil',
@@ -1217,74 +1264,73 @@
                             <div class="tab-pane" id="tab7">
 
                                 {{-- DOCUMENTOS ADJUNTOS --}}
-                               
-                                    <div class="row mt-3">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h4 class="header-title">Fotos e imagenes</h4>
-                                                        <p class="sub-header">
-                                                            DropzoneJS is an open source library that provides
-                                                            drag’n’drop file uploads with
-                                                            image previews.
-                                                        </p>
 
-                                                        <div class="dropzone" id="myAwesomeDropzone"
-                                                            data-plugin="dropzone"
-                                                            data-previews-container="#file-previews"
-                                                            data-upload-preview-template="#uploadPreviewTemplate">
-                                                            <div class="fallback">
-                                                                <input name="images" type="file" multiple />
-                                                            </div>
+                                <div class="row mt-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4 class="header-title">Fotos e imagenes</h4>
+                                                    <p class="sub-header">
+                                                        DropzoneJS is an open source library that provides
+                                                        drag’n’drop file uploads with
+                                                        image previews.
+                                                    </p>
 
-                                                            <div class="dz-message needsclick">
-                                                                <i class="h1 text-muted dripicons-cloud-upload"></i>
-                                                                <h3>Drop files here or click to upload.</h3>
-                                                                <span class="text-muted font-13">(This is just
-                                                                    a demo dropzone. Selected files
-                                                                    are
-                                                                    <strong>not</strong> actually
-                                                                    uploaded.)</span>
-                                                            </div>
+                                                    <div class="dropzone" id="myAwesomeDropzone" data-plugin="dropzone"
+                                                        data-previews-container="#file-previews"
+                                                        data-upload-preview-template="#uploadPreviewTemplate">
+                                                        <div class="fallback">
+                                                            <input name="images" type="file" multiple />
                                                         </div>
 
-                                                        <!-- Preview -->
-                                                        <div class="dropzone-previews mt-3" id="file-previews"></div>
+                                                        <div class="dz-message needsclick">
+                                                            <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                                            <h3>Drop files here or click to upload.</h3>
+                                                            <span class="text-muted font-13">(This is just
+                                                                a demo dropzone. Selected files
+                                                                are
+                                                                <strong>not</strong> actually
+                                                                uploaded.)</span>
+                                                        </div>
+                                                    </div>
 
-                                                    </div> <!-- end card-body-->
-                                                </div> <!-- end card-->
-                                            </div><!-- end col -->
-                                        </div>
-                                        <!-- end row -->
+                                                    <!-- Preview -->
+                                                    <div class="dropzone-previews mt-3" id="file-previews"></div>
 
-                                        <!-- file preview template -->
-                                        <div class="d-none" id="uploadPreviewTemplate">
-                                            <div class="card mt-1 mb-0 shadow-none border">
-                                                <div class="p-2">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-auto">
-                                                            <img data-dz-thumbnail src="#"
-                                                                class="avatar-sm rounded bg-light" alt="">
-                                                        </div>
-                                                        <div class="col ps-0">
-                                                            <a href="javascript:void(0);" class="text-muted fw-bold"
-                                                                data-dz-name></a>
-                                                            <p class="mb-0" data-dz-size></p>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <!-- Button -->
-                                                            <a href="" class="btn btn-link btn-lg text-muted"
-                                                                data-dz-remove>
-                                                                <i class="dripicons-cross"></i>
-                                                            </a>
-                                                        </div>
+                                                </div> <!-- end card-body-->
+                                            </div> <!-- end card-->
+                                        </div><!-- end col -->
+                                    </div>
+                                    <!-- end row -->
+
+                                    <!-- file preview template -->
+                                    <div class="d-none" id="uploadPreviewTemplate">
+                                        <div class="card mt-1 mb-0 shadow-none border">
+                                            <div class="p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <img data-dz-thumbnail src="#"
+                                                            class="avatar-sm rounded bg-light" alt="">
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="javascript:void(0);" class="text-muted fw-bold"
+                                                            data-dz-name></a>
+                                                        <p class="mb-0" data-dz-size></p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <!-- Button -->
+                                                        <a href="" class="btn btn-link btn-lg text-muted"
+                                                            data-dz-remove>
+                                                            <i class="dripicons-cross"></i>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
                                     </div>
 
-                               
+
                                     <div class="row mt-3">
                                         <div class="row">
                                             <div class="col-12">
@@ -1349,29 +1395,120 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+
+
                                     </div>
 
 
+
+                                 
+
+                                </div>
                             </div>
 
+                            <div class="tab-pane" id="tab8">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fecha_atencion" class="form-label mb-2">Fecha
+                                                actual</label>
+                                            <input type="date" class="form-control" name="fecha_actual"
+                                                value="{{ date('Y-m-d') }}" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Estatus de la atención <span
+                                                class="text-danger">*</span></label>
+                                        <small class="text-muted d-block mb-2">Elegir estatus del caso/expediente</small>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="estatus" id="estatus1"
+                                                value="en_proceso" required>
+                                            <label class="form-check-label" for="estatus1">En proceso</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="estatus" id="estatus2"
+                                                value="en_seguimiento" required>
+                                            <label class="form-check-label" for="estatus2">En seguimiento</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="estatus" id="estatus3"
+                                                value="cierre_atencion" required>
+                                            <label class="form-check-label" for="estatus3">Cierre de atención</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Indicadores</label>
+                                    <div class="form-control" style="height:auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="indicadores[]"
+                                                id="indicador1" value="PSEA.01">
+                                            <label class="form-check-label" for="indicador1">
+                                                PSEA.01: Difusión comunitaria de mensajes y sensibilización en materia de
+                                                Protección contra la Explotación y el Abuso Sexual
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="indicadores[]"
+                                                id="indicador2" value="encuesta_satisfaccion">
+                                            <label class="form-check-label" for="indicador2">
+                                                Encuesta de satisfacción
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="indicadores[]"
+                                                id="indicador3" value="no_aplica">
+                                            <label class="form-check-label" for="indicador3">
+                                                No aplica Indicadores
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                             <div class="mb-3">
+    <label for="descripcion" class="form-label">Descripción del caso</label>
+    <textarea name="descripcion" id="summernote" class="form-control"></textarea>
+</div>
+
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="verificador" class="form-label mb-2">Verificador </label>
+                                        <input type="number" class="form-control" name="verificador" value="">
+                                    </div>
+                                </div>
                                 
 
-                            <ul class="list-inline mt-4 wizard">
-                                <li class="previous list-inline-item">
-                                    <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
-                                </li>
+                                        <li class="next list-inline-item  center">
+                                            <button type="submit" class="btn btn-primary">Guardar y continuar</button>
+                                        </li>
 
-                                <li class="next list-inline-item float-center center">
-                                    <button type="submit" class="btn btn-primary">Guardar y continuar</button>
-                                </li>
+                            </div>
 
-                                <li class="next list-inline-item float-end">
-                                    <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
-                                </li>
-                            </ul>
+                               <ul class="list-inline mt-4 wizard">
+                                        <li class="previous list-inline-item">
+                                            <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
+                                        </li>
 
-                        </div>
-                    </div>
+                                        <li class="next list-inline-item float-end">
+                                            <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
+                                        </li>
+                                    </ul>
 
 
 
@@ -1384,10 +1521,6 @@
 
 @section('scripts')
 
-    <script src="{{ asset('assets/libs/select2/js/select2.min.js') }}"></script>
-
-    <script src="{{ asset('assets/js/pages/form-wizard.init.js') }}"></script>
-
     <script src="{{ asset('assets/libs/selectize/js/standalone/selectize.min.js') }}"></script>
     <script src="{{ asset('assets/libs/mohithg-switchery/switchery.min.js') }}"></script>
     <script src="{{ asset('assets/libs/multiselect/js/jquery.multi-select.js') }}"></script>
@@ -1395,89 +1528,923 @@
     <script src="{{ asset('assets/libs/devbridge-autocomplete/jquery.autocomplete.min.js') }}"></script>
     <script src="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js') }}"></script>
     <script src="{{ asset('assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js') }}"></script>
-    <!-- Plugins js-->
+
     <script src="{{ asset('assets/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/form-wizard.init.js') }}"></script>
 
+    <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
 
-    <!-- Plugins js -->
-    {{-- <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script> --}}
-
-  <script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
-
-    <script src="{{ asset('assets/js/pages/casos.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
 
     <script>
-        Dropzone.autoDiscover = false;
-        let uploadedFiles = [];
+        $(document).ready(function() {
+            $('#estadoSelect').on('change', function() {
+                var estadoId = $(this).val();
+                $('#municipioSelect').html('<option value="">Cargando...</option>');
+                $('#parroquiaSelect').html('<option value="">Seleccione</option>');
 
-        const myDropzone = new Dropzone("#myAwesomeDropzone", {
-            url: "{{ route('casos.upload.temp') }}",
-            paramName: "images",
+                if (estadoId) {
+                    $.ajax({
+                        url: '{{ url('get-municipios') }}/' + estadoId,
+
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Seleccione</option>';
+                            data.forEach(function(municipio) {
+                                options +=
+                                    `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                            });
+                            $('#municipioSelect').html(options);
+                        },
+                        error: function() {
+                            alert('Error al cargar municipios.');
+                            $('#municipioSelect').html('<option value="">Seleccione</option>');
+                        }
+                    });
+                } else {
+                    $('#municipioSelect').html('<option value="">Seleccione</option>');
+                }
+            });
+
+            $('#municipioSelect').on('change', function() {
+                var municipioId = $(this).val();
+                $('#parroquiaSelect').html('<option value="">Cargando...</option>');
+
+                if (municipioId) {
+                    $.ajax({
+                        url: '{{ url('get-parroquias') }}/' + municipioId,
+
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Seleccione</option>';
+                            data.forEach(function(parroquia) {
+                                options +=
+                                    `<option value="${parroquia.id}">${parroquia.nombre}</option>`;
+                            });
+                            $('#parroquiaSelect').html(options);
+                        },
+                        error: function() {
+                            alert('Error al cargar parroquias.');
+                            $('#parroquiaSelect').html('<option value="">Seleccione</option>');
+                        }
+                    });
+                } else {
+                    $('#parroquiaSelect').html('<option value="">Seleccione</option>');
+                }
+            });
+        });
+
+
+        Dropzone.autoDiscover = false;
+
+        // Dropzone para imágenes
+        const imagenesDropzone = new Dropzone("#myAwesomeDropzone", {
+            url: "/ruta-de-envio-temporal-o-ficticia", // será ignorado si usas formData
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
             maxFilesize: 5, // MB
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
+            previewsContainer: "#file-previews",
+            previewTemplate: document.querySelector("#uploadPreviewTemplate").innerHTML
+        });
 
-            success: function(file, response) {
-                uploadedFiles.push(response.filename);
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: 'imagenes_temp[]',
-                    value: response.filename
-                }).appendTo('form'); // agrega input oculto con el nombre del archivo
-            },
+        Dropzone.autoDiscover = false;
 
-            removedfile: function(images) {
-                let name = images.upload.filename;
+        const documentosDropzone = new Dropzone("#docuemntosDropzone", {
+            url: "/fake-url", // será reemplazado al enviar el formulario
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFilesize: 10,
+            acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx,.txt',
+            addRemoveLinks: true,
+            previewsContainer: "#file-previews2",
+            previewTemplate: document.querySelector("#uploadPreviewTemplate2").innerHTML,
+            init: function() {
+                this.on("addedfile", function(file) {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    let iconPath = "/assets/icons/file.png"; // por defecto
 
-                // Elimina del array
-                uploadedFiles = uploadedFiles.filter(f => f !== name);
+                    if (['doc', 'docx'].includes(ext)) {
+                        iconPath = "/assets/icons/word.png";
+                    } else if (['pdf'].includes(ext)) {
+                        iconPath = "/assets/icons/pdf.png";
+                    } else if (['xls', 'xlsx'].includes(ext)) {
+                        iconPath = "/assets/icons/excel.png";
+                    }
 
-                // Elimina input oculto
-                $('input[value="' + name + '"]').remove();
-
-                images.previewElement.remove();
+                    // Cambiar la miniatura manualmente
+                    const thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]");
+                    thumbnail.src = iconPath;
+                });
             }
+        });
+
+        // Enviar todos los archivos al enviar el formulario
+        document.querySelector("form#formCaso").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            // Agregar imágenes
+            imagenesDropzone.files.forEach((file, i) => {
+                formData.append('imagenes[]', file);
+            });
+
+            // Agregar documentos
+            documentosDropzone.files.forEach((file, i) => {
+                formData.append('documentos[]', file);
+            });
+
+            // Enviar formulario completo por AJAX
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(response => {
+                if (response.ok) {
+                    alert("Formulario enviado con éxito.");
+                    // Opcional: reiniciar dropzones
+                    imagenesDropzone.removeAllFiles();
+                    documentosDropzone.removeAllFiles();
+                    this.reset();
+                } else {
+                    alert("Error al enviar formulario.");
+                }
+            }).catch(error => {
+                console.error(error);
+                alert("Error inesperado.");
+            });
         });
     </script>
     <script>
-        Dropzone.autoDiscover = false;
-        let uploadedFiles2 = [];
+        document.addEventListener('DOMContentLoaded', function() {
+            const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
+            const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
 
-        const myDropzone2 = new Dropzone("#documentosDropzone", {
-            url: "{{ route('casos.upload.temp') }}",
-            paramName: "file",
-            maxFilesize: 5, // MB
-            acceptedFiles: 'image/*',
-            addRemoveLinks: true,
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
+            // Al seleccionar "No aplica", desmarcar los demás
+            noAplica.addEventListener('change', function() {
+                if (this.checked) {
+                    checkboxes.forEach(cb => cb.checked = false);
+                }
+            });
 
-            success: function(file, response) {
-                uploadedFiles2.push(response.filename);
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: 'imagenes_temp[]',
-                    value: response.filename
-                }).appendTo('form'); // agrega input oculto con el nombre del archivo
-            },
+            // Al seleccionar otro, desmarcar "No aplica"
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.checked) {
+                        noAplica.checked = false;
+                    }
+                });
+            });
+        });
 
-            removedfile: function(file) {
-                let name = file.upload.filename;
 
-                // Elimina del array
-                uploadedFiles2 = uploadedFiles2.filter(f => f !== name);
 
-                // Elimina input oculto
-                $('input[value="' + name + '"]').remove();
+        
+       
+        $(document).ready(function() {
+            const checkboxOtras = $('#otras_organizaciones'); // Este es el checkbox
+            const inputContainer = $('#otrasOrganizacionesContainer');
+            const inputText = inputContainer.find('input');
 
-                file.previewElement.remove();
+            checkboxOtras.on('change', function() {
+                if ($(this).is(':checked')) {
+                    inputContainer.show();
+                    inputText.prop('disabled', false).prop('required', true);
+                } else {
+                    inputContainer.hide();
+                    inputText.prop('disabled', true).prop('required', false).val('');
+                }
+            });
+
+            // Mostrar el input si estaba seleccionado en reenvío con errores
+            if (checkboxOtras.is(':checked')) {
+                inputContainer.show();
+                inputText.prop('disabled', false).prop('required', true);
             }
         });
+    
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const estadoSelect = document.getElementById('estadoSelect');
+            const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
+
+            estadoSelect.addEventListener('change', function() {
+                const estadoId = this.value;
+
+                fetch(`/casos/contador-estado/${estadoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.estado_nombre === 'Táchira') {
+                            const nuevoNumero = String(data.conteo + 1).padStart(3, '0');
+                            numeroCasoInput.value = `TCT-25-${nuevoNumero}`;
+                        } else {
+                            numeroCasoInput.value = '';
+                        }
+                    });
+            });
+        });
+    
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const radios = document.querySelectorAll('input[name="beneficiario[]"]');
+            const estadoMujerBlock = document.getElementById('estado-mujer-block');
+
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const valor = this.value.toLowerCase();
+                    if (valor.includes('mujer') || valor.includes('niña')) {
+                        estadoMujerBlock.style.display = 'block';
+                    } else {
+                        estadoMujerBlock.style.display = 'none';
+                        // Limpia los checkboxes marcados si se oculta
+                        estadoMujerBlock.querySelectorAll('input[type="checkbox"]').forEach(cb => cb
+                            .checked = false);
+                    }
+                });
+            });
+        });
+    
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const embarazada = document.getElementById('embarazada');
+            const lactante = document.getElementById('lactante');
+            const noAplica = document.getElementById('no_aplica');
+
+            function actualizarChecks() {
+                if (noAplica.checked) {
+                    embarazada.checked = false;
+                    lactante.checked = false;
+                }
+            }
+
+            function bloquearNoAplica() {
+                if (embarazada.checked || lactante.checked) {
+                    noAplica.checked = false;
+                }
+            }
+
+            embarazada.addEventListener('change', function() {
+                bloquearNoAplica();
+            });
+
+            lactante.addEventListener('change', function() {
+                bloquearNoAplica();
+            });
+
+            noAplica.addEventListener('change', function() {
+                actualizarChecks();
+            });
+        });
+    
+
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const reunificacion = document.getElementById('reunificacion_familiar');
+            const localizacion = document.getElementById('localizacion_familiar');
+            const retorno = document.getElementById('retorno_voluntario');
+
+            function limpiarOtrosSiRetorno() {
+                if (retorno.checked) {
+                    reunificacion.checked = false;
+                    localizacion.checked = false;
+                }
+            }
+
+            function limpiarRetornoSiOtros() {
+                if (reunificacion.checked || localizacion.checked) {
+                    retorno.checked = false;
+                }
+            }
+
+            reunificacion.addEventListener('change', limpiarRetornoSiOtros);
+            localizacion.addEventListener('change', limpiarRetornoSiOtros);
+            retorno.addEventListener('change', limpiarOtrosSiRetorno);
+        });
+    
+
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.acompanante-opcion');
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const esNoAplica = this.dataset.esNoAplica === '1';
+
+                    if (esNoAplica && this.checked) {
+                        // Desmarcar todos los demás si se marcó "No aplica"
+                        checkboxes.forEach(other => {
+                            if (other !== this) other.checked = false;
+                        });
+                    } else if (!esNoAplica && this.checked) {
+                        // Desmarcar "No aplica" si se marcó cualquier otro
+                        checkboxes.forEach(other => {
+                            if (other.dataset.esNoAplica === '1') {
+                                other.checked = false;
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('representante_legal');
+            const generoDiv = document.getElementById('genero_representante');
+
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    generoDiv.style.display = 'flex'; // o 'block' si prefieres
+                } else {
+                    generoDiv.style.display = 'none';
+                    generoDiv.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('no_aplica_acompanante');
+            const generoDiv = document.getElementById('genero_representante');
+
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    generoDiv.style.display = 'none'; // o 'block' si prefieres
+                }
+            });
+        });
+    
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectPais = document.getElementById('pais_procedencia');
+            const otroPaisContainer = document.getElementById('otro_pais_container');
+            const otroPaisInput = document.getElementById('otro_pais');
+
+            selectPais.addEventListener('change', function() {
+                if (this.value === 'Otro País') {
+                    otroPaisContainer.style.display = 'block';
+                    otroPaisInput.disabled = false;
+                    otroPaisInput.required = true;
+                } else {
+                    otroPaisContainer.style.display = 'none';
+                    otroPaisInput.disabled = true;
+                    otroPaisInput.required = false;
+                    otroPaisInput.value = '';
+                }
+            });
+
+            // Ejecutar al cargar por si viene con datos preseleccionados
+            if (selectPais.value === 'Otro País') {
+                otroPaisContainer.style.display = 'block';
+                otroPaisInput.disabled = false;
+                otroPaisInput.required = true;
+            }
+        });
+    
+
+
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectEtnia = document.getElementById('etnia_indigena');
+            const otraEtniaContainer = document.getElementById('otra_etnia_container');
+            const otraEtniaInput = document.getElementById('otra_etnia');
+
+            selectEtnia.addEventListener('change', function() {
+                if (this.value === 'Otra Etnia') {
+                    otraEtniaContainer.style.display = 'block';
+                    otraEtniaInput.disabled = false;
+                    otraEtniaInput.required = true;
+                } else {
+                    otraEtniaContainer.style.display = 'none';
+                    otraEtniaInput.disabled = true;
+                    otraEtniaInput.required = false;
+                    otraEtniaInput.value = '';
+                }
+            });
+
+            // Ejecutar al cargar por si ya está seleccionado
+            if (selectEtnia.value === 'Otra Etnia') {
+                otraEtniaContainer.style.display = 'block';
+                otraEtniaInput.disabled = false;
+                otraEtniaInput.required = true;
+            }
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const ninguno = document.getElementById("ningun_servicio_cosude");
+            const checkboxes = document.querySelectorAll(
+                'input[name="servicio_cosude[]"]:not(#ningun_servicio_cosude)');
+
+            if (ninguno) {
+                ninguno.addEventListener("change", function() {
+                    if (this.checked) {
+                        checkboxes.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener("change", function() {
+                        if (this.checked) {
+                            ninguno.checked = false;
+                        }
+                    });
+                });
+            }
+        });
+    
+
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const ningunoUnicef = document.getElementById("ningun_servicio_unicef");
+            const otrosUnicef = document.querySelectorAll(
+                'input[name="servicio_unicef[]"]:not(#ningun_servicio_unicef)');
+
+            if (ningunoUnicef) {
+                ningunoUnicef.addEventListener("change", function() {
+                    if (this.checked) {
+                        otrosUnicef.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                otrosUnicef.forEach(cb => {
+                    cb.addEventListener("change", function() {
+                        if (this.checked) {
+                            ningunoUnicef.checked = false;
+                        }
+                    });
+                });
+            }
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const unicefCheckbox = document.getElementById("unicef");
+            const cosudeCheckbox = document.getElementById("cosude");
+
+            const unicefContainer = document.getElementById("servicios_brindados_unicef_block");
+            const cosudeContainer = document.getElementById("servicios_brindados_cosude_container");
+
+            function actualizarVisibilidad() {
+                // Verificar si están marcados exactamente
+                const unicefMarcado = unicefCheckbox.checked;
+                const cosudeMarcado = cosudeCheckbox.checked;
+
+                // Mostrar u ocultar contenedores
+                unicefContainer.style.display = unicefMarcado ? 'block' : 'none';
+                cosudeContainer.style.display = cosudeMarcado ? 'block' : 'none';
+            }
+
+            // Ejecutar al cargar
+            actualizarVisibilidad();
+
+            // Añadir eventos a ambos checkboxes
+            unicefCheckbox.addEventListener("change", actualizarVisibilidad);
+            cosudeCheckbox.addEventListener("change", actualizarVisibilidad);
+        });
+    
+
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            // COSUDE
+            const ningunoCosude = document.querySelector(
+                'input[name="servicio_brindado_cosude[]"][value="Ningún servicio COSUDE"]');
+            const otrosCosude = document.querySelectorAll(
+                'input[name="servicio_brindado_cosude[]"]:not([value="Ningún servicio COSUDE"])');
+
+            ningunoCosude.addEventListener('change', function() {
+                if (this.checked) {
+                    otrosCosude.forEach(cb => cb.checked = false);
+                }
+            });
+
+            otrosCosude.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.checked) {
+                        ningunoCosude.checked = false;
+                    }
+                });
+            });
+
+            // UNICEF
+            const ningunoUnicef = document.querySelector(
+                'input[name="servicio_brindado_unicef[]"][value="Ningún servicio UNICEF"]');
+            const otrosUnicef = document.querySelectorAll(
+                'input[name="servicio_brindado_unicef[]"]:not([value="Ningún servicio UNICEF"])');
+
+            ningunoUnicef.addEventListener('change', function() {
+                if (this.checked) {
+                    otrosUnicef.forEach(cb => cb.checked = false);
+                }
+            });
+
+            otrosUnicef.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.checked) {
+                        ningunoUnicef.checked = false;
+                    }
+                });
+            });
+        });
+    
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+            const radiosEducacion = document.querySelectorAll('input[name="educacion"]');
+
+            const bloqueEducacion = document.getElementById("bloque_educacion");
+            const bloqueNivelTipo = document.getElementById("bloque_nivel_educativo_tipo_isntitucion");
+            const bloqueEstadoMujer = document.getElementById("estado-mujer-block");
+
+            function actualizarBloques() {
+                const beneficiario = document.querySelector('input[name="beneficiario"]:checked');
+                const educacion = document.querySelector('input[name="educacion"]:checked');
+                const valor = beneficiario ? beneficiario.value.trim() : "";
+
+                // Mostrar educación si es NNA
+                const esNNA = valor === "Niña adolescente" || valor === "Niño adolescente";
+                bloqueEducacion.style.display = esNNA ? "block" : "none";
+
+                // Mostrar nivel educativo + tipo institución si "Si estudia"
+                const estudia = educacion && educacion.value === "Si estudia";
+                bloqueNivelTipo.style.display = (esNNA && estudia) ? "flex" : "none";
+
+                // Mostrar bloque de estado si es mujer (niña adolescente, mujer joven o mujer adulta)
+                const esMujer = valor === "Niña adolescente" || valor === "Mujer joven" || valor === "Mujer adulta";
+                bloqueEstadoMujer.style.display = esMujer ? "block" : "none";
+            }
+
+            radiosBeneficiario.forEach(rb => rb.addEventListener("change", actualizarBloques));
+            radiosEducacion.forEach(rb => rb.addEventListener("change", actualizarBloques));
+
+            // Ejecutar al cargar por si hay datos precargados
+            actualizarBloques();
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectEdad = document.getElementById("edad-beneficiario-select");
+            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+
+            const rangos = {
+                'nina_adolescente': [0, 17],
+                'mujer_joven': [18, 21],
+                'mujer_adulta': [22, 100],
+                'nino_adolescente': [0, 17],
+                'hombre_joven': [18, 21],
+                'hombre_adulto': [22, 100]
+            };
+
+            function normalizarTexto(texto) {
+                return texto
+                    .toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
+                    .replace(/\s+/g, '_'); // espacios a guión bajo
+            }
+
+            function cargarRangoDeEdad(valorNormalizado) {
+                selectEdad.innerHTML = '<option value="">Seleccione</option>';
+
+                if (!(valorNormalizado in rangos)) return;
+
+                const [min, max] = rangos[valorNormalizado];
+                for (let i = min; i <= max; i++) {
+                    const option = document.createElement("option");
+                    option.value = i;
+                    option.textContent = `${i} años`;
+                    selectEdad.appendChild(option);
+                }
+            }
+
+            radiosBeneficiario.forEach(radio => {
+                radio.addEventListener("change", function() {
+                    const slug = normalizarTexto(this.value);
+                    cargarRangoDeEdad(slug);
+                });
+            });
+
+            // Ejecutar al cargar si hay selección previa
+            const seleccionado = document.querySelector('input[name="beneficiario"]:checked');
+            if (seleccionado) {
+                const slug = normalizarTexto(seleccionado.value);
+                cargarRangoDeEdad(slug);
+            }
+        });
+    
+
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkNoAplica = document.querySelector('input[name="estado_mujer[]"][value="No aplica estado"]');
+            const otrosEstados = document.querySelectorAll(
+                'input[name="estado_mujer[]"]:not([value="No aplica estado"])');
+
+            if (checkNoAplica) {
+                checkNoAplica.addEventListener("change", function() {
+                    if (this.checked) {
+                        otrosEstados.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                otrosEstados.forEach(cb => {
+                    cb.addEventListener("change", function() {
+                        if (this.checked) {
+                            checkNoAplica.checked = false;
+                        }
+                    });
+                });
+            }
+        });
+    
+
+    
+        $(document).ready(function() {
+            // Estado destino → Municipio destino
+            $('#estadoDestinoSelect').on('change', function() {
+                var estadoId = $(this).val();
+                $('#municipioDestinoSelect').html('<option value="">Cargando...</option>');
+                $('#parroquiaDestinoSelect').html('<option value="">Seleccione</option>');
+
+                if (estadoId) {
+                    $.ajax({
+                        url: '{{ url('get-municipios') }}/' + estadoId,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Seleccione</option>';
+                            data.forEach(function(municipio) {
+                                options +=
+                                    `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                            });
+                            $('#municipioDestinoSelect').html(options);
+                        },
+                        error: function() {
+                            alert('Error al cargar municipios destino.');
+                            $('#municipioDestinoSelect').html(
+                                '<option value="">Seleccione</option>');
+                        }
+                    });
+                } else {
+                    $('#municipioDestinoSelect').html('<option value="">Seleccione</option>');
+                }
+            });
+
+            // Municipio destino → Parroquia destino
+            $('#municipioDestinoSelect').on('change', function() {
+                var municipioId = $(this).val();
+                $('#parroquiaDestinoSelect').html('<option value="">Cargando...</option>');
+
+                if (municipioId) {
+                    $.ajax({
+                        url: '{{ url('get-parroquias') }}/' + municipioId,
+                        type: 'GET',
+                        success: function(data) {
+                            let options = '<option value="">Seleccione</option>';
+                            data.forEach(function(parroquia) {
+                                options +=
+                                    `<option value="${parroquia.id}">${parroquia.nombre}</option>`;
+                            });
+                            $('#parroquiaDestinoSelect').html(options);
+                        },
+                        error: function() {
+                            alert('Error al cargar parroquias destino.');
+                            $('#parroquiaDestinoSelect').html(
+                                '<option value="">Seleccione</option>');
+                        }
+                    });
+                } else {
+                    $('#parroquiaDestinoSelect').html('<option value="">Seleccione</option>');
+                }
+            });
+        });
+    
+
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxOtros = document.getElementById("otros_tipos_de_actuacion");
+            const containerTexto = document.getElementById("otros_actuacion_container");
+
+            if (checkboxOtros) {
+                checkboxOtros.addEventListener("change", function() {
+                    containerTexto.style.display = this.checked ? 'block' : 'none';
+                });
+
+                // Mostrar si ya estaba seleccionado al recargar
+                if (checkboxOtros.checked) {
+                    containerTexto.style.display = 'block';
+                }
+            }
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkNoIdentifica = document.querySelector(
+                'input[name="vulnerabilidades[]"][value="No se identifica vulnerabilidad"]');
+            const otrasVulnerabilidades = document.querySelectorAll(
+                'input[name="vulnerabilidades[]"]:not([value="No se identifica vulnerabilidad"])');
+
+            if (checkNoIdentifica) {
+                checkNoIdentifica.addEventListener("change", function() {
+                    if (this.checked) {
+                        otrasVulnerabilidades.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                otrasVulnerabilidades.forEach(cb => {
+                    cb.addEventListener("change", function() {
+                        if (this.checked) {
+                            checkNoIdentifica.checked = false;
+                        }
+                    });
+                });
+            }
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkNoAplica = document.querySelector(
+                'input[name="derechos_vulnerados[]"][value="NO Aplica Derechos Vulnerados"]');
+            const otrosDerechos = document.querySelectorAll(
+                'input[name="derechos_vulnerados[]"]:not([value="NO Aplica Derechos Vulnerados"])');
+
+            if (checkNoAplica) {
+                checkNoAplica.addEventListener("change", function() {
+                    if (this.checked) {
+                        otrosDerechos.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                otrosDerechos.forEach(cb => {
+                    cb.addEventListener("change", function() {
+                        if (this.checked) {
+                            checkNoAplica.checked = false;
+                        }
+                    });
+                });
+            }
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkNoVBG = document.querySelector(
+                'input[name="identificacion_violencia[]"][value="No se identifica VBG"]');
+            const otrasViolencias = document.querySelectorAll(
+                'input[name="identificacion_violencia[]"]:not([value="No se identifica VBG"])');
+
+            if (checkNoVBG) {
+                checkNoVBG.addEventListener("change", function() {
+                    if (this.checked) {
+                        otrasViolencias.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                otrasViolencias.forEach(cb => {
+                    cb.addEventListener("change", function() {
+                        if (this.checked) {
+                            checkNoVBG.checked = false;
+                        }
+                    });
+                });
+            }
+        });
+    
+
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxesVBG = document.querySelectorAll('input[name="identificacion_violencia[]"]');
+            const violenciaVicaria = document.querySelector(
+                'input[name="identificacion_violencia[]"][value="Violencia Vicaría"]');
+            const noIdentifica = document.querySelector(
+                'input[name="identificacion_violencia[]"][value="No se identifica VBG"]');
+            const bloqueVicaria = document.getElementById("bloque_tipos_vicaria");
+
+            // Obtener los checkboxes del bloque vicaria
+            function getVicariaCheckboxes() {
+                return document.querySelectorAll('input[name="tipos_violencia_vicaria[]"]');
+            }
+
+            // Al seleccionar "No se identifica VBG"
+            noIdentifica?.addEventListener("change", function() {
+                if (this.checked) {
+                    // Desmarcar todos los demás checkboxes de violencia
+                    checkboxesVBG.forEach(cb => {
+                        if (cb !== this) cb.checked = false;
+                    });
+
+                    // Desmarcar todos los tipos de violencia vicaria
+                    getVicariaCheckboxes().forEach(cb => cb.checked = false);
+
+                    // Ocultar bloque de violencia vicaria
+                    bloqueVicaria.style.display = "none";
+                }
+            });
+
+            // Al seleccionar "Violencia Vicaría"
+            violenciaVicaria?.addEventListener("change", function() {
+                if (this.checked) {
+                    // Mostrar bloque de violencia vicaria
+                    bloqueVicaria.style.display = "block";
+
+                    // Desmarcar "No se identifica VBG"
+                    if (noIdentifica.checked) noIdentifica.checked = false;
+                } else {
+                    // Si se desmarca violencia vicaria, ocultar bloque y desmarcar opciones internas
+                    bloqueVicaria.style.display = "none";
+                    getVicariaCheckboxes().forEach(cb => cb.checked = false);
+                }
+            });
+
+            // Desmarcar "No se identifica VBG" si se marca cualquier otro tipo de violencia
+            checkboxesVBG.forEach(cb => {
+                if (cb !== noIdentifica && cb !== violenciaVicaria) {
+                    cb.addEventListener("change", function() {
+                        if (this.checked && noIdentifica.checked) {
+                            noIdentifica.checked = false;
+                        }
+                    });
+                }
+            });
+        });
+    
+
+    
+        $(document).ready(function() {
+            $('#sin_remision').on('change', function() {
+                if ($(this).is(':checked')) {
+                    // Desmarcar todos los demás checkbox excepto "Sin Remisión"
+                    $('input[name="remisiones[]"]').not(this).prop('checked', false);
+                }
+            });
+
+            // Si se marca otro checkbox, desmarcar "Sin Remisión"
+            $('input[name="remisiones[]"]').not('#sin_remision').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#sin_remision').prop('checked', false);
+                }
+            });
+        });
+    
+
+    
+        $(document).ready(function() {
+            $('#pais_nacimiento').on('change', function() {
+                const seleccion = $(this).val();
+                const bloque = $('#otro_pais_nacimiento_container');
+                const input = $('#otro_pais_nacimientos');
+
+                if (seleccion === 'Otro País') {
+                    bloque.slideDown();
+                    input.prop('required', true);
+                } else {
+                    bloque.slideUp();
+                    input.val('').prop('required', false);
+                }
+            });
+        });
+    
+
+
+  
+
+
+
     </script>
+    <script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            height: 200,
+            placeholder: 'Escriba aquí los detalles del caso...',
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview']]
+            ]
+        });
+    });
+</script>
+
+
 
 
 @endsection

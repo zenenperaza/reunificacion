@@ -1,8 +1,4 @@
-
-        $('.select2').select2();
-
-
-        $(document).ready(function() {
+ $(document).ready(function() {
             $('#estadoSelect').on('change', function() {
                 var estadoId = $(this).val();
                 $('#municipioSelect').html('<option value="">Cargando...</option>');
@@ -58,9 +54,120 @@
                 }
             });
         });
-    
 
-    
+
+        Dropzone.autoDiscover = false;
+
+        // Dropzone para imágenes
+        const imagenesDropzone = new Dropzone("#myAwesomeDropzone", {
+            url: "/ruta-de-envio-temporal-o-ficticia", // será ignorado si usas formData
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFilesize: 5, // MB
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            previewsContainer: "#file-previews",
+            previewTemplate: document.querySelector("#uploadPreviewTemplate").innerHTML
+        });
+
+        Dropzone.autoDiscover = false;
+
+        const documentosDropzone = new Dropzone("#docuemntosDropzone", {
+            url: "/fake-url", // será reemplazado al enviar el formulario
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFilesize: 10,
+            acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx,.txt',
+            addRemoveLinks: true,
+            previewsContainer: "#file-previews2",
+            previewTemplate: document.querySelector("#uploadPreviewTemplate2").innerHTML,
+            init: function() {
+                this.on("addedfile", function(file) {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    let iconPath = "/assets/icons/file.png"; // por defecto
+
+                    if (['doc', 'docx'].includes(ext)) {
+                        iconPath = "/assets/icons/word.png";
+                    } else if (['pdf'].includes(ext)) {
+                        iconPath = "/assets/icons/pdf.png";
+                    } else if (['xls', 'xlsx'].includes(ext)) {
+                        iconPath = "/assets/icons/excel.png";
+                    }
+
+                    // Cambiar la miniatura manualmente
+                    const thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]");
+                    thumbnail.src = iconPath;
+                });
+            }
+        });
+
+        // Enviar todos los archivos al enviar el formulario
+        document.querySelector("form#formCaso").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            // Agregar imágenes
+            imagenesDropzone.files.forEach((file, i) => {
+                formData.append('imagenes[]', file);
+            });
+
+            // Agregar documentos
+            documentosDropzone.files.forEach((file, i) => {
+                formData.append('documentos[]', file);
+            });
+
+            // Enviar formulario completo por AJAX
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(response => {
+                if (response.ok) {
+                    alert("Formulario enviado con éxito.");
+                    // Opcional: reiniciar dropzones
+                    imagenesDropzone.removeAllFiles();
+                    documentosDropzone.removeAllFiles();
+                    this.reset();
+                } else {
+                    alert("Error al enviar formulario.");
+                }
+            }).catch(error => {
+                console.error(error);
+                alert("Error inesperado.");
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
+            const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
+
+            // Al seleccionar "No aplica", desmarcar los demás
+            noAplica.addEventListener('change', function() {
+                if (this.checked) {
+                    checkboxes.forEach(cb => cb.checked = false);
+                }
+            });
+
+            // Al seleccionar otro, desmarcar "No aplica"
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.checked) {
+                        noAplica.checked = false;
+                    }
+                });
+            });
+        });
+
+
+
+        
+       
         $(document).ready(function() {
             const checkboxOtras = $('#otras_organizaciones'); // Este es el checkbox
             const inputContainer = $('#otrasOrganizacionesContainer');
@@ -775,8 +882,4 @@
             });
         });
     
-
-
-  
-
 
