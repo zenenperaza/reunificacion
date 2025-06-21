@@ -4,8 +4,7 @@
 
 <head>
 
-    <?php $title = "File Uploads";
-    include 'partials/title-meta.php'; ?>
+   
 
     <!-- Plugins css -->
     <link href="assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
@@ -15,13 +14,12 @@
 
 </head>
 
-<?php include 'partials/body.php'; ?>
+
 
 <!-- Begin page -->
 <div id="wrapper">
 
-    <?php $pagetitle = "File Uploads";
-    include 'partials/menu.php'; ?>
+
 
     <!-- ============================================================== -->
     <!-- Start Page Content here -->
@@ -91,52 +89,9 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="header-title">Dropify File Upload</h4>
-                                <p class="sub-header">
-                                    Override your input files with style. Your so fresh input file — Default version.
-                                </p>
-
-                                <input type="file" data-plugins="dropify" data-height="300" />
-
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="mt-3">
-                                            <input type="file" data-plugins="dropify"
-                                                data-default-file="assets/images/small/img-2.jpg" />
-                                            <p class="text-muted text-center mt-2 mb-0">Default File</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="mt-3">
-                                            <input type="file" data-plugins="dropify" disabled="disabled" />
-                                            <p class="text-muted text-center mt-2 mb-0">Disabled the input</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="mt-3">
-                                            <input type="file" data-plugins="dropify" data-max-file-size="1M" />
-                                            <p class="text-muted text-center mt-2 mb-0">Max File size</p>
-                                        </div>
-                                    </div>
-                                </div> <!-- end row -->
-
-                            </div> <!-- end card-body-->
-                        </div> <!-- end card-->
-                    </div><!-- end col -->
-                </div>
-                <!-- end row -->
-
             </div> <!-- container -->
 
-        </div> <!-- content -->
-
-        <?php include 'partials/footer.php'; ?>
+        </div> <!-- content -->  
 
     </div>
 
@@ -148,13 +103,17 @@
 </div>
 <!-- END wrapper -->
 
-<?php include 'partials/right-sidebar.php'; ?>
-
-<?php include 'partials/footer-scripts.php'; ?>
+    <!-- Vendor -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="assets/libs/waypoints/lib/jquery.waypoints.min.js"></script>
+    <script src="assets/libs/jquery.counterup/jquery.counterup.min.js"></script>
+    <script src="assets/libs/feather-icons/feather.min.js"></script>
 
 <!-- Plugins js -->
 <script src="assets/libs/dropzone/min/dropzone.min.js"></script>
-<script src="assets/libs/dropify/js/dropify.min.js"></script>
 
 <!-- Init js-->
 <script src="assets/js/pages/form-fileuploads.init.js"></script>

@@ -9,6 +9,8 @@ use App\Models\Parroquia;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Storage;
+
 class CasoController extends Controller
 {
     public function index()
@@ -82,6 +84,23 @@ class CasoController extends Controller
 
         Caso::create($data);
 
+        if ($request->has('imagenes_temp')) {
+            $imagenesFinales = [];
+
+            foreach ($request->imagenes_temp as $tempFile) {
+                $origen = storage_path('app/public/temp_casos/' . $tempFile);
+                $destino = 'casos/' . $tempFile;
+
+                if (file_exists($origen)) {
+                    Storage::disk('public')->move('temp_casos/' . $tempFile, $destino);
+                    $imagenesFinales[] = $destino;
+                }
+            }
+
+            $data['fotos'] = json_encode($imagenesFinales);
+        }
+
+
         return redirect()->route('casos.index')->with('success', 'Caso creado correctamente.');
     }
 
@@ -149,18 +168,28 @@ class CasoController extends Controller
         ]);
     }
 
-    public function storeImagen(Request $request)
-{
-    if ($request->hasFile('archivo')) {
-        $file = $request->file('archivo');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $path = $file->storeAs('public/archivos', $filename);
-        return response()->json(['ruta' => $path]);
+
+
+    public function upload(Request $request)
+    {
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('casos/imagenes', 'public');
+            return response()->json(['path' => $path], 200);
+        }
+
+        return response()->json(['error' => 'No se subió ningún archivo.'], 400);
     }
 
-    return response()->json(['error' => 'Archivo no recibido'], 400);
-}
+    public function uploadTemp(Request $request)
+    {
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('temp_casos', $filename, 'public');
 
+            return response()->json(['filename' => $filename]);
+        }
 
-
+        return response()->json(['error' => 'No file uploaded'], 400);
+    }
 }

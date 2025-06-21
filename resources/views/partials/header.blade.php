@@ -10,7 +10,7 @@
             <form class="app-search">
                 <div class="app-search-box">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar..." id="top-search">
+                        <input type="text" class="form-control" name="search" placeholder="Buscar..." id="top-search">
                         <button class="btn input-group-text" type="submit">
                             <i class="fe-search"></i>
                         </button>
@@ -72,7 +72,7 @@
             </a>
             <div class="dropdown-menu dropdown-lg dropdown-menu-end p-0">
                 <form class="p-3">
-                    <input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
+                    <input type="text" class="form-control" name="buscar" placeholder="Buscar..." aria-label="Buscar">
                 </form>
             </div>
         </li>
