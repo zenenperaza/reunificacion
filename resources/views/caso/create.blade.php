@@ -11,6 +11,12 @@
     <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet"
         type="text/css" />
 
+    <!-- Plugins css -->
+
+    <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css') }}" />
+
+    
+<link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('content')
@@ -64,7 +70,15 @@
                                 <a href="#tab6" data-bs-toggle="tab" data-toggle="tab"
                                     class="nav-link rounded-0 pt-2 pb-2">
                                     <i class="mdi mdi-file-image-outline me-1"></i>
-                                    <span class="d-none d-sm-inline">Adjuntos</span>
+                                    <span class="d-none d-sm-inline">Identificación de violencia basada en género
+                                            VBG</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab7" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-file-image-outline me-1"></i>
+                                    <span class="d-none d-sm-inline">Documentos Adjuntos</span>
                                 </a>
                             </li>
                         </ul>
@@ -76,6 +90,7 @@
                             </div>
 
                             <div class="tab-pane" id="tab1">
+
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="row">
@@ -268,6 +283,7 @@
 
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="tab-pane" id="tab2">
@@ -1195,94 +1211,158 @@
                                                 class="form-control">
                                         </div>
                                     </div>
-
-
-
-
-
-                                    <div class="row mt-3">
-                                             <div class="row">
-                                                        <div class="col-12">
-                                                            <div class="card">
-                                                                <div class="card-body">
-                                                                    <h4 class="header-title">Dropzone File Upload</h4>
-                                                                    <p class="sub-header">
-                                                                        DropzoneJS is an open source library that provides
-                                                                        drag’n’drop file uploads with
-                                                                        image previews.
-                                                                    </p>
-
-                                                                    <div class="dropzone" id="myAwesomeDropzone"
-                                                                        data-plugin="dropzone"
-                                                                        data-previews-container="#file-previews"
-                                                                        data-upload-preview-template="#uploadPreviewTemplate">
-                                                                        <div class="fallback">
-                                                                            <input name="file" type="file"
-                                                                                multiple />
-                                                                        </div>
-
-                                                                        <div class="dz-message needsclick">
-                                                                            <i
-                                                                                class="h1 text-muted dripicons-cloud-upload"></i>
-                                                                            <h3>Drop files here or click to upload.</h3>
-                                                                            <span class="text-muted font-13">(This is just
-                                                                                a demo dropzone. Selected files
-                                                                                are
-                                                                                <strong>not</strong> actually
-                                                                                uploaded.)</span>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <!-- Preview -->
-                                                                    <div class="dropzone-previews mt-3"
-                                                                        id="file-previews"></div>
-
-                                                                </div> <!-- end card-body-->
-                                                            </div> <!-- end card-->
-                                                        </div><!-- end col -->
-                                                    </div>
-                                                    <!-- end row -->
-
-                                                    <!-- file preview template -->
-                                                    <div class="d-none" id="uploadPreviewTemplate">
-                                                        <div class="card mt-1 mb-0 shadow-none border">
-                                                            <div class="p-2">
-                                                                <div class="row align-items-center">
-                                                                    <div class="col-auto">
-                                                                        <img data-dz-thumbnail src="#"
-                                                                            class="avatar-sm rounded bg-light"
-                                                                            alt="">
-                                                                    </div>
-                                                                    <div class="col ps-0">
-                                                                        <a href="javascript:void(0);"
-                                                                            class="text-muted fw-bold" data-dz-name></a>
-                                                                        <p class="mb-0" data-dz-size></p>
-                                                                    </div>
-                                                                    <div class="col-auto">
-                                                                        <!-- Button -->
-                                                                        <a href=""
-                                                                            class="btn btn-link btn-lg text-muted"
-                                                                            data-dz-remove>
-                                                                            <i class="dripicons-cross"></i>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-  
-
-                                    </div>
                                 </div>
                             </div>
+
+                            <div class="tab-pane" id="tab7">
+
+                                {{-- DOCUMENTOS ADJUNTOS --}}
+                               
+                                    <div class="row mt-3">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h4 class="header-title">Fotos e imagenes</h4>
+                                                        <p class="sub-header">
+                                                            DropzoneJS is an open source library that provides
+                                                            drag’n’drop file uploads with
+                                                            image previews.
+                                                        </p>
+
+                                                        <div class="dropzone" id="myAwesomeDropzone"
+                                                            data-plugin="dropzone"
+                                                            data-previews-container="#file-previews"
+                                                            data-upload-preview-template="#uploadPreviewTemplate">
+                                                            <div class="fallback">
+                                                                <input name="images" type="file" multiple />
+                                                            </div>
+
+                                                            <div class="dz-message needsclick">
+                                                                <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                                                <h3>Drop files here or click to upload.</h3>
+                                                                <span class="text-muted font-13">(This is just
+                                                                    a demo dropzone. Selected files
+                                                                    are
+                                                                    <strong>not</strong> actually
+                                                                    uploaded.)</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Preview -->
+                                                        <div class="dropzone-previews mt-3" id="file-previews"></div>
+
+                                                    </div> <!-- end card-body-->
+                                                </div> <!-- end card-->
+                                            </div><!-- end col -->
+                                        </div>
+                                        <!-- end row -->
+
+                                        <!-- file preview template -->
+                                        <div class="d-none" id="uploadPreviewTemplate">
+                                            <div class="card mt-1 mb-0 shadow-none border">
+                                                <div class="p-2">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <img data-dz-thumbnail src="#"
+                                                                class="avatar-sm rounded bg-light" alt="">
+                                                        </div>
+                                                        <div class="col ps-0">
+                                                            <a href="javascript:void(0);" class="text-muted fw-bold"
+                                                                data-dz-name></a>
+                                                            <p class="mb-0" data-dz-size></p>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <!-- Button -->
+                                                            <a href="" class="btn btn-link btn-lg text-muted"
+                                                                data-dz-remove>
+                                                                <i class="dripicons-cross"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+
+                               
+                                    <div class="row mt-3">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h4 class="header-title">Documentos</h4>
+                                                        <p class="sub-header">
+                                                            DropzoneJS is an open source library that provides
+                                                            drag’n’drop file uploads with
+                                                            image previews.
+                                                        </p>
+
+                                                        <div class="dropzone" id="docuemntosDropzone"
+                                                            data-plugin="dropzone"
+                                                            data-previews-container="#file-previews2"
+                                                            data-upload-preview-template="#uploadPreviewTemplate2">
+                                                            <div class="fallback">
+                                                                <input name="file" type="file" multiple />
+                                                            </div>
+
+                                                            <div class="dz-message needsclick">
+                                                                <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                                                <h3>Drop files here or click to upload.</h3>
+                                                                <span class="text-muted font-13">(This is just
+                                                                    a demo dropzone. Selected files
+                                                                    are
+                                                                    <strong>not</strong> actually
+                                                                    uploaded.)</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Preview -->
+                                                        <div class="dropzone-previews mt-3" id="file-previews2"></div>
+
+                                                    </div> <!-- end card-body-->
+                                                </div> <!-- end card-->
+                                            </div><!-- end col -->
+                                        </div>
+                                        <!-- end row -->
+
+                                        <!-- file preview template -->
+                                        <div class="d-none" id="uploadPreviewTemplate2">
+                                            <div class="card mt-1 mb-0 shadow-none border">
+                                                <div class="p-2">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <img data-dz-thumbnail src="#"
+                                                                class="avatar-sm rounded bg-light" alt="">
+                                                        </div>
+                                                        <div class="col ps-0">
+                                                            <a href="javascript:void(0);" class="text-muted fw-bold"
+                                                                data-dz-name></a>
+                                                            <p class="mb-0" data-dz-size></p>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <!-- Button -->
+                                                            <a href="" class="btn btn-link btn-lg text-muted"
+                                                                data-dz-remove>
+                                                                <i class="dripicons-cross"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+
+
+                            </div>
+
+                                
 
                             <ul class="list-inline mt-4 wizard">
                                 <li class="previous list-inline-item">
                                     <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
                                 </li>
-                                
+
                                 <li class="next list-inline-item float-center center">
-                                   <button type="submit" class="btn btn-primary">Guardar y continuar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar y continuar</button>
                                 </li>
 
                                 <li class="next list-inline-item float-end">
@@ -1320,44 +1400,83 @@
 
 
     <!-- Plugins js -->
-    <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script> --}}
+
+  <script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
 
     <script src="{{ asset('assets/js/pages/casos.js') }}"></script>
 
     <script>
-Dropzone.autoDiscover = false;
-let uploadedFiles = [];
+        Dropzone.autoDiscover = false;
+        let uploadedFiles = [];
 
-const myDropzone = new Dropzone("#myAwesomeDropzone", {
-    url: "{{ route('casos.upload.temp') }}",
-    paramName: "file",
-    maxFilesize: 5, // MB
-    acceptedFiles: 'image/*',
-    addRemoveLinks: true,
-    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+        const myDropzone = new Dropzone("#myAwesomeDropzone", {
+            url: "{{ route('casos.upload.temp') }}",
+            paramName: "images",
+            maxFilesize: 5, // MB
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
 
-    success: function (file, response) {
-        uploadedFiles.push(response.filename);
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'imagenes_temp[]',
-            value: response.filename
-        }).appendTo('form'); // agrega input oculto con el nombre del archivo
-    },
+            success: function(file, response) {
+                uploadedFiles.push(response.filename);
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'imagenes_temp[]',
+                    value: response.filename
+                }).appendTo('form'); // agrega input oculto con el nombre del archivo
+            },
 
-    removedfile: function(file) {
-        let name = file.upload.filename;
+            removedfile: function(images) {
+                let name = images.upload.filename;
 
-        // Elimina del array
-        uploadedFiles = uploadedFiles.filter(f => f !== name);
+                // Elimina del array
+                uploadedFiles = uploadedFiles.filter(f => f !== name);
 
-        // Elimina input oculto
-        $('input[value="' + name + '"]').remove();
+                // Elimina input oculto
+                $('input[value="' + name + '"]').remove();
 
-        file.previewElement.remove();
-    }
-});
+                images.previewElement.remove();
+            }
+        });
+    </script>
+    <script>
+        Dropzone.autoDiscover = false;
+        let uploadedFiles2 = [];
 
+        const myDropzone2 = new Dropzone("#documentosDropzone", {
+            url: "{{ route('casos.upload.temp') }}",
+            paramName: "file",
+            maxFilesize: 5, // MB
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+
+            success: function(file, response) {
+                uploadedFiles2.push(response.filename);
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'imagenes_temp[]',
+                    value: response.filename
+                }).appendTo('form'); // agrega input oculto con el nombre del archivo
+            },
+
+            removedfile: function(file) {
+                let name = file.upload.filename;
+
+                // Elimina del array
+                uploadedFiles2 = uploadedFiles2.filter(f => f !== name);
+
+                // Elimina input oculto
+                $('input[value="' + name + '"]').remove();
+
+                file.previewElement.remove();
+            }
+        });
     </script>
 
 

@@ -13,8 +13,7 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
 
-        <!-- Plugins css -->
-    <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css') }}" />
+
 
     <!-- App CSS -->
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
