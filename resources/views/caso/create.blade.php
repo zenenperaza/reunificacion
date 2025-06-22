@@ -7,12 +7,14 @@
     <link href="{{ asset('assets/libs/mohithg-switchery/switchery.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/multiselect/css/multi-select.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/selectize/css/selectize.bootstrap3.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet"
+        type="text/css" />
 
     <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- Summernote CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/libs/summernote/summernote-lite.min.css') }}" rel="stylesheet">
+    
 
 
 
@@ -384,7 +386,7 @@
             'Privada',
             'Privada subsidiada',
             'Ninguna
-                                                                        institución',
+                                                                            institución',
         ] as $tipo)
                                                         <option value="{{ $tipo }}">{{ $tipo }}</option>
                                                     @endforeach
@@ -1402,7 +1404,7 @@
 
 
 
-                                 
+
 
                                 </div>
                             </div>
@@ -1480,10 +1482,10 @@
                                 </div>
 
 
-                             <div class="mb-3">
-    <label for="descripcion" class="form-label">Descripción del caso</label>
-    <textarea name="descripcion" id="summernote" class="form-control"></textarea>
-</div>
+                                <div class="mb-3">
+                                    <label for="descripcion" class="form-label">Descripción del caso</label>
+                                    <textarea name="descripcion" id="summernote" class="form-control"></textarea>
+                                </div>
 
 
                                 <div class="col-md-6">
@@ -1492,23 +1494,23 @@
                                         <input type="number" class="form-control" name="verificador" value="">
                                     </div>
                                 </div>
-                                
 
-                                        <li class="next list-inline-item  center">
-                                            <button type="submit" class="btn btn-primary">Guardar y continuar</button>
-                                        </li>
+
+                                <li class="next list-inline-item  center">
+                                    <button type="submit" class="btn btn-primary">Guardar y continuar</button>
+                                </li>
 
                             </div>
 
-                               <ul class="list-inline mt-4 wizard">
-                                        <li class="previous list-inline-item">
-                                            <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
-                                        </li>
+                            <ul class="list-inline mt-4 wizard">
+                                <li class="previous list-inline-item">
+                                    <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
+                                </li>
 
-                                        <li class="next list-inline-item float-end">
-                                            <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
-                                        </li>
-                                    </ul>
+                                <li class="next list-inline-item float-end">
+                                    <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
+                                </li>
+                            </ul>
 
 
 
@@ -1534,7 +1536,7 @@
 
     <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+    <script src="{{ asset('assets/libs/summernote/summernote-lite.min.js') }}"></script>
 
     <script>
         $(document).ready(function() {
@@ -1705,8 +1707,8 @@
 
 
 
-        
-       
+
+
         $(document).ready(function() {
             const checkboxOtras = $('#otras_organizaciones'); // Este es el checkbox
             const inputContainer = $('#otrasOrganizacionesContainer');
@@ -1728,9 +1730,9 @@
                 inputText.prop('disabled', false).prop('required', true);
             }
         });
-    
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
@@ -1750,9 +1752,9 @@
                     });
             });
         });
-    
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const radios = document.querySelectorAll('input[name="beneficiario[]"]');
             const estadoMujerBlock = document.getElementById('estado-mujer-block');
@@ -1771,9 +1773,9 @@
                 });
             });
         });
-    
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const embarazada = document.getElementById('embarazada');
             const lactante = document.getElementById('lactante');
@@ -1804,10 +1806,10 @@
                 actualizarChecks();
             });
         });
-    
 
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const reunificacion = document.getElementById('reunificacion_familiar');
             const localizacion = document.getElementById('localizacion_familiar');
@@ -1830,10 +1832,10 @@
             localizacion.addEventListener('change', limpiarRetornoSiOtros);
             retorno.addEventListener('change', limpiarOtrosSiRetorno);
         });
-    
 
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const checkboxes = document.querySelectorAll('.acompanante-opcion');
 
@@ -1857,8 +1859,8 @@
                 });
             });
         });
-    
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const checkbox = document.getElementById('representante_legal');
             const generoDiv = document.getElementById('genero_representante');
@@ -1883,9 +1885,9 @@
                 }
             });
         });
-    
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const selectPais = document.getElementById('pais_procedencia');
             const otroPaisContainer = document.getElementById('otro_pais_container');
@@ -1911,10 +1913,10 @@
                 otroPaisInput.required = true;
             }
         });
-    
 
 
-    
+
+
         document.addEventListener('DOMContentLoaded', function() {
             const selectEtnia = document.getElementById('etnia_indigena');
             const otraEtniaContainer = document.getElementById('otra_etnia_container');
@@ -1940,9 +1942,9 @@
                 otraEtniaInput.required = true;
             }
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const ninguno = document.getElementById("ningun_servicio_cosude");
             const checkboxes = document.querySelectorAll(
@@ -1964,10 +1966,10 @@
                 });
             }
         });
-    
 
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const ningunoUnicef = document.getElementById("ningun_servicio_unicef");
             const otrosUnicef = document.querySelectorAll(
@@ -1989,9 +1991,9 @@
                 });
             }
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const unicefCheckbox = document.getElementById("unicef");
             const cosudeCheckbox = document.getElementById("cosude");
@@ -2016,10 +2018,10 @@
             unicefCheckbox.addEventListener("change", actualizarVisibilidad);
             cosudeCheckbox.addEventListener("change", actualizarVisibilidad);
         });
-    
 
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             // COSUDE
             const ningunoCosude = document.querySelector(
@@ -2061,8 +2063,8 @@
                 });
             });
         });
-    
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
             const radiosEducacion = document.querySelectorAll('input[name="educacion"]');
@@ -2095,9 +2097,9 @@
             // Ejecutar al cargar por si hay datos precargados
             actualizarBloques();
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const selectEdad = document.getElementById("edad-beneficiario-select");
             const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
@@ -2146,10 +2148,10 @@
                 cargarRangoDeEdad(slug);
             }
         });
-    
 
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoAplica = document.querySelector('input[name="estado_mujer[]"][value="No aplica estado"]');
             const otrosEstados = document.querySelectorAll(
@@ -2171,9 +2173,9 @@
                 });
             }
         });
-    
 
-    
+
+
         $(document).ready(function() {
             // Estado destino → Municipio destino
             $('#estadoDestinoSelect').on('change', function() {
@@ -2232,10 +2234,10 @@
                 }
             });
         });
-    
 
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxOtros = document.getElementById("otros_tipos_de_actuacion");
             const containerTexto = document.getElementById("otros_actuacion_container");
@@ -2251,9 +2253,9 @@
                 }
             }
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoIdentifica = document.querySelector(
                 'input[name="vulnerabilidades[]"][value="No se identifica vulnerabilidad"]');
@@ -2276,9 +2278,9 @@
                 });
             }
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoAplica = document.querySelector(
                 'input[name="derechos_vulnerados[]"][value="NO Aplica Derechos Vulnerados"]');
@@ -2301,9 +2303,9 @@
                 });
             }
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoVBG = document.querySelector(
                 'input[name="identificacion_violencia[]"][value="No se identifica VBG"]');
@@ -2326,9 +2328,9 @@
                 });
             }
         });
-    
 
-    
+
+
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxesVBG = document.querySelectorAll('input[name="identificacion_violencia[]"]');
             const violenciaVicaria = document.querySelector(
@@ -2384,9 +2386,9 @@
                 }
             });
         });
-    
 
-    
+
+
         $(document).ready(function() {
             $('#sin_remision').on('change', function() {
                 if ($(this).is(':checked')) {
@@ -2402,9 +2404,9 @@
                 }
             });
         });
-    
 
-    
+
+
         $(document).ready(function() {
             $('#pais_nacimiento').on('change', function() {
                 const seleccion = $(this).val();
@@ -2420,29 +2422,23 @@
                 }
             });
         });
-    
-
-
-  
-
-
-
     </script>
+
     <script>
-    $(document).ready(function() {
-        $('#summernote').summernote({
-            height: 200,
-            placeholder: 'Escriba aquí los detalles del caso...',
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview']]
-            ]
+        $(document).ready(function() {
+            $('#summernote').summernote({
+                height: 200,
+                placeholder: 'Escriba aquí los detalles del caso...',
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
         });
-    });
-</script>
+    </script>
 
 
 
