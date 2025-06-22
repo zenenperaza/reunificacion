@@ -1331,7 +1331,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                </div>
 
                                     <div class="row mt-3">
                                         <div class="row">
@@ -1406,7 +1406,6 @@
 
 
 
-                                </div>
                             </div>
 
                             <div class="tab-pane" id="tab8">

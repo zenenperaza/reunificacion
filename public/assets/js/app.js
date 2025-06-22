@@ -168,81 +168,88 @@ class LeftSidebar {
 }
 
 class Topbar {
-
     constructor() {
         this.body = $('body');
         this.window = $(window);
     }
 
     toggleRightSideBar() {
-
-        var self = this;
-        if(document.body.classList.contains('right-bar-enabled'))
-            document.body.classList.remove('right-bar-enabled')
-        else
-            document.body.classList.add('right-bar-enabled')
+        if (document.body.classList.contains('right-bar-enabled')) {
+            document.body.classList.remove('right-bar-enabled');
+        } else {
+            document.body.classList.add('right-bar-enabled');
+        }
     }
 
     initMenu() {
-        const  self = this;
-        document.querySelector('.right-bar-toggle')?.addEventListener('click', function () {
-            self.toggleRightSideBar();
+        const self = this;
+
+        // Toggle botón (abre/cierra barra lateral)
+        document.querySelectorAll('.right-bar-toggle').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                self.toggleRightSideBar();
+            });
         });
 
-        // Serach Toggle
-        $('#top-search').on('click', function (e) {
+        // Ocultar barra lateral al hacer clic fuera
+        document.addEventListener('click', function (e) {
+            const isInsideRightBar = e.target.closest('.right-bar') || e.target.closest('.right-bar-toggle');
+            if (!isInsideRightBar) {
+                document.body.classList.remove('right-bar-enabled');
+            }
+        });
+
+        // Toggle búsqueda
+        $('#top-search').on('click', function () {
             $('#search-dropdown').addClass('d-block');
         });
 
-        // hide search on opening other dropdown
+        // Ocultar búsqueda al abrir otro dropdown
         $('.topbar-dropdown').on('show.bs.dropdown', function () {
             $('#search-dropdown').removeClass('d-block');
         });
 
-        //activate the menu in topbar(horizontal menu) based on url
+        // Activar menú topbar basado en la URL
         $(".navbar-nav a").each(function () {
-            var pageUrl = window.location.href.split(/[?#]/)[0];
-            if (this.href == pageUrl) {
-                $(this).addClass("active");
-                $(this).parent().addClass("active");
-                $(this).parent().parent().addClass("active");
+            const pageUrl = window.location.href.split(/[?#]/)[0];
+            if (this.href === pageUrl) {
+                $(this).addClass("active")
+                    .parent().addClass("active")
+                    .parent().addClass("active")
+                    .parent().addClass("active")
+                    .parent().addClass("active");
 
-                $(this).parent().parent().parent().addClass("active");
-                $(this).parent().parent().parent().parent().addClass("active");
-                if ($(this).parent().parent().parent().parent().hasClass('mega-dropdown-menu')) {
-                    $(this).parent().parent().parent().parent().parent().addClass("active");
-                    $(this).parent().parent().parent().parent().parent().parent().addClass("active");
-
+                if ($(this).closest('.mega-dropdown-menu').length) {
+                    $(this).parentsUntil('.navbar-nav').addClass("active");
                 } else {
-                    var child = $(this).parent().parent()[0].querySelector('.dropdown-item');
-                    if (child) {
-                        var pageUrl = window.location.href.split(/[?#]/)[0];
-                        if (child.href == pageUrl || child.classList.contains('dropdown-toggle')) child.classList.add("active");
+                    const child = $(this).parent().parent()[0].querySelector('.dropdown-item');
+                    if (child && (child.href === pageUrl || child.classList.contains('dropdown-toggle'))) {
+                        child.classList.add("active");
                     }
                 }
-                var el = $(this).parent().parent().parent().parent().addClass("active").prev();
+
+                const el = $(this).parent().parent().parent().parent().addClass("active").prev();
                 if (el.hasClass("nav-link")) el.addClass('active');
             }
         });
 
-        // Topbar - main menu
-        $('.navbar-toggle').on('click', function (event) {
+        // Menú hamburguesa
+        $('.navbar-toggle').on('click', function () {
             $(this).toggleClass('open');
             $('#navigation').slideToggle(400);
         });
 
-
-        //Horizontal Menu (For SM Screen)
-        var AllNavs = document.querySelectorAll('ul.navbar-nav .dropdown .dropdown-toggle');
-
-        var isInner = false;
+        // Menú horizontal en pantallas pequeñas
+        const AllNavs = document.querySelectorAll('ul.navbar-nav .dropdown .dropdown-toggle');
+        let isInner = false;
 
         AllNavs.forEach(function (element) {
-            element.addEventListener('click', function (event) {
+            element.addEventListener('click', function () {
                 if (!element.parentElement.classList.contains('nav-item')) {
                     isInner = true;
                     element.parentElement.parentElement.classList.add('show');
-                    var parent = element.parentElement.parentElement.parentElement.querySelector('.nav-link');
+                    const parent = element.parentElement.parentElement.parentElement.querySelector('.nav-link');
                     parent.ariaExpanded = true;
                     parent.classList.add("show");
                     bootstrap.Dropdown.getInstance(element).show();
@@ -257,13 +264,11 @@ class Topbar {
                 }
             });
         });
-
     }
 
     init() {
         this.initMenu();
     }
-
 }
 
 class RightSidebar {
@@ -299,196 +304,210 @@ class RightSidebar {
 
 class ThemeCustomizer {
 
-
     constructor() {
         this.body = document.body;
+        this.storageKey = 'theme';
+
         this.defaultConfig = {
             leftbar: {
-                color: 'light', size: 'default', position: 'fixed',
-            }, layout: {
-                color: 'light', size: 'fluid', mode: 'default',
-            }, topbar: {
+                color: 'light',
+                size: 'default',
+                position: 'fixed'
+            },
+            layout: {
+                color: 'light',
+                size: 'fluid',
+                mode: 'default'
+            },
+            topbar: {
                 color: 'light'
-            }, sidebar: {
+            },
+            sidebar: {
                 user: true
             }
-        }
+        };
+    }
 
+    loadStoredConfig() {
+        const stored = localStorage.getItem(this.storageKey);
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    saveConfig() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.config));
     }
 
     initConfig() {
-        let config = JSON.parse(JSON.stringify(this.defaultConfig));
-        config['leftbar']['color'] = this.body.getAttribute('data-leftbar-color') ?? this.defaultConfig.leftbar.color;
-        config['leftbar']['size'] = this.body.getAttribute('data-leftbar-size') ?? this.defaultConfig.leftbar.size;
-        config['leftbar']['position'] = this.body.getAttribute('data-leftbar-position') ?? this.defaultConfig.leftbar.position;
-        config['layout']['color'] = this.body.getAttribute('data-layout-color') ?? this.defaultConfig.layout.color;
-        config['layout']['size'] = this.body.getAttribute('data-layout-size') ?? this.defaultConfig.layout.size;
-        config['layout']['mode'] = this.body.getAttribute('data-layout-mode') ?? this.defaultConfig.layout.mode;
-        config['topbar']['color'] = this.body.getAttribute('data-topbar-color') ?? this.defaultConfig.topbar.color;
-        config['sidebar']['user'] = this.body.getAttribute('data-sidebar-user') ?? this.defaultConfig.sidebar.user;
-        this.defaultConfig = JSON.parse(JSON.stringify(config));
-        this.config = config;
-        this.setSwitchFromConfig();
+    const storedConfig = this.loadStoredConfig();
+    let config = storedConfig ? storedConfig : JSON.parse(JSON.stringify(this.defaultConfig));
+
+    // Guardamos la configuración cargada en el objeto de clase
+    this.config = config;
+
+    // Aplicamos los atributos desde la config
+    this.setAttributesFromConfig();
+
+    // Aseguramos que los switches reflejen el estado actual
+    this.setSwitchFromConfig();
+}
+
+ setAttributesFromConfig() {
+    const cfg = this.config;
+    this.body.setAttribute('data-leftbar-color', cfg.leftbar.color);
+    this.body.setAttribute('data-leftbar-size', cfg.leftbar.size);
+    this.body.setAttribute('data-leftbar-position', cfg.leftbar.position);
+    this.body.setAttribute('data-layout-color', cfg.layout.color);
+    this.body.setAttribute('data-layout-size', cfg.layout.size);
+    this.body.setAttribute('data-layout-mode', cfg.layout.mode);
+    this.body.setAttribute('data-topbar-color', cfg.topbar.color);
+
+    if (cfg.sidebar.user === true || cfg.sidebar.user === 'true') {
+        this.body.setAttribute('data-sidebar-user', 'true');
+    } else {
+        this.body.removeAttribute('data-sidebar-user');
     }
+}
+
 
     changeLeftbarColor(color) {
         this.config.leftbar.color = color;
         this.body.setAttribute('data-leftbar-color', color);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeLeftbarPosition(position) {
         this.config.leftbar.position = position;
         this.body.setAttribute('data-leftbar-position', position);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeLeftbarSize(size) {
         this.config.leftbar.size = size;
         this.body.setAttribute('data-leftbar-size', size);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeLayoutMode(mode) {
         this.config.layout.mode = mode;
         this.body.setAttribute('data-layout-mode', mode);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeLayoutColor(color) {
         this.config.layout.color = color;
         this.body.setAttribute('data-layout-color', color);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeLayoutSize(size) {
         this.config.layout.size = size;
         this.body.setAttribute('data-layout-size', size);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeTopbarColor(color) {
         this.config.topbar.color = color;
         this.body.setAttribute('data-topbar-color', color);
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     changeSidebarUser(showUser) {
         this.config.sidebar.user = showUser;
         if (showUser) {
-            this.body.setAttribute('data-sidebar-user', showUser);
+            this.body.setAttribute('data-sidebar-user', 'true');
         } else {
             this.body.removeAttribute('data-sidebar-user');
         }
         this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     resetTheme() {
         this.config = JSON.parse(JSON.stringify(this.defaultConfig));
-        this.changeLeftbarColor(this.config.leftbar.color);
-        this.changeLeftbarPosition(this.config.leftbar.position);
-        this.changeLeftbarSize(this.config.leftbar.size);
-        this.changeLayoutColor(this.config.layout.color);
-        this.changeLayoutSize(this.config.layout.size);
-        this.changeLayoutMode(this.config.layout.mode);
-        this.changeTopbarColor(this.config.topbar.color);
-        this.changeSidebarUser(this.config.sidebar.user);
+        this.setAttributesFromConfig();
+        this.setSwitchFromConfig();
+        this.saveConfig();
     }
 
     initSwitchListener() {
         const self = this;
-        document.querySelectorAll('input[name=leftbar-color]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeLeftbarColor(element.value);
-            })
-        });
-        document.querySelectorAll('input[name=leftbar-size]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeLeftbarSize(element.value);
-            })
-        });
-        document.querySelectorAll('input[name=leftbar-position]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeLeftbarPosition(element.value);
 
-            })
-        });
-        document.querySelectorAll('input[name=layout-color]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeLayoutColor(element.value);
-            })
-        });
-        document.querySelectorAll('input[name=layout-size]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeLayoutSize(element.value);
-            })
-        });
+        document.querySelectorAll('input[name=layout-color]').forEach(el =>
+            el.addEventListener('change', () => self.changeLeftbarColor(el.value))
+        );
 
-        document.querySelectorAll('input[name=layout-mode]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeLayoutMode(element.value);
-            })
-        });
-        document.querySelectorAll('input[name=topbar-color]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeTopbarColor(element.value);
-            })
-        });
-        document.querySelectorAll('input[name=sidebar-user]').forEach(function (element) {
-            element.addEventListener('change', function (e) {
-                self.changeSidebarUser(element.checked);
-            })
-        });
-        document.querySelector('#resetBtn')?.addEventListener('click', function (e) {
-            self.resetTheme();
-        });
+        document.querySelectorAll('input[name=leftbar-size]').forEach(el =>
+            el.addEventListener('change', () => self.changeLeftbarSize(el.value))
+        );
 
-        document.querySelector('.button-menu-mobile')?.addEventListener('click', function () {
-            // self.changeLeftbarSize('default');
+        document.querySelectorAll('input[name=leftbar-position]').forEach(el =>
+            el.addEventListener('change', () => self.changeLeftbarPosition(el.value))
+        );
+
+        document.querySelectorAll('input[name=layout-color]').forEach(el =>
+            el.addEventListener('change', () => self.changeLayoutColor(el.value))
+        );
+        document.querySelectorAll('input[name=topbar-color]').forEach(el =>
+            el.addEventListener('change', () => self.changeTopbarColor(el.value))
+        );
+
+        document.querySelectorAll('input[name=layout-size]').forEach(el =>
+            el.addEventListener('change', () => self.changeLayoutSize(el.value))
+        );
+
+        document.querySelectorAll('input[name=layout-mode]').forEach(el =>
+            el.addEventListener('change', () => self.changeLayoutMode(el.value))
+        );
+
+        document.querySelectorAll('input[name=layout-color]').forEach(el =>
+            el.addEventListener('change', () => self.changeTopbarColor(el.value))
+        );
+
+        document.querySelectorAll('input[name=sidebar-user]').forEach(el =>
+            el.addEventListener('change', () => self.changeSidebarUser(el.checked))
+        );
+
+        document.querySelector('#resetBtn')?.addEventListener('click', () => self.resetTheme());
+
+        document.querySelector('.button-menu-mobile')?.addEventListener('click', () => {
             self.body.classList.toggle('sidebar-enable');
-
-        })
+        });
     }
-
 
     setSwitchFromConfig() {
-        document.querySelectorAll('.right-bar input[type=checkbox]').forEach(function (checkbox) {
-            checkbox.checked = false;
-        })
-        let config = this.config;
-        if (config) {
-            let leftbarColorSwitch = document.querySelector('input[type=checkbox][name=leftbar-color][value=' + config.leftbar.color + ']');
-            let leftbarSizeSwitch = document.querySelector('input[type=checkbox][name=leftbar-size][value=' + config.leftbar.size + ']');
-            let leftbarPositionSwitch = document.querySelector('input[type=checkbox][name=leftbar-position][value=' + config.leftbar.position + ']');
+        document.querySelectorAll('.right-bar input[type=checkbox]').forEach(cb => cb.checked = false);
 
-            let layoutColorSwitch = document.querySelector('input[type=checkbox][name=layout-color][value=' + config.layout.color + ']');
-            let layoutSizeSwitch = document.querySelector('input[type=checkbox][name=layout-size][value=' + config.layout.size + ']');
-            let layoutModeSwitch = document.querySelector('input[type=checkbox][name=layout-mode][value=' + config.layout.type + ']');
+        const cfg = this.config;
 
-            let topbarColorSwitch = document.querySelector('input[type=checkbox][name=topbar-color][value=' + config.topbar.color + ']');
-            let sidebarUserSwitch = document.querySelector('input[type=checkbox][name=sidebar-user]');
+        document.querySelector(`input[name="leftbar-color"][value="${cfg.leftbar.color}"]`)?.setAttribute('checked', 'true');
+        document.querySelector(`input[name="leftbar-size"][value="${cfg.leftbar.size}"]`)?.setAttribute('checked', 'true');
+        document.querySelector(`input[name="leftbar-position"][value="${cfg.leftbar.position}"]`)?.setAttribute('checked', 'true');
+        document.querySelector(`input[name="layout-color"][value="${cfg.layout.color}"]`)?.setAttribute('checked', 'true');
+        document.querySelector(`input[name="layout-size"][value="${cfg.layout.size}"]`)?.setAttribute('checked', 'true');
+        document.querySelector(`input[name="layout-mode"][value="${cfg.layout.mode}"]`)?.setAttribute('checked', 'true');
+        document.querySelector(`input[name="topbar-color"][value="${cfg.topbar.color}"]`)?.setAttribute('checked', 'true');
 
-
-            if (leftbarColorSwitch) leftbarColorSwitch.checked = true;
-            if (leftbarSizeSwitch) leftbarSizeSwitch.checked = true;
-            if (leftbarPositionSwitch) leftbarPositionSwitch.checked = true;
-
-            if (layoutColorSwitch) layoutColorSwitch.checked = true;
-            if (layoutSizeSwitch) layoutSizeSwitch.checked = true;
-            if (layoutModeSwitch) layoutModeSwitch.checked = true;
-
-            if (topbarColorSwitch) topbarColorSwitch.checked = true;
-            if (sidebarUserSwitch && config.sidebar.user.toString() === "true") sidebarUserSwitch.checked = true;
-        }
+        const sidebarUserSwitch = document.querySelector('input[name="sidebar-user"]');
+        if (sidebarUserSwitch) sidebarUserSwitch.checked = (cfg.sidebar.user === true || cfg.sidebar.user === 'true');
     }
-
-
 
     init() {
         this.initConfig();
         this.initSwitchListener();
-        // this.setSwitchFromConfig();
-
     }
 }
 
@@ -851,6 +870,8 @@ File: Main Js File
         "use strict";
         $.App.init();
     }(window.jQuery);
+
+    
 
 // Waves Effect
 Waves.init();
