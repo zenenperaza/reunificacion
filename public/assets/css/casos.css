@@ -1,14 +1,69 @@
 /* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/roboto/roboto-v48-latin-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/roboto/roboto-v48-latin-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/roboto/roboto-v48-latin-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/roboto/roboto-v48-latin-700italic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+@font-face {
+  font-family: 'Karla';
+  src: url('/assets/fonts/karla/karla-v32-latin-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Karla';
+  src: url('/assets/fonts/karla/karla-v32-latin-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Karla';
+  src: url('/assets/fonts/karla/karla-v32-latin-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Karla';
+  src: url('/assets/fonts/karla/karla-v32-latin-700italic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+}
+
 
 body {
     background: #f3f1fc; /* similar al fondo liláceo de Google Forms */
-    font-family: 'Roboto', sans-serif;
+   font-family: 'Karla', sans-serif;
 }
 
 /* Contenedor principal del formulario */
 form#formCaso {
-    max-width: 960px;
     margin: 30px auto;
     background: #fff;
     padding: 40px;
@@ -21,7 +76,7 @@ form#formCaso h4.header-title {
     font-size: 28px;
     font-weight: 600;
     color: #202124;
-    border-left: 6px solid #673ab7;
+    border-left: 6px solid #00437c;
     padding-left: 15px;
     margin-bottom: 25px;
 }
@@ -35,14 +90,14 @@ form#formCaso .row.mt-3 {
     border-radius: 10px;
     padding: 24px;
     margin-bottom: 20px;
-    box-shadow: 0px 1px 6px rgba(0,0,0,0.07);
-    border-left: 4px solid #c3b1f5;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.07);
+    border-left: 5px solid #abd9f1;
 }
 
 /* Labels */
 form#formCaso label.form-label {
     font-weight: 500;
-    font-size: 15px;
+    font-size: medium;
     margin-bottom: 6px;
     color: #1f1f1f;
 }
@@ -72,7 +127,7 @@ form#formCaso textarea:focus {
 /* Radios y checkboxes */
 form#formCaso .form-check {
     padding-left: 1.5em;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 form#formCaso .form-check-input {
@@ -111,9 +166,9 @@ form#formCaso .btn-primary:hover {
 }
 
 .form-wizard-header .nav-link.active {
-    color: #673ab7;
+     color: #00437c;
     background: #fff;
-    border-bottom: 3px solid #673ab7;
+    border-bottom: 3px solid #04437c;
 }
 
 /* Progreso */

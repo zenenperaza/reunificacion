@@ -14,8 +14,8 @@
 
     <!-- Summernote CSS -->
     <link href="{{ asset('assets/libs/summernote/summernote-lite.min.css') }}" rel="stylesheet">
-       <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
-       {{-- <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
+    <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
 
 
 
@@ -101,197 +101,187 @@
 
                             <div class="tab-pane" id="tab1">
 
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="periodo" class="form-label mb-2">Periodo</label>
-                                                    <input type="text" class="form-control" name="periodo"
-                                                        id="periodo" value="{{ date('Y-m') }}" required readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="fecha_atencion" class="form-label mb-2">Fecha de
-                                                        Atención</label>
-                                                    <input type="date" class="form-control" name="fecha_atencion"
-                                                        required>
-                                                </div>
-                                            </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="periodo" class="form-label mb-2">Periodo</label>
+                                            <input type="text" class="form-control" name="periodo" id="periodo"
+                                                value="{{ date('Y-m') }}" required readonly>
                                         </div>
-
-                                        <!-- Estado -> Municipio -> Parroquia -->
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <label for="estadoSelect" class="form-label mb-2">Estado</label>
-                                                <select id="estadoSelect" class="form-select" name="estado_id">
-                                                    <option value="">Seleccione</option>
-                                                    @foreach ($estados as $estado)
-                                                        <option value="{{ $estado->id }}">{{ $estado->nombre }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-lg-4">
-                                                <label for="municipioSelect" class="form-label mb-2">Municipio</label>
-                                                <select id="municipioSelect" class="form-select" name="municipio_id">
-                                                    <option value="">Seleccione</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-lg-4">
-                                                <label for="parroquiaSelect" class="form-label mb-2">Parroquia</label>
-                                                <select id="parroquiaSelect" class="form-select" name="parroquia_id">
-                                                    <option value="">Seleccione</option>
-                                                </select>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de
+                                                Atención</label>
+                                            <input type="date" class="form-control" name="fecha_atencion" required>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <label for="elaborado_por" class="form-label mb-2">Elaborado por</label>
-                                                <input type="text" class="form-control" name="elaborado_por"
-                                                    value="{{ auth()->user()->name }}" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="numero_caso" class="form-label mb-2">Numero de
-                                                        caso</label>
-                                                    <input type="text" class="form-control" name="numero_caso"
-                                                        value="" required>
-                                                </div>
-                                            </div>
+                                <!-- Estado -> Municipio -> Parroquia -->
+                                <div class="row mt-3">
+                                    <div class="col-lg-4">
+                                        <label for="estadoSelect" class="form-label mb-2">Estado</label>
+                                        <select id="estadoSelect" class="form-select" name="estado_id">
+                                            <option value="">Seleccione</option>
+                                            @foreach ($estados as $estado)
+                                                <option value="{{ $estado->id }}">{{ $estado->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <label for="municipioSelect" class="form-label mb-2">Municipio</label>
+                                        <select id="municipioSelect" class="form-select" name="municipio_id">
+                                            <option value="">Seleccione</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <label for="parroquiaSelect" class="form-label mb-2">Parroquia</label>
+                                        <select id="parroquiaSelect" class="form-select" name="parroquia_id">
+                                            <option value="">Seleccione</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label for="elaborado_por" class="form-label mb-2">Elaborado por</label>
+                                        <input type="text" class="form-control" name="elaborado_por"
+                                            value="{{ auth()->user()->name }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="numero_caso" class="form-label mb-2">Numero de
+                                                caso</label>
+                                            <input type="text" class="form-control" name="numero_caso" value=""
+                                                required>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mt-3">
-                                            <div class="col-md-4">
-                                                <label for="" class="form-label mb-2">Organizacion
-                                                    programas</label>
-                                                <br>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" value="UNICEF"
-                                                        id="unicef" name="organizacion_programas[]" checked>
-                                                    <label class="form-check-label" for="unicef">Unicef</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" value="COSUDE"
-                                                        id="cosude" name="organizacion_programas[]">
-                                                    <label class="form-check-label" for="cosude">COSUDE</label>
-                                                </div>
-                                            </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label mb-2">Organizacion
+                                            programas</label>
+                                        <br>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" value="UNICEF"
+                                                id="unicef" name="organizacion_programas[]" checked>
+                                            <label class="form-check-label" for="unicef">Unicef</label>
                                         </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" value="COSUDE"
+                                                id="cosude" name="organizacion_programas[]">
+                                            <label class="form-check-label" for="cosude">COSUDE</label>
+                                        </div>
+                                    </div>
+                                </div>
 
 
-                                        <div class="row mt-3">
-                                            <div class="col-md-12">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2 ">Organizacion solicitante</label>
-                                                    <div class="row">
-                                                        @php
-                                                            $organizaciones = [
-                                                                'Diócesis',
-                                                                'UNICEF',
-                                                                'World Vision',
-                                                                'CORPRODINCO',
-                                                                'INTERSOS',
-                                                                'UNIANDES',
-                                                                'ICBF Colombia',
-                                                                'Save the Children',
-                                                                'OIM',
-                                                                'Aideas Infantiles',
-                                                                'Defensoría NNA',
-                                                                'CISP',
-                                                                'HIAS',
-                                                                'IRC',
-                                                                'Otras organizaciones',
-                                                            ];
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <div class="mt-0">
+                                            <label class="form-label mb-2 ">Organizacion solicitante</label>
+                                            <div class="row">
+                                                @php
+                                                    $organizaciones = [
+                                                        'Diócesis',
+                                                        'UNICEF',
+                                                        'World Vision',
+                                                        'CORPRODINCO',
+                                                        'INTERSOS',
+                                                        'UNIANDES',
+                                                        'ICBF Colombia',
+                                                        'Save the Children',
+                                                        'OIM',
+                                                        'Aideas Infantiles',
+                                                        'Defensoría NNA',
+                                                        'CISP',
+                                                        'HIAS',
+                                                        'IRC',
+                                                        'Otras organizaciones',
+                                                    ];
 
-                                                        @endphp
+                                                @endphp
 
-                                                        @foreach ($organizaciones as $organizacion)
-                                                            <div class="col-md-4">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        name="organizacion_solicitante[]"
-                                                                        value="{{ $organizacion }}"
-                                                                        id="{{ Str::slug($organizacion, '_') }}">
-                                                                    <label class="form-check-label"
-                                                                        for="{{ Str::slug($organizacion, '_') }}">
-                                                                        {{ $organizacion }}
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
+                                                @foreach ($organizaciones as $organizacion)
+                                                    <div class="col-md-4">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="organizacion_solicitante[]"
+                                                                value="{{ $organizacion }}"
+                                                                id="{{ Str::slug($organizacion, '_') }}">
+                                                            <label class="form-check-label"
+                                                                for="{{ Str::slug($organizacion, '_') }}">
+                                                                {{ $organizacion }}
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6" id="otrasOrganizacionesContainer"
-                                                style="display: none;">
-                                                <div class="mt-3">
-                                                    <label for="otras_organizaciones" class="form-label mb-2">Otras
-                                                        organizaciones</label>
-                                                    <input type="text" class="form-control"
-                                                        name="otras_organizaciones" id="otras_organizaciones" disabled>
-                                                </div>
+                                                @endforeach
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-6" id="otrasOrganizacionesContainer" style="display: none;">
+                                        <div class="mt-3">
+                                            <label for="otras_organizaciones" class="form-label mb-2">Otras
+                                                organizaciones</label>
+                                            <input type="text" class="form-control" name="otras_organizaciones"
+                                                id="otras_organizaciones" disabled>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mt-3">
-                                            <div class="col-md-12">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2 ">Tipo de Atención - Programas</label>
-                                                    <div class="row">
-                                                        @php
-                                                            $tipo_atencion_programa = [
-                                                                'Reunificación familiar',
-                                                                'Localización familiar',
-                                                                'Retorno voluntario',
-                                                            ];
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <div class="mt-0">
+                                            <label class="form-label mb-2 ">Tipo de Atención - Programas</label>
+                                            <div class="row">
+                                                @php
+                                                    $tipo_atencion_programa = [
+                                                        'Reunificación familiar',
+                                                        'Localización familiar',
+                                                        'Retorno voluntario',
+                                                    ];
 
-                                                        @endphp
+                                                @endphp
 
-                                                        @foreach ($tipo_atencion_programa as $tipo_atencion)
-                                                            <div class="col-md-4">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        name="tipo_atencion_programa[]"
-                                                                        value="{{ $tipo_atencion }}"
-                                                                        id="{{ Str::slug($tipo_atencion, '_') }}">
-                                                                    <label class="form-check-label"
-                                                                        for="{{ Str::slug($tipo_atencion, '_') }}">
-                                                                        {{ $tipo_atencion }}
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
+                                                @foreach ($tipo_atencion_programa as $tipo_atencion)
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="tipo_atencion_programa[]" value="{{ $tipo_atencion }}"
+                                                            id="{{ Str::slug($tipo_atencion, '_') }}">
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($tipo_atencion, '_') }}">
+                                                            {{ $tipo_atencion }}
+                                                        </label>
                                                     </div>
-                                                </div>
+                                                @endforeach
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="row mt-3">
-                                            <div class="col-md-4">
-                                                <label for="" class="form-label mb-2">Tipo de atencion</label>
-                                                <br>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="tipo_atencion"
-                                                        id="individual" value="Individual">
-                                                    <label class="form-check-label" for="individual">
-                                                        Individual
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="tipo_atencion"
-                                                        id="grupo_familiar" value="Grupo familiar">
-                                                    <label class="form-check-label" for="grupo_familiar">
-                                                        Grupo familiar
-                                                    </label>
-                                                </div>
-                                            </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <label for="" class="form-label mb-2">Tipo de atencion</label>
+                                        <br>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_atencion"
+                                                id="individual" value="Individual">
+                                            <label class="form-check-label" for="individual">
+                                                Individual
+                                            </label>
                                         </div>
-
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_atencion"
+                                                id="grupo_familiar" value="Grupo familiar">
+                                            <label class="form-check-label" for="grupo_familiar">
+                                                Grupo familiar
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -474,19 +464,17 @@
                                                         @endphp
 
                                                         @foreach ($acompantes as $acompanante)
-                                                            <div class="col-md-4">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input acompanante-opcion"
-                                                                        type="checkbox" name="acompanante[]"
-                                                                        value="{{ $acompanante }}"
-                                                                        id="{{ Str::slug($acompanante, '_') }}"
-                                                                        data-es-no-aplica="{{ $acompanante === 'No aplica acompanante' ? '1' : '0' }}">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input acompanante-opcion"
+                                                                    type="checkbox" name="acompanante[]"
+                                                                    value="{{ $acompanante }}"
+                                                                    id="{{ Str::slug($acompanante, '_') }}"
+                                                                    data-es-no-aplica="{{ $acompanante === 'No aplica acompanante' ? '1' : '0' }}">
 
-                                                                    <label class="form-check-label"
-                                                                        for="{{ Str::slug($acompanante, '_') }}">
-                                                                        {{ $acompanante }}
-                                                                    </label>
-                                                                </div>
+                                                                <label class="form-check-label"
+                                                                    for="{{ Str::slug($acompanante, '_') }}">
+                                                                    {{ $acompanante }}
+                                                                </label>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -759,7 +747,7 @@
                                 <div class="row mt-3" id="servicios_brindados_cosude_container" style="display: none;">
                                     <div class="col-md-12">
                                         <div class="mt-0">
-                                            <label class="form-label mb-1 fw-bold">Servicios brindados
+                                            <label class="form-label mb-2 fw-bold">Servicios brindados
                                                 COSUDE</label>
                                             <div class="row">
                                                 @php
@@ -775,7 +763,7 @@
                                                 @endphp
 
                                                 @foreach ($servicios_cosude as $servicio)
-                                                    <div class="col-md-4 mt-2">
+                                                    <div class="col-md-4">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox"
                                                                 name="servicio_brindado_cosude[]"
@@ -795,7 +783,7 @@
 
                                 <div class="row mt-3" id="servicios_brindados_unicef_block" style="display: none;">
                                     <div class="mt-0 col-md-12">
-                                        <label class="form-label mb-1 fw-bold">Servicos brindados
+                                        <label class="form-label mb-2 fw-bold">Servicos brindados
                                             UNICEF</label>
                                         <div class="row">
                                             @php
@@ -816,7 +804,7 @@
                                             @endphp
 
                                             @foreach ($servicios_unicef as $servicio)
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox"
                                                             name="servicio_brindado_unicef[]" value="{{ $servicio }}"
@@ -1156,247 +1144,207 @@
                                             @endforeach
                                         </div>
                                     </div>
+                                </div>
 
-                                    {{-- TIPOS DE VIOLENCIA VICARIA --}}
-                                    <div class="row mt-3" id="bloque_tipos_vicaria" style="display: none;">
-                                        <div class="col-md-12">
-                                            <label class="form-label fw-bold">Tipos de violencia vicaria</label>
-                                            <small class="d-block text-muted mb-2">Elegir varias opciones de ser
-                                                necesario</small>
-                                            <div class="row">
-                                                @php
-                                                    $tipos_vicaria = [
-                                                        'Violencia vincular (destruir el vínculo hijo/madre)',
-                                                        'Violencia económica (privar de manutención)',
-                                                        'Violencia psicológica y física (agresión directa a NNA, exposición a
+                                {{-- TIPOS DE VIOLENCIA VICARIA --}}
+                                <div class="row mt-3" id="bloque_tipos_vicaria" style="display: none;">
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Tipos de violencia vicaria</label>
+                                        <small class="d-block text-muted mb-2">Elegir varias opciones de ser
+                                            necesario</small>
+                                        <div class="row">
+                                            @php
+                                                $tipos_vicaria = [
+                                                    'Violencia vincular (destruir el vínculo hijo/madre)',
+                                                    'Violencia económica (privar de manutención)',
+                                                    'Violencia psicológica y física (agresión directa a NNA, exposición a
                                             insultos de desvalorización madre)',
-                                                        'Violencia judicial/administrativa (instrumentalización de entes abruman con
+                                                    'Violencia judicial/administrativa (instrumentalización de entes abruman con
                                             demandas)',
-                                                        'Negligencia (conductas de descuido a NNA)',
-                                                        'Abuso sexual (asociados a VBG)',
-                                                        'Muerte (a NNA vinculadas a la VBG padres/parejas)',
-                                                        'Institucional (por no manejo de perspectiva de género por sesgo
+                                                    'Negligencia (conductas de descuido a NNA)',
+                                                    'Abuso sexual (asociados a VBG)',
+                                                    'Muerte (a NNA vinculadas a la VBG padres/parejas)',
+                                                    'Institucional (por no manejo de perspectiva de género por sesgo
                                             androadultocéntrico)',
-                                                    ];
-                                                @endphp
+                                                ];
+                                            @endphp
 
-                                                @foreach ($tipos_vicaria as $vicaria)
-                                                    <div class="col-md-6">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="tipos_violencia_vicaria[]"
-                                                                value="{{ $vicaria }}"
-                                                                id="{{ Str::slug($vicaria, '_') }}">
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($vicaria, '_') }}">
-                                                                {{ $vicaria }}
-                                                            </label>
-                                                        </div>
+                                            @foreach ($tipos_vicaria as $vicaria)
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="tipos_violencia_vicaria[]" value="{{ $vicaria }}"
+                                                            id="{{ Str::slug($vicaria, '_') }}">
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($vicaria, '_') }}">
+                                                            {{ $vicaria }}
+                                                        </label>
                                                     </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- REMISIONES --}}
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label fw-bold">Remisiones</label>
-                                            <div class="row">
-                                                @php
-                                                    $remisiones = [
-                                                        'Para EMD ASONACOP',
-                                                        'Para Consejo de Proteccion NNA',
-                                                        'Para Defensoría de NNA',
-                                                        'A programas sociales del estado',
-                                                        'Cita para seguimiento',
-                                                        'Derivar a psiquiatría',
-                                                        'Derivar a Servicios de atención en salud provenciado por otras
-                                            organizaciones',
-                                                        'Derivar a Servicios de atención Psicosocial',
-                                                        'Para Ministerio Público /Fiscalía especializada',
-                                                        'Para Registro civil',
-                                                        'Para servicios de salud',
-                                                        'Remitir con Informe diagnostico al Consejo de Proteccion NNA',
-                                                        'Para SAIME',
-                                                        'Otras Remisiones',
-                                                        'Sin Remisión',
-                                                    ];
-                                                @endphp
-
-                                                @foreach ($remisiones as $remision)
-                                                    <div class="col-md-4 mb-1">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="remisiones[]" value="{{ $remision }}"
-                                                                id="{{ Str::slug($remision, '_') }}">
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($remision, '_') }}">
-                                                                {{ $remision }}
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3" id="bloque_otras_remisiones" style="display: none;">
-                                        <div class="col-md-6">
-                                            <label for="detalle_otras_remisiones" class="form-label">Especifique otras
-                                                remisiones</label>
-                                            <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
-                                                class="form-control">
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
+                                {{-- REMISIONES --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Remisiones</label>
+                                        <div class="row">
+                                            @php
+                                                $remisiones = [
+                                                    'Para EMD ASONACOP',
+                                                    'Para Consejo de Proteccion NNA',
+                                                    'Para Defensoría de NNA',
+                                                    'A programas sociales del estado',
+                                                    'Cita para seguimiento',
+                                                    'Derivar a psiquiatría',
+                                                    'Derivar a Servicios de atención en salud provenciado por otras
+                                            organizaciones',
+                                                    'Derivar a Servicios de atención Psicosocial',
+                                                    'Para Ministerio Público /Fiscalía especializada',
+                                                    'Para Registro civil',
+                                                    'Para servicios de salud',
+                                                    'Remitir con Informe diagnostico al Consejo de Proteccion NNA',
+                                                    'Para SAIME',
+                                                    'Otras Remisiones',
+                                                    'Sin Remisión',
+                                                ];
+                                            @endphp
+
+                                            @foreach ($remisiones as $remision)
+                                                <div class="col-md-4 mb-1">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="remisiones[]" value="{{ $remision }}"
+                                                            id="{{ Str::slug($remision, '_') }}">
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($remision, '_') }}">
+                                                            {{ $remision }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3" id="bloque_otras_remisiones" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label for="detalle_otras_remisiones" class="form-label">Especifique otras
+                                            remisiones</label>
+                                        <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
+                                            class="form-control">
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div class="tab-pane" id="tab7">
 
                                 {{-- DOCUMENTOS ADJUNTOS --}}
 
-                                <div class="row mt-3">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="header-title">Fotos e imagenes</h4>
-                                                    <p class="sub-header">
-                                                        DropzoneJS is an open source library that provides
-                                                        drag’n’drop file uploads with
-                                                        image previews.
-                                                    </p>
+                               <div class="row mt-3">
+    <div class="card-body">
+        <h4 class="header-title">Fotos e Imágenes</h4>
+        <p class="sub-header">
+            Por favor, sube aquí las fotos o imágenes relacionadas con el caso. Puedes arrastrarlas al área o hacer clic para seleccionarlas desde tu dispositivo. <br>
+            <strong>Formatos permitidos: .jpg, .jpeg, .png, .gif</strong>
+        </p>
 
-                                                    <div class="dropzone" id="myAwesomeDropzone" data-plugin="dropzone"
-                                                        data-previews-container="#file-previews"
-                                                        data-upload-preview-template="#uploadPreviewTemplate">
-                                                        <div class="fallback">
-                                                            <input name="images" type="file" multiple />
-                                                        </div>
+        <div class="dropzone" id="myAwesomeDropzone" data-plugin="dropzone"
+            data-previews-container="#file-previews"
+            data-upload-preview-template="#uploadPreviewTemplate">
+            <div class="fallback">
+                <input name="images" type="file" multiple accept=".jpg,.jpeg,.png,.gif" />
+            </div>
 
-                                                        <div class="dz-message needsclick">
-                                                            <i class="h1 text-muted dripicons-cloud-upload"></i>
-                                                            <h3>Drop files here or click to upload.</h3>
-                                                            <span class="text-muted font-13">(This is just
-                                                                a demo dropzone. Selected files
-                                                                are
-                                                                <strong>not</strong> actually
-                                                                uploaded.)</span>
-                                                        </div>
-                                                    </div>
+            <div class="dz-message needsclick">
+                <i class="h1 text-muted dripicons-cloud-upload"></i>
+                <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
+                <h3>Formatos permitidos: .jpg, .jpeg, .png, .gif</h3>
+                <span class="text-muted font-13">Puedes subir varias imágenes a la vez.</span>
+            </div>
+        </div>
 
-                                                    <!-- Preview -->
-                                                    <div class="dropzone-previews mt-3" id="file-previews"></div>
+        <div class="dropzone-previews mt-3" id="file-previews"></div>
+    </div>
 
-                                                </div> <!-- end card-body-->
-                                            </div> <!-- end card-->
-                                        </div><!-- end col -->
-                                    </div>
-                                    <!-- end row -->
+    <div class="d-none" id="uploadPreviewTemplate">
+        <div class="card mt-1 mb-0 shadow-none border">
+            <div class="p-2">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                    </div>
+                    <div class="col ps-0">
+                        <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                        <p class="mb-0" data-dz-size></p>
+                    </div>
+                    <div class="col-auto">
+                        <a href="" class="btn btn-link btn-lg text-muted" data-dz-remove>
+                            <i class="dripicons-cross"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                                    <!-- file preview template -->
-                                    <div class="d-none" id="uploadPreviewTemplate">
-                                        <div class="card mt-1 mb-0 shadow-none border">
-                                            <div class="p-2">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <img data-dz-thumbnail src="#"
-                                                            class="avatar-sm rounded bg-light" alt="">
-                                                    </div>
-                                                    <div class="col ps-0">
-                                                        <a href="javascript:void(0);" class="text-muted fw-bold"
-                                                            data-dz-name></a>
-                                                        <p class="mb-0" data-dz-size></p>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <!-- Button -->
-                                                        <a href="" class="btn btn-link btn-lg text-muted"
-                                                            data-dz-remove>
-                                                            <i class="dripicons-cross"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+<div class="row mt-3">
+    <div class="card-body">
+        <h4 class="header-title">Documentos</h4>
+        <p class="sub-header">
+            Puedes subir aquí cualquier documento relevante al caso, como informes, certificados o autorizaciones. Arrastra los archivos o haz clic para cargarlos. <br>
+            <strong>Formatos permitidos: .pdf, .doc, .docx</strong>
+        </p>
 
-                                <div class="row mt-3">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="header-title">Documentos</h4>
-                                                    <p class="sub-header">
-                                                        DropzoneJS is an open source library that provides
-                                                        drag’n’drop file uploads with
-                                                        image previews.
-                                                    </p>
+        <div class="dropzone" id="docuemntosDropzone" data-plugin="dropzone"
+            data-previews-container="#file-previews2"
+            data-upload-preview-template="#uploadPreviewTemplate2">
+            <div class="fallback">
+                <input name="file" type="file" multiple accept=".pdf,.doc,.docx" />
+            </div>
 
-                                                    <div class="dropzone" id="docuemntosDropzone" data-plugin="dropzone"
-                                                        data-previews-container="#file-previews2"
-                                                        data-upload-preview-template="#uploadPreviewTemplate2">
-                                                        <div class="fallback">
-                                                            <input name="file" type="file" multiple />
-                                                        </div>
+            <div class="dz-message needsclick">
+                <i class="h1 text-muted dripicons-cloud-upload"></i>
+                <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
+                <h3>Formatos permitidos: .pdf, .doc, .docx</h3>
+                <span class="text-muted font-13">Puedes subir varios documentos en esta sección.</span>
+            </div>
+        </div>
 
-                                                        <div class="dz-message needsclick">
-                                                            <i class="h1 text-muted dripicons-cloud-upload"></i>
-                                                            <h3>Drop files here or click to upload.</h3>
-                                                            <span class="text-muted font-13">(This is just
-                                                                a demo dropzone. Selected files
-                                                                are
-                                                                <strong>not</strong> actually
-                                                                uploaded.)</span>
-                                                        </div>
-                                                    </div>
+        <div class="dropzone-previews mt-3" id="file-previews2"></div>
+    </div>
 
-                                                    <!-- Preview -->
-                                                    <div class="dropzone-previews mt-3" id="file-previews2"></div>
-
-                                                </div> <!-- end card-body-->
-                                            </div> <!-- end card-->
-                                        </div><!-- end col -->
-                                    </div>
-                                    <!-- end row -->
-
-                                    <!-- file preview template -->
-                                    <div class="d-none" id="uploadPreviewTemplate2">
-                                        <div class="card mt-1 mb-0 shadow-none border">
-                                            <div class="p-2">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <img data-dz-thumbnail src="#"
-                                                            class="avatar-sm rounded bg-light" alt="">
-                                                    </div>
-                                                    <div class="col ps-0">
-                                                        <a href="javascript:void(0);" class="text-muted fw-bold"
-                                                            data-dz-name></a>
-                                                        <p class="mb-0" data-dz-size></p>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <!-- Button -->
-                                                        <a href="" class="btn btn-link btn-lg text-muted"
-                                                            data-dz-remove>
-                                                            <i class="dripicons-cross"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-
-
+    <div class="d-none" id="uploadPreviewTemplate2">
+        <div class="card mt-1 mb-0 shadow-none border">
+            <div class="p-2">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                    </div>
+                    <div class="col ps-0">
+                        <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                        <p class="mb-0" data-dz-size></p>
+                    </div>
+                    <div class="col-auto">
+                        <a href="" class="btn btn-link btn-lg text-muted" data-dz-remove>
+                            <i class="dripicons-cross"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
                             </div>
 
                             <div class="tab-pane" id="tab8">
 
-                                <div class="row">
+                                <div class="row mt-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="fecha_atencion" class="form-label mb-2">Fecha
@@ -1408,8 +1356,7 @@
 
                                 </div>
 
-                                <div class="row">
-
+                                <div class="row mt-3">
                                     <div class="mb-3">
                                         <label class="form-label d-block">Estatus de la atención <span
                                                 class="text-danger">*</span></label>
@@ -1433,12 +1380,11 @@
                                             <label class="form-check-label" for="estatus3">Cierre de atención</label>
                                         </div>
                                     </div>
-
                                 </div>
 
-                                <div class="mb-3">
+                                <div class="row mt-3">
                                     <label class="form-label">Indicadores</label>
-                                    <div class="form-control" style="height:auto">
+                                    <div >
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="indicadores[]"
                                                 id="indicador1" value="PSEA.01">
@@ -1467,14 +1413,14 @@
                                 </div>
 
 
-                                <div class="mb-3">
+                                <div class="row mt-3">
                                     <label for="descripcion" class="form-label">Descripción del caso</label>
                                     <textarea name="descripcion" id="summernote" class="form-control"></textarea>
                                 </div>
 
 
-                                <div class="col-md-6">
-                                    <div class="mb-3">
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
                                         <label for="verificador" class="form-label mb-2">Verificador </label>
                                         <input type="number" class="form-control" name="verificador" value="">
                                     </div>
@@ -1591,7 +1537,7 @@
             uploadMultiple: true,
             parallelUploads: 10,
             maxFilesize: 5, // MB
-            acceptedFiles: 'image/*',
+            acceptedFiles: 'image/jpeg,image/png,image/gif',
             addRemoveLinks: true,
             previewsContainer: "#file-previews",
             previewTemplate: document.querySelector("#uploadPreviewTemplate").innerHTML
