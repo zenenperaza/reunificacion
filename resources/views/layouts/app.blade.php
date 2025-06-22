@@ -27,7 +27,7 @@
 
 <body class="loading"
       data-layout-color="light"
-      data-layout-mode="default"
+      data-layout-mode="horizontal"
       data-layout-size="fluid"
       data-topbar-color="light"
       data-leftbar-position="fixed"

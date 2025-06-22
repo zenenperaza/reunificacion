@@ -14,7 +14,10 @@
 
     <!-- Summernote CSS -->
     <link href="{{ asset('assets/libs/summernote/summernote-lite.min.css') }}" rel="stylesheet">
-    
+       <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
+       {{-- <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
+
+
 
 
 
@@ -169,7 +172,7 @@
                                                 <br>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="checkbox" value="UNICEF"
-                                                        id="unicef" name="organizacion_programas[]">
+                                                        id="unicef" name="organizacion_programas[]" checked>
                                                     <label class="form-check-label" for="unicef">Unicef</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
@@ -381,13 +384,7 @@
                                                 <select class="form-select" name="tipo_institucion"
                                                     id="tipo_institucion">
                                                     <option value="">Seleccione</option>
-                                                    @foreach ([
-            'Pública',
-            'Privada',
-            'Privada subsidiada',
-            'Ninguna
-                                                                            institución',
-        ] as $tipo)
+                                                    @foreach (['Pública', 'Privada', 'Privada subsidiada', 'Ninguna institución'] as $tipo)
                                                         <option value="{{ $tipo }}">{{ $tipo }}</option>
                                                     @endforeach
                                                 </select>
@@ -947,26 +944,20 @@
                                                     'Violencia sexual / abuso sexual / explotación sexual / VBG / VSBG',
                                                     'Negligencia',
                                                     'Violencia familiar',
-                                                    'No tiene documentos de identidad o de identificación (EV25, acta de nacimiento
-                                        u otro documento de identificación)',
+                                                    'No tiene documentos de identidad o de identificación (EV25, acta de nacimiento u otro documento de identificación)',
                                                     'NNA fuera de la escuela (NFE) / desescolarizados',
                                                     'Acoso escolar',
                                                     'Violencia online (grooming, sextorsión, cyberbullying)',
-                                                    'Aflicción emocional / alteraciones emocionales / trastorno psicosocial /
-                                        problemas de salud mental / angustia / trastorno de estrés postraumático',
+                                                    'Aflicción emocional / alteraciones emocionales / trastorno psicosocial / problemas de salud mental / angustia / trastorno de estrés postraumático',
                                                     'Matrimonio infantil / uniones tempranas',
                                                     'Embarazo adolescente / niña o adolescente madre o niño o adolescente padre',
                                                     'NNA con discapacidades o enfermedad crónica',
-                                                    'NNA privados de cuidados parentales o de sus cuidadores legales o
-                                        consuetudinarios / NNA que aparentemente no tienen un cuidador principal o
-                                        circunstancial / orfandad',
-                                                    'Uso o abuso de sustancias psicoactivas / consumo de drogas / dependencia de
-                                        drogas',
+                                                    'NNA privados de cuidados parentales o de sus cuidadores legales o consuetudinarios / NNA que aparentemente no tienen un cuidador principal o circunstancial / orfandad',
+                                                    'Uso o abuso de sustancias psicoactivas / consumo de drogas / dependencia de drogas',
                                                     'Discriminación a grupos minoritarios (etnias, LGBTIQ+, VIH, etc)',
                                                     'NNA asociados o involucrados con fuerzas o grupos armados irregulares',
                                                     'Niños en situación de calle / mendicidad',
-                                                    'NNA que incurren en hechos punibles (menores de 14 años) / adolescentes en
-                                        conflicto con la ley penal',
+                                                    'NNA que incurren en hechos punibles (menores de 14 años) / adolescentes en conflicto con la ley penal',
                                                     'Trabajo infantil / explotación laboral',
                                                     'NNA víctimas de trata o tráfico',
                                                     'Dificultad o falta de acceso a servicios básicos',
@@ -1012,16 +1003,13 @@
                                                     'Artículo 24 Promoción del reconocimiento de hijos e hijas',
                                                     'Artículo 25 Derecho a conocer a su padre y madre y a ser cuidados por ellos',
                                                     'Artículo 26 Derecho a ser criado en una familia',
-                                                    'Artículo 27 Derecho a mantener relaciones personales y contacto directo con el
-                                        padre y la madre',
+                                                    'Artículo 27 Derecho a mantener relaciones personales y contacto directo con el padre y la madre',
                                                     'Artículo 28 Derecho al libre desarrollo de la personalidad',
-                                                    'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades
-                                        especiales',
+                                                    'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades especiales',
                                                     'Artículo 30 Derecho a un nivel de vida adecuado',
                                                     'Artículo 32 Derecho a la integridad personal',
                                                     'Artículo 32-A. Derecho al buen trato',
-                                                    'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación
-                                        sexual',
+                                                    'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación sexual',
                                                     'Artículo 34 Servicios forenses',
                                                     'Artículo 35 Derecho a la libertad de pensamiento, conciencia y religión',
                                                     'Artículo 36 Derechos culturales de las minorías',
@@ -1030,8 +1018,7 @@
                                                     'Artículo 39 Derecho a la libertad de tránsito',
                                                     'Artículo 40 Protección contra el traslado ilícito',
                                                     'Artículo 41 Derecho a la salud y a servicios de salud',
-                                                    'Artículo 42 Responsabilidad del padre, la madre, representantes o responsables
-                                        en materia de salud',
+                                                    'Artículo 42 Responsabilidad del padre, la madre, representantes o responsables en materia de salud',
                                                     'Artículo 43 Derecho a información en materia de salud',
                                                     'Artículo 44 Protección de la maternidad',
                                                     'Artículo 45 Protección del vínculo materno-filial',
@@ -1333,74 +1320,73 @@
                                     </div>
                                 </div>
 
-                                    <div class="row mt-3">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h4 class="header-title">Documentos</h4>
-                                                        <p class="sub-header">
-                                                            DropzoneJS is an open source library that provides
-                                                            drag’n’drop file uploads with
-                                                            image previews.
-                                                        </p>
+                                <div class="row mt-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4 class="header-title">Documentos</h4>
+                                                    <p class="sub-header">
+                                                        DropzoneJS is an open source library that provides
+                                                        drag’n’drop file uploads with
+                                                        image previews.
+                                                    </p>
 
-                                                        <div class="dropzone" id="docuemntosDropzone"
-                                                            data-plugin="dropzone"
-                                                            data-previews-container="#file-previews2"
-                                                            data-upload-preview-template="#uploadPreviewTemplate2">
-                                                            <div class="fallback">
-                                                                <input name="file" type="file" multiple />
-                                                            </div>
-
-                                                            <div class="dz-message needsclick">
-                                                                <i class="h1 text-muted dripicons-cloud-upload"></i>
-                                                                <h3>Drop files here or click to upload.</h3>
-                                                                <span class="text-muted font-13">(This is just
-                                                                    a demo dropzone. Selected files
-                                                                    are
-                                                                    <strong>not</strong> actually
-                                                                    uploaded.)</span>
-                                                            </div>
+                                                    <div class="dropzone" id="docuemntosDropzone" data-plugin="dropzone"
+                                                        data-previews-container="#file-previews2"
+                                                        data-upload-preview-template="#uploadPreviewTemplate2">
+                                                        <div class="fallback">
+                                                            <input name="file" type="file" multiple />
                                                         </div>
 
-                                                        <!-- Preview -->
-                                                        <div class="dropzone-previews mt-3" id="file-previews2"></div>
+                                                        <div class="dz-message needsclick">
+                                                            <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                                            <h3>Drop files here or click to upload.</h3>
+                                                            <span class="text-muted font-13">(This is just
+                                                                a demo dropzone. Selected files
+                                                                are
+                                                                <strong>not</strong> actually
+                                                                uploaded.)</span>
+                                                        </div>
+                                                    </div>
 
-                                                    </div> <!-- end card-body-->
-                                                </div> <!-- end card-->
-                                            </div><!-- end col -->
-                                        </div>
-                                        <!-- end row -->
+                                                    <!-- Preview -->
+                                                    <div class="dropzone-previews mt-3" id="file-previews2"></div>
 
-                                        <!-- file preview template -->
-                                        <div class="d-none" id="uploadPreviewTemplate2">
-                                            <div class="card mt-1 mb-0 shadow-none border">
-                                                <div class="p-2">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-auto">
-                                                            <img data-dz-thumbnail src="#"
-                                                                class="avatar-sm rounded bg-light" alt="">
-                                                        </div>
-                                                        <div class="col ps-0">
-                                                            <a href="javascript:void(0);" class="text-muted fw-bold"
-                                                                data-dz-name></a>
-                                                            <p class="mb-0" data-dz-size></p>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <!-- Button -->
-                                                            <a href="" class="btn btn-link btn-lg text-muted"
-                                                                data-dz-remove>
-                                                                <i class="dripicons-cross"></i>
-                                                            </a>
-                                                        </div>
+                                                </div> <!-- end card-body-->
+                                            </div> <!-- end card-->
+                                        </div><!-- end col -->
+                                    </div>
+                                    <!-- end row -->
+
+                                    <!-- file preview template -->
+                                    <div class="d-none" id="uploadPreviewTemplate2">
+                                        <div class="card mt-1 mb-0 shadow-none border">
+                                            <div class="p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <img data-dz-thumbnail src="#"
+                                                            class="avatar-sm rounded bg-light" alt="">
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="javascript:void(0);" class="text-muted fw-bold"
+                                                            data-dz-name></a>
+                                                        <p class="mb-0" data-dz-size></p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <!-- Button -->
+                                                        <a href="" class="btn btn-link btn-lg text-muted"
+                                                            data-dz-remove>
+                                                            <i class="dripicons-cross"></i>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
+
+
+                                </div>
 
 
 
@@ -1681,8 +1667,7 @@
                 alert("Error inesperado.");
             });
         });
-    </script>
-    <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
             const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
@@ -2421,9 +2406,7 @@
                 }
             });
         });
-    </script>
 
-    <script>
         $(document).ready(function() {
             $('#summernote').summernote({
                 height: 200,

@@ -1,0 +1,128 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+    background: #f3f1fc; /* similar al fondo liláceo de Google Forms */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Contenedor principal del formulario */
+form#formCaso {
+    max-width: 960px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Encabezado */
+form#formCaso h4.header-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #202124;
+    border-left: 6px solid #673ab7;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+/* Tarjetas de cada sección (como cada pregunta en Forms) */
+form#formCaso .form-group,
+form#formCaso .card,
+form#formCaso .section-block,
+form#formCaso .row.mt-3 {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0px 1px 6px rgba(0,0,0,0.07);
+    border-left: 4px solid #c3b1f5;
+}
+
+/* Labels */
+form#formCaso label.form-label {
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 6px;
+    color: #1f1f1f;
+}
+
+/* Inputs, selects, textareas */
+form#formCaso input[type="text"],
+form#formCaso input[type="date"],
+form#formCaso input[type="number"],
+form#formCaso input[type="file"],
+form#formCaso select,
+form#formCaso textarea {
+    border: none;
+    border-bottom: 2px solid #ccc;
+    background-color: transparent;
+    padding: 8px 4px;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+form#formCaso input:focus,
+form#formCaso select:focus,
+form#formCaso textarea:focus {
+    border-color: #673ab7;
+    outline: none;
+}
+
+/* Radios y checkboxes */
+form#formCaso .form-check {
+    padding-left: 1.5em;
+    margin-bottom: 8px;
+}
+
+form#formCaso .form-check-input {
+    accent-color: #673ab7;
+}
+
+form#formCaso .form-check-label {
+    font-weight: 400;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Botones */
+form#formCaso .btn-primary {
+    background-color: #673ab7;
+    border-color: #673ab7;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+form#formCaso .btn-primary:hover {
+    background-color: #512da8;
+    border-color: #512da8;
+}
+
+/* Wizard nav pills estilo moderno */
+.form-wizard-header .nav-link {
+    font-weight: 500;
+    color: #555;
+    border-radius: 0;
+    background: #f5f5f5;
+    padding: 10px 14px;
+    border-bottom: 2px solid transparent;
+}
+
+.form-wizard-header .nav-link.active {
+    color: #673ab7;
+    background: #fff;
+    border-bottom: 3px solid #673ab7;
+}
+
+/* Progreso */
+#progressbarwizard .progress {
+    height: 6px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+}
+
+#progressbarwizard .progress-bar {
+    background-color: #673ab7;
+}
