@@ -11623,12 +11623,12 @@ body {
   color: var(--ct-menu-item-hover);
   text-decoration: none;
     font-weight: 600;
-    font-size: medium;
+    font-size: 0.9rem;
 }
 #sidebar-menu > ul > li > a > span {
   vertical-align: middle;
     font-weight: 600;
-    font-size: medium;
+    font-size: 0.9rem;
 }
 #sidebar-menu > ul > li > a i {
   display: inline-block;
