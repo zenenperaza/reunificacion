@@ -8,6 +8,8 @@ use App\Models\Municipio;
 use App\Models\Parroquia;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Exports\CasosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\Storage;
 
@@ -18,18 +20,25 @@ class CasoController extends Controller
         return view('caso.index');
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        return datatables()->of(Caso::with(['estado', 'municipio']))
+        $query = Caso::with(['estado', 'municipio']);
+
+        // Filtro por rango de fechas
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
+        }
+
+        return datatables()->of($query)
             ->addColumn('acciones', function ($caso) {
                 $edit = route('casos.edit', $caso->id);
                 $delete = route('casos.destroy', $caso->id);
                 return '
-                    <a href="' . $edit . '" class="btn btn-sm btn-primary"><i class="mdi mdi-pencil"></i></a>
-                    <form action="' . $delete . '" method="POST" style="display:inline-block;" onsubmit="return confirm(\'¿Eliminar este caso?\')">
-                        ' . csrf_field() . method_field('DELETE') . '
-                        <button class="btn btn-sm btn-danger"><i class="mdi mdi-delete"></i></button>
-                    </form>';
+                <a href="' . $edit . '" class="btn btn-sm btn-primary"><i class="mdi mdi-pencil"></i></a>
+                <form action="' . $delete . '" method="POST" style="display:inline-block;" onsubmit="return confirm(\'¿Eliminar este caso?\')">
+                    ' . csrf_field() . method_field('DELETE') . '
+                    <button class="btn btn-sm btn-danger"><i class="mdi mdi-delete"></i></button>
+                </form>';
             })
             ->editColumn('fecha_atencion', function ($caso) {
                 return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
@@ -37,6 +46,7 @@ class CasoController extends Controller
             ->rawColumns(['acciones'])
             ->make(true);
     }
+
 
 
     public function create()
@@ -230,26 +240,50 @@ class CasoController extends Controller
 
 
 
-    public function upload(Request $request)
+    public function exportarExcel(Request $request)
     {
-        if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('casos/imagenes', 'public');
-            return response()->json(['path' => $path], 200);
-        }
+        $start = $request->start_date;
+        $end = $request->end_date;
 
-        return response()->json(['error' => 'No se subió ningún archivo.'], 400);
+        // Formatear el nombre del archivo con la fecha
+        $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
+
+        return Excel::download(new CasosExport($start, $end), $filename);
     }
 
-    public function uploadTemp(Request $request)
+
+
+
+    public function show($id)
     {
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('temp_casos', $filename, 'public');
+        $caso = Caso::with(['estado', 'municipio', 'parroquia'])->findOrFail($id);
 
-            return response()->json(['filename' => $filename]);
-        }
-
-        return response()->json(['error' => 'No file uploaded'], 400);
+        return view('casos.show', compact('caso'));
     }
+
+
+
+
+    // public function upload(Request $request)
+    // {
+    //     if ($request->hasFile('file')) {
+    //         $path = $request->file('file')->store('casos/imagenes', 'public');
+    //         return response()->json(['path' => $path], 200);
+    //     }
+
+    //     return response()->json(['error' => 'No se subió ningún archivo.'], 400);
+    // }
+
+    // public function uploadTemp(Request $request)
+    // {
+    //     if ($request->hasFile('file')) {
+    //         $file = $request->file('file');
+    //         $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+    //         $file->storeAs('temp_casos', $filename, 'public');
+
+    //         return response()->json(['filename' => $filename]);
+    //     }
+
+    //     return response()->json(['error' => 'No file uploaded'], 400);
+    // }
 }

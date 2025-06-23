@@ -14,6 +14,11 @@
 
     <!-- Summernote CSS -->
     <link href="{{ asset('assets/libs/summernote/summernote-lite.min.css') }}" rel="stylesheet">
+    <!-- Sweet Alert-->
+    <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+
+
+
     <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
     {{-- <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
 
@@ -161,12 +166,12 @@
                                         <label for="" class="form-label mb-2">Organizacion
                                             programas</label>
                                         <br>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="checkbox" value="UNICEF"
                                                 id="unicef" name="organizacion_programas[]" checked>
                                             <label class="form-check-label" for="unicef">Unicef</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="checkbox" value="COSUDE"
                                                 id="cosude" name="organizacion_programas[]">
                                             <label class="form-check-label" for="cosude">COSUDE</label>
@@ -232,7 +237,7 @@
                                     <div class="col-md-12">
                                         <div class="mt-0">
                                             <label class="form-label mb-2 ">Tipo de Atención - Programas</label>
-                                            <div class="row">
+                                            <div class="col-md-4">
                                                 @php
                                                     $tipo_atencion_programa = [
                                                         'Reunificación familiar',
@@ -262,14 +267,14 @@
                                     <div class="col-md-4">
                                         <label for="" class="form-label mb-2">Tipo de atencion</label>
                                         <br>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
                                                 id="individual" value="Individual">
                                             <label class="form-check-label" for="individual">
                                                 Individual
                                             </label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
                                                 id="grupo_familiar" value="Grupo familiar">
                                             <label class="form-check-label" for="grupo_familiar">
@@ -329,16 +334,14 @@
                                                     @endphp
 
                                                     @foreach ($opciones_educacion as $opcion)
-                                                        <div class="col-md-4">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="radio"
-                                                                    name="educacion" value="{{ $opcion }}"
-                                                                    id="{{ Str::slug($opcion, '_') }}">
-                                                                <label class="form-check-label"
-                                                                    for="{{ Str::slug($opcion, '_') }}">
-                                                                    {{ $opcion }}
-                                                                </label>
-                                                            </div>
+                                                        <div class="form-check mb-1">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="educacion" value="{{ $opcion }}"
+                                                                id="{{ Str::slug($opcion, '_') }}">
+                                                            <label class="form-check-label"
+                                                                for="{{ Str::slug($opcion, '_') }}">
+                                                                {{ $opcion }}
+                                                            </label>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -391,16 +394,14 @@
                                                         @endphp
 
                                                         @foreach ($beneficiario_estado as $estado)
-                                                            <div class="col-md-4">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        name="estado_mujer[]" value="{{ $estado }}"
-                                                                        id="{{ Str::slug($estado, '_') }}">
-                                                                    <label class="form-check-label"
-                                                                        for="{{ Str::slug($estado, '_') }}">
-                                                                        {{ $estado }}
-                                                                    </label>
-                                                                </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    name="estado_mujer[]" value="{{ $estado }}"
+                                                                    id="{{ Str::slug($estado, '_') }}">
+                                                                <label class="form-check-label"
+                                                                    for="{{ Str::slug($estado, '_') }}">
+                                                                    {{ $estado }}
+                                                                </label>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -423,14 +424,14 @@
                                             <div class="col-md-6">
                                                 <label for="" class="form-label mb-2">Poblacion LGBTI</label>
                                                 <br>
-                                                <div class="form-check form-check-inline">
+                                                <div class="form-check ">
                                                     <input class="form-check-input" type="radio" name="poblacion_lgbti"
                                                         id="poblacion_si" value="Si">
                                                     <label class="form-check-label" for="poblacion_si">
                                                         Si
                                                     </label>
                                                 </div>
-                                                <div class="form-check form-check-inline">
+                                                <div class="form-check ">
                                                     <input class="form-check-input" type="radio" name="poblacion_lgbti"
                                                         id="poblacion_no" value="No">
                                                     <label class="form-check-label" for="poblacion_no">
@@ -483,14 +484,14 @@
                                                 <label for="" class="form-label mb-2">Genero - Representante
                                                     legal</label>
                                                 <br>
-                                                <div class="form-check form-check-inline">
+                                                <div class="form-check ">
                                                     <input class="form-check-input" type="radio"
                                                         name="representante_legal" id="mujer" value="Mujer">
                                                     <label class="form-check-label" for="mujer">
                                                         Mujer
                                                     </label>
                                                 </div>
-                                                <div class="form-check form-check-inline">
+                                                <div class="form-check ">
                                                     <input class="form-check-input" type="radio"
                                                         name="representante_legal" id="hombre" value="Hombre">
                                                     <label class="form-check-label" for="hombre">
@@ -565,7 +566,7 @@
                                                 <label for="" class="form-label mb-2"> Nacionalidad del
                                                     solicitante</label>
                                                 <br>
-                                                <div class="form-check form-check-inline">
+                                                <div class="form-check ">
                                                     <input class="form-check-input" type="radio"
                                                         name="nacionalidad_solicitante" id="Venezolana"
                                                         value="Venezolana">
@@ -573,7 +574,7 @@
                                                         Venezolana
                                                     </label>
                                                 </div>
-                                                <div class="form-check form-check-inline">
+                                                <div class="form-check ">
                                                     <input class="form-check-input" type="radio"
                                                         name="nacionalidad_solicitante" id="Extranjera"
                                                         value="Extranjera">
@@ -882,16 +883,13 @@
                                             @endphp
 
                                             @foreach ($tipos_actuacion as $tipo)
-                                                <div class="col-md-4">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="tipo_actuacion[]" value="{{ $tipo }}"
-                                                            id="{{ Str::slug($tipo, '_') }}">
-                                                        <label class="form-check-label"
-                                                            for="{{ Str::slug($tipo, '_') }}">
-                                                            {{ $tipo }}
-                                                        </label>
-                                                    </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="tipo_actuacion[]" value="{{ $tipo }}"
+                                                        id="{{ Str::slug($tipo, '_') }}">
+                                                    <label class="form-check-label" for="{{ Str::slug($tipo, '_') }}">
+                                                        {{ $tipo }}
+                                                    </label>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -1369,21 +1367,21 @@
                                                 class="text-danger">*</span></label>
                                         <small class="text-muted d-block mb-2">Elegir estatus del caso/expediente</small>
 
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="radio" name="estatus" id="estatus1"
-                                                value="en_proceso">
+                                                value="En proceso">
                                             <label class="form-check-label" for="estatus1">En proceso</label>
                                         </div>
 
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="radio" name="estatus" id="estatus2"
-                                                value="en_seguimiento">
+                                                value="En seguimiento">
                                             <label class="form-check-label" for="estatus2">En seguimiento</label>
                                         </div>
 
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check ">
                                             <input class="form-check-input" type="radio" name="estatus" id="estatus3"
-                                                value="cierre_atencion">
+                                                value="Cierre de atención">
                                             <label class="form-check-label" for="estatus3">Cierre de atención</label>
                                         </div>
                                     </div>
@@ -1421,8 +1419,8 @@
 
 
                                 <div class="row mt-3">
-                                    <label for="descripcion" class="form-label">Descripción del caso</label>
-                                    <textarea name="descripcion" id="summernote" class="form-control"></textarea>
+                                    <label for="observaciones" class="form-label">Observaciones</label>
+                                    <textarea name="observaciones" id="summernote" class="form-control"></textarea>
                                 </div>
 
 
@@ -1442,12 +1440,13 @@
                                 <li class="previous list-inline-item">
                                     <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
                                 </li>
-                                <li class="next list-inline-item  center">
-                                    <button type="submit" class="btn btn-primary">Guardar y continuar</button>
-                                </li>
 
                                 <li class="next list-inline-item float-end">
                                     <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
+                                </li>
+
+                                <li class="next list-inline-item  center">
+                                    <button type="submit" class="btn btn-primary">Enviar y finalizar</button>
                                 </li>
                             </ul>
 
@@ -1477,6 +1476,8 @@
             <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
 
             <script src="{{ asset('assets/libs/summernote/summernote-lite.min.js') }}"></script>
+            <!-- Sweet Alerts js -->
+            <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
             <script>
                 $(document).ready(function() {
@@ -1541,11 +1542,12 @@
 
                 // Dropzone para imágenes
                 const imagenesDropzone = new Dropzone("#myAwesomeDropzone", {
+                    url: "#", // será ignorado si usas formData
                     autoProcessQueue: false,
                     uploadMultiple: true,
                     parallelUploads: 10,
                     maxFilesize: 5, // MB
-                    acceptedFiles: 'image/jpeg,image/png,image/gif',
+                    acceptedFiles: 'image/*',
                     addRemoveLinks: true,
                     previewsContainer: "#file-previews",
                     previewTemplate: document.querySelector("#uploadPreviewTemplate").innerHTML
@@ -1554,6 +1556,7 @@
                 Dropzone.autoDiscover = false;
 
                 const documentosDropzone = new Dropzone("#docuemntosDropzone", {
+                    url: "#", // será reemplazado al enviar el formulario
                     autoProcessQueue: false,
                     uploadMultiple: true,
                     parallelUploads: 10,
@@ -1590,12 +1593,12 @@
 
                     // Agregar imágenes
                     imagenesDropzone.files.forEach((file, i) => {
-                        formData.append('imagenes[]', file);
+                        formData.append('fotos[]', file);
                     });
 
                     // Agregar documentos
                     documentosDropzone.files.forEach((file, i) => {
-                        formData.append('documentos[]', file);
+                        formData.append('archivos[]', file);
                     });
 
                     // Enviar formulario completo por AJAX
@@ -1607,20 +1610,35 @@
                         }
                     }).then(response => {
                         if (response.ok) {
-                            alert("Formulario enviado con éxito.");
-                            // Opcional: reiniciar dropzones
+                            Swal.fire({
+                                position: "top-end",
+                                icon: 'success',
+                                title: '¡Caso guardado!',
+                                text: 'El registro se completó correctamente.',
+                                showConfirmButton: !1,
+                                timer: 1500,
+                            }).then(() => {
+                                window.location.href = "{{ route('casos.index') }}";
+                            });
                             imagenesDropzone.removeAllFiles();
                             documentosDropzone.removeAllFiles();
                             this.reset();
                         } else {
-                            alert("Error al enviar formulario.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al guardar',
+                                text: 'No se pudo registrar el caso. Por favor, intente nuevamente.',
+                                footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el Desarrollador</a>'
+                            });
+
                         }
                     }).catch(error => {
                         console.error(error);
                         alert("Error inesperado.");
                     });
                 });
-
+            </script>
+            <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
                     const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
@@ -1654,17 +1672,17 @@
                     checkboxOtras.on('change', function() {
                         if ($(this).is(':checked')) {
                             inputContainer.show();
-                            inputText.prop('disabled', false).prop('', true);
+                            inputText.prop('disabled', false).prop('required', true);
                         } else {
                             inputContainer.hide();
-                            inputText.prop('disabled', true).prop('', false).val('');
+                            inputText.prop('disabled', true).prop('required', false).val('');
                         }
                     });
 
                     // Mostrar el input si estaba seleccionado en reenvío con errores
                     if (checkboxOtras.is(':checked')) {
                         inputContainer.show();
-                        inputText.prop('disabled', false).prop('', true);
+                        inputText.prop('disabled', false).prop('required', true);
                     }
                 });
 
@@ -1834,11 +1852,11 @@
                         if (this.value === 'Otro País') {
                             otroPaisContainer.style.display = 'block';
                             otroPaisInput.disabled = false;
-                            otroPaisInput. = true;
+                            otroPaisInput.required = true;
                         } else {
                             otroPaisContainer.style.display = 'none';
                             otroPaisInput.disabled = true;
-                            otroPaisInput. = false;
+                            otroPaisInput.required = false;
                             otroPaisInput.value = '';
                         }
                     });
@@ -1847,7 +1865,7 @@
                     if (selectPais.value === 'Otro País') {
                         otroPaisContainer.style.display = 'block';
                         otroPaisInput.disabled = false;
-                        otroPaisInput. = true;
+                        otroPaisInput.required = true;
                     }
                 });
 
@@ -1863,11 +1881,11 @@
                         if (this.value === 'Otra Etnia') {
                             otraEtniaContainer.style.display = 'block';
                             otraEtniaInput.disabled = false;
-                            otraEtniaInput. = true;
+                            otraEtniaInput.required = true;
                         } else {
                             otraEtniaContainer.style.display = 'none';
                             otraEtniaInput.disabled = true;
-                            otraEtniaInput. = false;
+                            otraEtniaInput.required = false;
                             otraEtniaInput.value = '';
                         }
                     });
@@ -1876,7 +1894,7 @@
                     if (selectEtnia.value === 'Otra Etnia') {
                         otraEtniaContainer.style.display = 'block';
                         otraEtniaInput.disabled = false;
-                        otraEtniaInput. = true;
+                        otraEtniaInput.required = true;
                     }
                 });
 
@@ -2352,10 +2370,10 @@
 
                         if (seleccion === 'Otro País') {
                             bloque.slideDown();
-                            input.prop('', true);
+                            input.prop('required', true);
                         } else {
                             bloque.slideUp();
-                            input.val('').prop('', false);
+                            input.val('').prop('required', false);
                         }
                     });
                 });

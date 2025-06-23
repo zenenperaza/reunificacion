@@ -30,7 +30,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
 
+    // ✅ Primero rutas específicas
+    Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');
+
+    // ✅ Luego el resource completo
     Route::resource('casos', CasoController::class);
+
+
     Route::get('casos-data', [CasoController::class, 'data'])->name('casos.data');
 
     Route::get('/get-municipios/{estado_id}', [CasoController::class, 'getMunicipios']);
@@ -39,9 +45,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
 
     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
-
-
-
 });
 
 
