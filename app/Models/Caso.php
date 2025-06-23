@@ -59,4 +59,5 @@ class Caso extends Model
     {
         return $this->belongsTo(Parroquia::class, 'parroquia_destino_id');
     }
+    
 }
