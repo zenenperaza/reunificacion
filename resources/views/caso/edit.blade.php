@@ -34,8 +34,23 @@
 
 
 
+@php
+    // Organización programas (UNICEF, COSUDE)
+    $orgProgramasRaw = $caso->organizacion_programa ?? '';
+    $orgProgramas = is_array($orgProgramasRaw) ? $orgProgramasRaw : array_map('trim', explode(',', $orgProgramasRaw));
 
+    // Organización solicitante (Diócesis, CORPRODINCO, etc.)
+    $orgSolicitanteRaw = $caso->organizacion_solicitante ?? '';
+    $orgSolicitante = is_array($orgSolicitanteRaw)
+        ? $orgSolicitanteRaw
+        : array_map('trim', explode(',', $orgSolicitanteRaw));
 
+    // Tipo de Atención - Programas
+    $tipoAtencionRaw = $caso->tipo_atencion_programa ?? '';
+    $tipoAtencionPrograma = is_array($tipoAtencionRaw)
+        ? $tipoAtencionRaw
+        : array_map('trim', explode(',', $tipoAtencionRaw));
+@endphp
 
 
 @section('content')
@@ -96,7 +111,8 @@
                                 <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
                             </a>
                     </ul>
-                    <form id="formCaso" action="{{ route('casos.update', $caso->id) }}" method="POST" enctype="multipart/form-data">
+                    <form id="formCaso" action="{{ route('casos.update', $caso->id) }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -109,26 +125,7 @@
                             </div>
 
                             <div class="tab-pane" id="tab1">
-                                @php
 
-                                    // Organización programas (UNICEF, COSUDE)
-                                    $orgProgramasRaw = $caso->organizacion_programa ?? '';
-                                    $orgProgramas = is_array($orgProgramasRaw)
-                                        ? $orgProgramasRaw
-                                        : array_map('trim', explode(',', $orgProgramasRaw));
-
-                                    // Organización solicitante (Diócesis, CORPRODINCO, etc.)
-                                    $orgSolicitanteRaw = $caso->organizacion_solicitante ?? '';
-                                    $orgSolicitante = is_array($orgSolicitanteRaw)
-                                        ? $orgSolicitanteRaw
-                                        : array_map('trim', explode(',', $orgSolicitanteRaw));
-
-                                    // Tipo de Atención - Programas
-                                    $tipoAtencionRaw = $caso->tipo_atencion_programa ?? '';
-                                    $tipoAtencionPrograma = is_array($tipoAtencionRaw)
-                                        ? $tipoAtencionRaw
-                                        : array_map('trim', explode(',', $tipoAtencionRaw));
-                                @endphp
 
                                 <div class="row mt-3">
                                     <div class="col-md-6">
@@ -198,13 +195,13 @@
                                         <label class="form-label mb-2">Organización programas</label><br>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="UNICEF"
-                                                id="unicef" name="organizacion_programas[]"
+                                                id="unicef" name="organizacion_programa[]"
                                                 {{ in_array('UNICEF', $orgProgramas) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="unicef">Unicef</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="COSUDE"
-                                                id="cosude" name="organizacion_programas[]"
+                                                id="cosude" name="organizacion_programa[]"
                                                 {{ in_array('COSUDE', $orgProgramas) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="cosude">COSUDE</label>
                                         </div>
@@ -499,17 +496,15 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4">
                                         <label class="form-label mb-2">Edad del beneficiario</label>
-                                        <select class="form-select" t id="selectEdad"  name="edad_beneficiario">
+
+                                        <select class="form-select" id="selectEdad" name="edad_beneficiario"
+                                            data-edad="{{ $caso->edad_beneficiario }}">
                                             <option value="">Seleccione</option>
-                                            @for ($i = 0; $i <= 100; $i++)
-                                                <option value="{{ $i }}"
-                                                    {{ $caso->edad_beneficiario == $i ? 'selected' : '' }}>
-                                                    {{ $i }}</option>
-                                            @endfor
                                         </select>
+
                                     </div>
                                 </div>
-                                
+
 
                                 {{-- Población LGBTI --}}
                                 <div class="row mt-3">
@@ -663,6 +658,35 @@
                                         <input type="text" class="form-control" name="otra_etnia" id="otra_etnia"
                                             value="{{ $caso->otra_etnia }}">
                                     </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="mt-0">
+                                            <label class="form-label mb-2">Discapacidad</label>
+                                            <select class="form-select" name="discapacidad" id="discapacidad">
+                                                <option value="">Seleccione</option>
+                                                @php
+                                                    $discapacidades = [
+                                                        'Física o Motora',
+                                                        'Sensorial (auditiva y visual)',
+                                                        'Auditiva',
+                                                        'Visual',
+                                                        'Intelectual',
+                                                        'Psíquica',
+                                                        'Ninguna',
+                                                    ];
+                                                @endphp
+
+                                                @foreach ($discapacidades as $discapacidad)
+                                                    <option value="{{ $discapacidad }}"
+                                                        {{ old('discapacidad', $caso->discapacidad ?? '') == $discapacidad ? 'selected' : '' }}>
+                                                        {{ $discapacidad }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -1702,28 +1726,28 @@
 
 
     <script>
-   document.addEventListener('DOMContentLoaded', function () {
-    const noAplica = document.getElementById('indicador3');
-    const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
+        document.addEventListener('DOMContentLoaded', function() {
+            const noAplica = document.getElementById('indicador3');
+            const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
 
-    if (noAplica) {
-        // Al seleccionar "No aplica", desmarcar los demás
-        noAplica.addEventListener('change', function () {
-            if (this.checked) {
-                checkboxes.forEach(cb => cb.checked = false);
+            if (noAplica) {
+                // Al seleccionar "No aplica", desmarcar los demás
+                noAplica.addEventListener('change', function() {
+                    if (this.checked) {
+                        checkboxes.forEach(cb => cb.checked = false);
+                    }
+                });
+
+                // Al seleccionar otro, desmarcar "No aplica"
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', function() {
+                        if (this.checked) {
+                            noAplica.checked = false;
+                        }
+                    });
+                });
             }
         });
-
-        // Al seleccionar otro, desmarcar "No aplica"
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', function () {
-                if (this.checked) {
-                    noAplica.checked = false;
-                }
-            });
-        });
-    }
-});
 
 
 
@@ -2147,13 +2171,19 @@
                 if (!(valorNormalizado in rangos)) return;
 
                 const [min, max] = rangos[valorNormalizado];
+                const edadActual = parseInt(selectEdad.dataset.edad);
+
                 for (let i = min; i <= max; i++) {
                     const option = document.createElement("option");
                     option.value = i;
                     option.textContent = `${i} años`;
+                    if (i === edadActual) {
+                        option.selected = true;
+                    }
                     selectEdad.appendChild(option);
                 }
             }
+
 
             radiosBeneficiario.forEach(radio => {
                 radio.addEventListener("change", function() {

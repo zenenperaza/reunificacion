@@ -12,22 +12,19 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-   public function run(): void
-{
-     Caso::truncate();
-
-    
-        // Caso::factory()->count(100)->create();
-    // $this->call([
-    //     RoleSeeder::class,
-    //     UserSeeder::class,
-    //     EstadoSeeder::class,
-    //     MunicipioSeeder::class,
-    //     ParroquiaSeeder::class,
+    public function run(): void
+    {
+        Caso::truncate();
         
-    //     CasoSeeder::class,
-    // ]);
-}
+        $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
+            EstadoSeeder::class,
+            MunicipioSeeder::class,
+            ParroquiaSeeder::class,
 
-
+            CasoSeeder::class,
+        ]);
+        Caso::factory()->count(100)->create();
+    }
 }

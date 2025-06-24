@@ -35,7 +35,7 @@ return new class extends Migration
         $table->string('beneficiario')->nullable();
         $table->string('estado_mujer')->nullable();
         $table->integer('edad_beneficiario')->nullable();
-        $table->boolean('poblacion_lgbti')->default(false);
+        $table->string('poblacion_lgbti')->nullable();
 
         $table->string('acompanante')->nullable();
         $table->string('representante_legal')->nullable();

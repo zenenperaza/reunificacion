@@ -142,6 +142,7 @@ class CasoController extends Controller
             'otro_pais_nacimiento' => $request->otro_pais_nacimientos,
             'etnia_indigena' => $request->etnia_indigena,
             'otra_etnia' => $request->otra_etnia,
+            'discapacidad' => $request->discapacidad,
             'fecha_actual' => $request->fecha_actual,
             'estatus' => $request->estatus,
             'descripcion' => $request->descripcion,

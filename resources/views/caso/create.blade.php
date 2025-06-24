@@ -726,6 +726,33 @@
                                                         id="otra_etnia" disabled>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-6">
+                                                <div class="mt-0">
+                                                    <label class="form-label mb-2">Discapacidad</label>
+                                                    <select class="form-select" name="discapacidad" id="discapacidad">
+                                                        <option value="">Seleccione</option>
+                                                        @php
+                                                            $discapacidades = [
+                                                                'Física o Motora',
+                                                                'Sensorial (auditiva y visual)',
+                                                                'Auditiva',
+                                                                'Visual',
+                                                                'Intelectual',
+                                                                'Psíquica',
+                                                                'Ninguna',
+                                                            ];
+                                                        @endphp
+
+                                                        @foreach ($discapacidades as $discapacidad)
+                                                            <option value="{{ $discapacidad }}">
+                                                                {{ $discapacidad }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                         </div>
 
 

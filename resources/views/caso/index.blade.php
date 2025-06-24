@@ -24,7 +24,7 @@
         </div>
         <div class="form-group d-flex m-2">
             <div class="input-group  d-flex justify-content-start">
-                <button type="button" class="btn btn-default " id="daterange-btn">
+                <button type="button" class="btn btn btn-outline-primary" id="daterange-btn">
                     <i class="far fa-calendar-alt"></i> Buscar por fecha actual
                     <i class="fas fa-caret-down"></i>
                 </button>

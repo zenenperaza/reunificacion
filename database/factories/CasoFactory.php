@@ -34,8 +34,6 @@ class CasoFactory extends Factory
         // Listas de datos
         $beneficiarios = ['Niña adolescente', 'Mujer joven', 'Mujer adulta', 'Niño adolescente', 'Hombre joven', 'Hombre adulto'];
         $acompanantes = ['Padre', 'Madre', 'Representante legal', 'No aplica acompanante'];
-        $documentos = ['Certificado de nacimiento', 'Acta de nacimiento (partida de nacimiento)', 'Cédula', 'Pasaporte', 'NO posee documentos'];
-        $etnias = ['Akawayo', 'Añu', 'Piaroa', 'Yekuana', 'Otra Etnia'];
         $serviciosCosude = ['Kits de higiene personal', 'Kit de alimentación (cesta de alimentos)', 'Platos servidos', 'Movilizaciones por caso', 'Hospedaje', 'Ningún servicio COSUDE'];
         $serviciosUnicef = ['Kits de higiene (NNA)', 'Viáticos alimentos', 'Traslado (NNA)', 'Traslado seguimiento', 'Traslado consejeros', 'Orientación', 'Ningún servicio UNICEF'];
         $actuaciones = ['Gestoría de casos', 'Derivaciones', 'Asistencia jurídica', 'Orientaciones'];
@@ -43,6 +41,112 @@ class CasoFactory extends Factory
         $derechos = ['Artículo 26 Derecho a ser criado en una familia', 'Artículo 41 Derecho a la salud y a servicios de salud'];
         $violencias = ['Violencia Psicológica (Conductas amenazantes que no necesariamente implican violencia física ni abuso verbal)'];
         $vicaria = ['Violencia económica (privar de manutención)', 'Negligencia (conductas de descuido a NNA)'];
+        $tipos = [
+            'Reunificación familiar',
+            'Localización familiar',
+            'Retorno voluntario',
+        ];
+        $organizaciones = [
+            'Diócesis',
+            'UNICEF',
+            'World Vision',
+            'CORPRODINCO',
+            'INTERSOS',
+            'UNIANDES',
+            'ICBF Colombia',
+            'Save the Children',
+            'OIM',
+            'Aideas Infantiles',
+            'Defensoría NNA',
+            'CISP',
+            'HIAS',
+            'IRC',
+            'Otras organizaciones',
+        ];
+        $paises = [
+            'Venezuela',
+            'Argentina',
+            'Bolivia',
+            'Brasil',
+            'Chile',
+            'Colombia',
+            'Costa Rica',
+            'Cuba',
+            'Ecuador',
+            'El Salvador',
+            'Guayana Francesa',
+            'Granada',
+            'Guatemala',
+            'Guayana',
+            'Haití',
+            'Honduras',
+            'Jamaica',
+            'México',
+            'Nicaragua',
+            'Paraguay',
+            'Panamá',
+            'Perú',
+            'Puerto Rico',
+            'República Dominicana',
+            'Surinam',
+            'Uruguay',
+            'Estados Unidos',
+            'Otro País',
+        ];
+
+        $etnias_indigenas = [
+            'Akawayo',
+            'Añu',
+            'Banova o Kurripako',
+            'Barí',
+            'Chaima',
+            'Cuiva',
+            'Gayón',
+            'Hoti',
+            'Japrería',
+            'Jirajara',
+            'Jivi',
+            'Kariña',
+            'Maki',
+            'Mapoyo',
+            'Panare',
+            'Pemón',
+            'Piapoko o Wenaiwika',
+            'Puinave',
+            'Pumé',
+            'Sáliba',
+            'Sanema',
+            'Sapé',
+            'Urak',
+            'Waike',
+            'Waikerí',
+            'Wanukia',
+            'Waraos',
+            'Wayúu',
+            'Wottuja-Piaroa',
+            'Yabarana',
+            'Yanomami',
+            'Yekuana',
+            'Yukpa',
+            'Otra Etnia',
+        ];
+
+        $tipo_documento = [
+            'Certificado de nacimiento',
+            'Acta de nacimiento (partida de nacimiento)',
+            'Cédula',
+            'Pasaporte',
+            'NO posee documentos',
+        ];
+        $discapacidades = [
+            'Física o Motora',
+            'Sensorial (auditiva y visual)',
+            'Auditiva',
+            'Visual',
+            'Intelectual',
+            'Psíquica',
+            'Ninguna',
+        ];
 
         return [
             'user_id' => User::inRandomOrder()->value('id') ?? 1,
@@ -59,34 +163,43 @@ class CasoFactory extends Factory
 
             'elaborado_por' => $this->faker->name,
             'numero_caso' => 'ASONACOP-' . strtoupper(Str::random(5)),
-            'organizacion_programa' => 'UNICEF',
-            'organizacion_solicitante' => 'HIAS',
+            'organizacion_programa' => implode(', ', $this->faker->randomElements(['UNICEF', 'COSUDE'], rand(1, 2))),
+            'organizacion_solicitante' => implode(', ', $this->faker->randomElements($organizaciones, rand(1, 3))),
             'otras_organizaciones' => 'Save the Children',
 
-            'tipo_atencion_programa' => 'REUNIFICACIÓN FAMILIAR',
-            'tipo_atencion' => $this->faker->randomElement(['Individual', 'Familiar']),
+            'tipo_atencion_programa' => $this->faker->randomElement($tipos),
+
+            'tipo_atencion' => $this->faker->randomElement(['Individual', 'Grupo familiar']),
 
             'beneficiario' => $this->faker->randomElement($beneficiarios),
             'estado_mujer' => 'No aplica',
             'edad_beneficiario' => $this->faker->numberBetween(1, 17),
-            'poblacion_lgbti' => $this->faker->boolean(),
+            'poblacion_lgbti' => $this->faker->boolean() ? 'Sí' : 'No',
             'acompanante' => $this->faker->randomElement($acompanantes),
             'representante_legal' => $this->faker->randomElement($acompanantes),
 
-            'pais_procedencia' => 'Colombia',
+            'pais_nacimiento' => $this->faker->randomElement($paises),
+            'etnia_indigena' => $this->faker->randomElement($etnias_indigenas),
+            'tipo_documento' => $this->faker->randomElement($tipo_documento),
+
+
+            'pais_procedencia' => $this->faker->randomElement($paises),
             'otro_pais' => null,
-            'nacionalidad_solicitante' => 'Colombiana',
-            'pais_nacimiento' => 'Colombia',
+            'nacionalidad_solicitante' => $this->faker->randomElement(['Venezolana', 'Extranjera']),
             'otro_pais_nacimiento' => null,
 
-            'tipo_documento' => $this->faker->randomElement($documentos),
-            'etnia_indigena' => $this->faker->randomElement($etnias),
             'otra_etnia' => null,
-            'discapacidad' => 'Ninguna',
+            'tipo_documento' => $this->faker->randomElement($discapacidades),
 
             'educacion' => 'Sí',
             'nivel_educativo' => $this->faker->randomElement(['Inicial', 'Primaria', 'Secundaria']),
-            'tipo_institucion' => 'Pública',
+            'tipo_institucion' => $this->faker->randomElement([
+                'Pública',
+                'Privada',
+                'Privada subsidiada',
+                'Ninguna institución',
+            ]),
+
 
             'servicio_brindado_cosude' => $this->faker->randomElement($serviciosCosude),
             'servicio_brindado_unicef' => $this->faker->randomElement($serviciosUnicef),
@@ -102,14 +215,35 @@ class CasoFactory extends Factory
             'identificacion_violencia' => json_encode($this->faker->randomElements($violencias, 1)),
             'tipos_violencia_vicaria' => json_encode($this->faker->randomElements($vicaria, rand(1, 2))),
 
-            'remisiones' => json_encode(['Para Defensoría de NNA']),
+            'remisiones' => implode(', ', $this->faker->randomElements([
+                'Para EMD ASONACOP',
+                'Para Consejo de Proteccion NNA',
+                'Para Defensoría de NNA',
+                'A programas sociales del estado',
+                'Cita para seguimiento',
+                'Derivar a psiquiatría',
+                'Derivar a Servicios de atención en salud provenciado por otras organizaciones',
+                'Derivar a Servicios de atención Psicosocial',
+                'Para Ministerio Público /Fiscalía especializada',
+                'Para Registro civil',
+                'Para servicios de salud',
+                'Remitir con Informe diagnostico al Consejo de Proteccion NNA',
+                'Para SAIME',
+                'Otras Remisiones',
+                'Sin Remisión',
+            ], rand(1, 3))),
+
             'otras_remisiones' => null,
 
-            'fotos' => json_encode(['/uploads/foto1.jpg']),
-            'archivos' => json_encode(['/uploads/documento1.pdf']),
+            'fotos' => json_encode(['/casos/imagenes/foto.png']),
+            'archivos' => json_encode(['/casos/archivos/documento.pdf']),
 
             'fecha_actual' => $this->faker->dateTimeBetween('-6 months', 'now'),
-            'estatus' => 'Pendiente',
+            'estatus' => $this->faker->randomElement([
+                'En proceso',
+                'En seguimiento',
+                'Cierre de atención',
+            ]),
             'indicadores' => 'PSEA.01',
             'observaciones' => 'Caso de prueba generado automáticamente.',
             'verificador' => 1,
