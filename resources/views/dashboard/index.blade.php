@@ -133,9 +133,10 @@
 @section('scripts')
 
 
-<script src="{{ asset('assets/libs/flot-charts/jquery.flot.js') }}"></script>
-<script src="{{ asset('assets/libs/flot-charts/jquery.flot.pie.js') }}"></script>
-
+    <script src="{{ asset('assets/libs/flot-charts/jquery.flot.js') }}"></script>
+    <script src="{{ asset('assets/libs/flot-charts/jquery.flot.pie.js') }}"></script>
+    <script src="{{ asset('assets/libs/morris.js06/morris.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
 
     <script>
         new Morris.Bar({
@@ -155,46 +156,43 @@
             hideHover: 'auto',
             resize: true
         });
-
-
-        
     </script>
 
-  <script>
-    $(function () {
-        const total = {{ $porBeneficiario->sum() }};
+    <script>
+        $(function() {
+            const total = {{ $porBeneficiario->sum() }};
 
-        var beneficiarioData = [
-            @foreach($porBeneficiario as $tipo => $cantidad)
-                {
-                    label: "{{ $tipo }} ({{ round(($cantidad / $porBeneficiario->sum()) * 100) }}%, {{ $cantidad }} casos)",
-                    data: {{ $cantidad }},
-                    color: getRandomColor()
-                },
-            @endforeach
-        ];
+            var beneficiarioData = [
+                @foreach ($porBeneficiario as $tipo => $cantidad)
+                    {
+                        label: "{{ $tipo }} ({{ round(($cantidad / $porBeneficiario->sum()) * 100) }}%, {{ $cantidad }} casos)",
+                        data: {{ $cantidad }},
+                        color: getRandomColor()
+                    },
+                @endforeach
+            ];
 
-        $.plot('#donut-beneficiario-container', beneficiarioData, {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.7,
-                    label: {
-                        show: false // Ocultar labels dentro de la dona
+            $.plot('#donut-beneficiario-container', beneficiarioData, {
+                series: {
+                    pie: {
+                        show: true,
+                        innerRadius: 0.7,
+                        label: {
+                            show: false // Ocultar labels dentro de la dona
+                        }
                     }
+                },
+                legend: {
+                    show: true
                 }
-            },
-            legend: {
-                show: true
+            });
+
+            function getRandomColor() {
+                const colors = ['#42a5f5', '#f06292', '#66bb6a', '#ffa726', '#ab47bc', '#26c6da'];
+                return colors[Math.floor(Math.random() * colors.length)];
             }
         });
-
-        function getRandomColor() {
-            const colors = ['#42a5f5', '#f06292', '#66bb6a', '#ffa726', '#ab47bc', '#26c6da'];
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-    });
-</script>
+    </script>
 
 
 

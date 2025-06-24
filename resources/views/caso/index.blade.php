@@ -7,7 +7,8 @@
     <link href="{{ asset('assets/css/datatables.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet">
 
-
+    <!-- Sweet Alert-->
+    <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/daterangepicker/daterangepicker.css') }}" rel="stylesheet">
 
 @endsection
@@ -90,27 +91,30 @@
 @section('scripts')
 
     <!-- DataTables núcleo + Bootstrap 5 -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="{{ asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
 
-    <!-- Responsive -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+<!-- Responsive -->
+<script src="{{ asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
 
-    <!-- Botones -->
-    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<!-- Botones -->
+<script src="{{ asset('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('assets/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
 
-    <!-- PDF y Excel -->
-    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="assets/libs/jszip/jszip.min.js"></script>
+<!-- Sweet Alerts js -->
+<script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
-    <script src="assets/libs/moment/moment.js"></script>
+<!-- PDF y Excel -->
+<script src="{{ asset('assets/libs/pdfmake/build/pdfmake.min.js') }}"></script>
+<script src="{{ asset('assets/libs/pdfmake/build/vfs_fonts.js') }}"></script>
+<script src="{{ asset('assets/libs/jszip/jszip.min.js') }}"></script>
 
-    <script src="assets/libs/daterangepicker/daterangepicker.js"></script>
+<!-- Moment y Rango de Fechas -->
+<script src="{{ asset('assets/libs/moment/moment.js') }}"></script>
+<script src="{{ asset('assets/libs/daterangepicker/daterangepicker.js') }}"></script>
 
     <script>
         let startDate = '';
@@ -293,6 +297,54 @@
         //     }
         // )
     </script>
+
+<script>
+    let tablaCasos = $('#casos-table').DataTable(); // reemplaza #miTabla con el ID real de tu tabla
+
+    $(document).on('click', '.btn-delete', function (e) {
+        e.preventDefault();
+        let url = $(this).data('url');
+        let nombre = $(this).data('nombre');
+
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Se eliminará el caso: " + nombre,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        _method: 'DELETE'
+                    },
+                    success: function (respuesta) {
+                        Swal.fire(
+                            '¡Eliminado!',
+                            'El caso ha sido eliminado.',
+                            'success'
+                        );
+                        tablaCasos.ajax.reload(null, false); // recargar sin reiniciar la paginación
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error',
+                            'Ocurrió un error al intentar eliminar.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 
     @if (session('success'))
         <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">

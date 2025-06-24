@@ -30,16 +30,23 @@ class CasoController extends Controller
         }
 
         return datatables()->of($query)
+
             ->addColumn('acciones', function ($caso) {
                 $edit = route('casos.edit', $caso->id);
                 $delete = route('casos.destroy', $caso->id);
                 return '
-                <a href="' . $edit . '" class="btn btn-sm btn-primary"><i class="mdi mdi-pencil"></i></a>
-                <form action="' . $delete . '" method="POST" style="display:inline-block;" onsubmit="return confirm(\'¿Eliminar este caso?\')">
-                    ' . csrf_field() . method_field('DELETE') . '
-                    <button class="btn btn-sm btn-danger"><i class="mdi mdi-delete"></i></button>
-                </form>';
+        <a href="' . $edit . '" class="btn btn-sm btn-primary" title="Editar">
+            <i class="mdi mdi-pencil"></i>
+        </a>
+        <button class="btn btn-sm btn-danger btn-delete" 
+            data-url="' . $delete . '" 
+            data-nombre="' . $caso->numero_caso . '">
+            <i class="mdi mdi-delete"></i>
+        </button>
+    ';
             })
+
+
             ->editColumn('fecha_atencion', function ($caso) {
                 return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
             })
@@ -178,45 +185,45 @@ class CasoController extends Controller
 
 
 
-    public function edit(Caso $caso)
+    public function edit($id)
     {
-        return view('caso.edit', [
-            'caso' => $caso,
-            'estados' => Estado::all(),
-            'municipios' => Municipio::all(),
-            'parroquias' => Parroquia::all(),
-            'usuarios' => User::all(),
-        ]);
+        $caso = Caso::findOrFail($id);
+        $estados = Estado::all(); // si usas estados en un select
+
+        return view('caso.edit', compact('caso', 'estados'));
     }
 
-    public function update(Request $request, Caso $caso)
+
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'numero_caso' => 'required|unique:casos,numero_caso,' . $caso->id,
-            'fecha_atencion' => 'required|date',
-            'estado_id' => 'required|exists:estados,id',
-            'municipio_id' => 'required|exists:municipios,id',
-            'parroquia_id' => 'required|exists:parroquias,id',
+            'numero_caso' => 'required|string|max:255',
+            'fecha_atencion' => 'nullable|date',
+            'estado_id' => 'nullable|exists:estados,id',
+            // agrega validaciones para otros campos
         ]);
 
-        $data = $request->all();
-        $data['vulnerabilidades'] = json_encode($request->vulnerabilidades);
-        $data['derechos_vulnerados'] = json_encode($request->derechos_vulnerados);
-        $data['identificacion_violencia'] = json_encode($request->identificacion_violencia);
-        $data['tipos_violencia_vicaria'] = json_encode($request->tipos_violencia_vicaria);
-        $data['remisiones'] = json_encode($request->remisiones);
+        $caso = Caso::findOrFail($id);
 
-        $caso->update($data);
+        $caso->numero_caso = $request->numero_caso;
+        $caso->fecha_atencion = $request->fecha_atencion;
+        $caso->estado_id = $request->estado_id;
+        // agrega los demás campos
 
-        return redirect()->route('casos.index')->with('success', 'Caso actualizado correctamente.');
+        $caso->save();
+
+        return redirect()->route('casos.index')->with('success', 'Caso actualizado correctamente');
     }
 
-    public function destroy(Caso $caso)
+
+    public function destroy($id)
     {
+        $caso = Caso::findOrFail($id);
         $caso->delete();
-        return redirect()->route('casos.index')->with('success', 'Caso eliminado correctamente.');
+
+        return response()->json(['success' => true]);
     }
+
 
     public function getMunicipios($estado_id)
     {
