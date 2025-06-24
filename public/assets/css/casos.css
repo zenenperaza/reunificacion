@@ -332,3 +332,43 @@ body[data-layout-color="dark"] .dropzone .dz-preview {
     margin-bottom: 0.5rem;
 }
 
+/* Mejorar diseño Dropzone en tema Admininto */
+.dropzone {
+    border: 2px dashed #ced4da;
+    background: #f8f9fa;
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.dropzone:hover {
+    border-color: #3bafda;
+    background-color: #f1f5f9;
+}
+
+.dropzone .dz-message {
+    font-size: 16px;
+    color: #6c757d;
+    padding: 20px 0;
+}
+
+.dropzone .dz-message i {
+    font-size: 36px;
+    margin-bottom: 10px;
+    display: block;
+    color: #adb5bd;
+}
+
+.dropzone .dz-preview {
+    margin-top: 15px;
+}
+
+.dropzone-previews .card {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+}
+
+.dropzone-previews .card .btn {
+    padding: 0.2rem 0.4rem;
+}

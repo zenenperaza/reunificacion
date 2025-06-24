@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\Storage;
 
+
 class CasoController extends Controller
 {
     public function index()
@@ -272,6 +273,42 @@ class CasoController extends Controller
         return view('casos.show', compact('caso'));
     }
 
+
+    public function eliminarArchivo(Request $request, $id)
+    {
+        $caso = Caso::findOrFail($id);
+
+        $tipo = $request->input('tipo'); // 'foto' o 'archivo'
+        $archivo = $request->input('archivo');
+
+        if (!$tipo || !$archivo) {
+            return response()->json(['success' => false, 'message' => 'Datos incompletos']);
+        }
+
+        $campo = $tipo === 'foto' ? 'fotos' : 'archivos';
+
+        $archivos = json_decode($caso->$campo, true) ?? [];
+
+        // Verifica si el archivo está en la lista
+        if (!in_array($archivo, $archivos)) {
+            return response()->json(['success' => false, 'message' => 'Archivo no encontrado']);
+        }
+
+        // Elimina físicamente el archivo si existe
+        if (Storage::disk('public')->exists($archivo)) {
+            Storage::disk('public')->delete($archivo);
+        }
+
+        // Elimina del array y guarda nuevamente
+        $archivos = array_values(array_filter($archivos, function ($item) use ($archivo) {
+            return $item !== $archivo;
+        }));
+
+        $caso->$campo = json_encode($archivos);
+        $caso->save();
+
+        return response()->json(['success' => true]);
+    }
 
 
 

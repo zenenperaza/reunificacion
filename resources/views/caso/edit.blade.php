@@ -20,13 +20,23 @@
 
 
     <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
-    {{-- <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
+
+    {{--
+<link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
 
 
 
 
 
 @endsection
+
+
+
+
+
+
+
+
 
 @section('content')
     <div class="container-fluid">
@@ -86,10 +96,11 @@
                                 <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
                             </a>
                     </ul>
-                    <form action="{{ route('casos.update', $caso->id) }}" method="POST" enctype="multipart/form-data">
+                    <form id="formCaso" action="{{ route('casos.update', $caso->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        
+
+
                         <div class="tab-content b-0 mb-0 pt-0">
 
 
@@ -98,20 +109,40 @@
                             </div>
 
                             <div class="tab-pane" id="tab1">
+                                @php
+
+                                    // Organización programas (UNICEF, COSUDE)
+                                    $orgProgramasRaw = $caso->organizacion_programa ?? '';
+                                    $orgProgramas = is_array($orgProgramasRaw)
+                                        ? $orgProgramasRaw
+                                        : array_map('trim', explode(',', $orgProgramasRaw));
+
+                                    // Organización solicitante (Diócesis, CORPRODINCO, etc.)
+                                    $orgSolicitanteRaw = $caso->organizacion_solicitante ?? '';
+                                    $orgSolicitante = is_array($orgSolicitanteRaw)
+                                        ? $orgSolicitanteRaw
+                                        : array_map('trim', explode(',', $orgSolicitanteRaw));
+
+                                    // Tipo de Atención - Programas
+                                    $tipoAtencionRaw = $caso->tipo_atencion_programa ?? '';
+                                    $tipoAtencionPrograma = is_array($tipoAtencionRaw)
+                                        ? $tipoAtencionRaw
+                                        : array_map('trim', explode(',', $tipoAtencionRaw));
+                                @endphp
 
                                 <div class="row mt-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="periodo" class="form-label mb-2">Periodo</label>
                                             <input type="text" class="form-control" name="periodo" id="periodo"
-                                                value="{{ date('Y-m') }}" readonly>
+                                                value="{{ $caso->periodo }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de
-                                                Atención</label>
-                                            <input type="date" class="form-control" name="fecha_atencion">
+                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de Atención</label>
+                                            <input type="date" class="form-control" name="fecha_atencion"
+                                                value="{{ $caso->fecha_atencion }}">
                                         </div>
                                     </div>
                                 </div>
@@ -123,8 +154,9 @@
                                         <select id="estadoSelect" class="form-select" name="estado_id">
                                             <option value="">Seleccione</option>
                                             @foreach ($estados as $estado)
-                                                <option value="{{ $estado->id }}">{{ $estado->nombre }}
-                                                </option>
+                                                <option value="{{ $estado->id }}"
+                                                    {{ $caso->estado_id == $estado->id ? 'selected' : '' }}>
+                                                    {{ $estado->nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -132,14 +164,16 @@
                                     <div class="col-lg-4">
                                         <label for="municipioSelect" class="form-label mb-2">Municipio</label>
                                         <select id="municipioSelect" class="form-select" name="municipio_id">
-                                            <option value="">Seleccione</option>
+                                            <option value="{{ $caso->municipio_id }}">
+                                                {{ $caso->municipio->nombre ?? 'Seleccione' }}</option>
                                         </select>
                                     </div>
 
                                     <div class="col-lg-4">
                                         <label for="parroquiaSelect" class="form-label mb-2">Parroquia</label>
                                         <select id="parroquiaSelect" class="form-select" name="parroquia_id">
-                                            <option value="">Seleccione</option>
+                                            <option value="{{ $caso->parroquia_id }}">
+                                                {{ $caso->parroquia->nombre ?? 'Seleccione' }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -148,665 +182,571 @@
                                     <div class="col-md-6">
                                         <label for="elaborado_por" class="form-label mb-2">Elaborado por</label>
                                         <input type="text" class="form-control" name="elaborado_por"
-                                            value="{{ auth()->user()->name }}">
+                                            value="{{ $caso->elaborado_por }}">
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="numero_caso" class="form-label mb-2">Numero de
-                                                caso</label>
+                                            <label for="numero_caso" class="form-label mb-2">Número de caso</label>
                                             <input type="text" class="form-control" name="numero_caso"
-                                                value="">
+                                                value="{{ $caso->numero_caso }}">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row mt-3">
                                     <div class="col-md-4">
-                                        <label for="" class="form-label mb-2">Organizacion
-                                            programas</label>
-                                        <br>
-                                        <div class="form-check ">
+                                        <label class="form-label mb-2">Organización programas</label><br>
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="UNICEF"
-                                                id="unicef" name="organizacion_programas[]" checked>
+                                                id="unicef" name="organizacion_programas[]"
+                                                {{ in_array('UNICEF', $orgProgramas) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="unicef">Unicef</label>
                                         </div>
-                                        <div class="form-check ">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="COSUDE"
-                                                id="cosude" name="organizacion_programas[]">
+                                                id="cosude" name="organizacion_programas[]"
+                                                {{ in_array('COSUDE', $orgProgramas) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="cosude">COSUDE</label>
                                         </div>
                                     </div>
                                 </div>
 
-
                                 <div class="row mt-3">
                                     <div class="col-md-12">
-                                        <div class="mt-0">
-                                            <label class="form-label mb-2 ">Organizacion solicitante</label>
-                                            <div class="row">
-                                                @php
-                                                    $organizaciones = [
-                                                        'Diócesis',
-                                                        'UNICEF',
-                                                        'World Vision',
-                                                        'CORPRODINCO',
-                                                        'INTERSOS',
-                                                        'UNIANDES',
-                                                        'ICBF Colombia',
-                                                        'Save the Children',
-                                                        'OIM',
-                                                        'Aideas Infantiles',
-                                                        'Defensoría NNA',
-                                                        'CISP',
-                                                        'HIAS',
-                                                        'IRC',
-                                                        'Otras organizaciones',
-                                                    ];
-
-                                                @endphp
-
-                                                @foreach ($organizaciones as $organizacion)
-                                                    <div class="col-md-4">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="organizacion_solicitante[]"
-                                                                value="{{ $organizacion }}"
-                                                                id="{{ Str::slug($organizacion, '_') }}">
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($organizacion, '_') }}">
-                                                                {{ $organizacion }}
-                                                            </label>
-                                                        </div>
+                                        <label class="form-label mb-2">Organización solicitante</label>
+                                        <div class="row">
+                                            @php
+                                                $organizaciones = [
+                                                    'Diócesis',
+                                                    'UNICEF',
+                                                    'World Vision',
+                                                    'CORPRODINCO',
+                                                    'INTERSOS',
+                                                    'UNIANDES',
+                                                    'ICBF Colombia',
+                                                    'Save the Children',
+                                                    'OIM',
+                                                    'Aideas Infantiles',
+                                                    'Defensoría NNA',
+                                                    'CISP',
+                                                    'HIAS',
+                                                    'IRC',
+                                                    'Otras organizaciones',
+                                                ];
+                                            @endphp
+                                            @foreach ($organizaciones as $organizacion)
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="organizacion_solicitante[]" value="{{ $organizacion }}"
+                                                            id="{{ Str::slug($organizacion, '_') }}"
+                                                            {{ in_array($organizacion, $orgSolicitante) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($organizacion, '_') }}">{{ $organizacion }}</label>
                                                     </div>
-                                                @endforeach
-                                            </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
-                                    <div class="col-md-6" id="otrasOrganizacionesContainer" style="display: none;">
+                                    <div class="col-md-6" id="otrasOrganizacionesContainer"
+                                        style="{{ in_array('Otras organizaciones', $orgSolicitante) ? '' : 'display: none;' }}">
                                         <div class="mt-3">
                                             <label for="otras_organizaciones" class="form-label mb-2">Otras
                                                 organizaciones</label>
                                             <input type="text" class="form-control" name="otras_organizaciones"
-                                                id="otras_organizaciones" disabled>
+                                                id="otras_organizaciones"
+                                                value="{{ $caso->otras_organizaciones ?? '' }}">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row mt-3">
                                     <div class="col-md-12">
-                                        <div class="mt-0">
-                                            <label class="form-label mb-2 ">Tipo de Atención - Programas</label>
-                                            <div class="col-md-4">
-                                                @php
-                                                    $tipo_atencion_programa = [
-                                                        'Reunificación familiar',
-                                                        'Localización familiar',
-                                                        'Retorno voluntario',
-                                                    ];
-
-                                                @endphp
-
-                                                @foreach ($tipo_atencion_programa as $tipo_atencion)
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="tipo_atencion_programa[]" value="{{ $tipo_atencion }}"
-                                                            id="{{ Str::slug($tipo_atencion, '_') }}">
-                                                        <label class="form-check-label"
-                                                            for="{{ Str::slug($tipo_atencion, '_') }}">
-                                                            {{ $tipo_atencion }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                        <label class="form-label mb-2">Tipo de Atención - Programas</label>
+                                        <div class="col-md-4">
+                                            @php
+                                                $tipos = [
+                                                    'Reunificación familiar',
+                                                    'Localización familiar',
+                                                    'Retorno voluntario',
+                                                ];
+                                            @endphp
+                                            @foreach ($tipos as $tipo)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="tipo_atencion_programa[]" value="{{ $tipo }}"
+                                                        id="{{ Str::slug($tipo, '_') }}"
+                                                        {{ in_array($tipo, $tipoAtencionPrograma) ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="{{ Str::slug($tipo, '_') }}">{{ $tipo }}</label>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row mt-3">
                                     <div class="col-md-4">
-                                        <label for="" class="form-label mb-2">Tipo de atencion</label>
-                                        <br>
-                                        <div class="form-check ">
+                                        <label class="form-label mb-2">Tipo de atención</label><br>
+                                        <div class="form-check">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
-                                                id="individual" value="Individual">
-                                            <label class="form-check-label" for="individual">
-                                                Individual
-                                            </label>
+                                                id="individual" value="Individual"
+                                                {{ $caso->tipo_atencion == 'Individual' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="individual">Individual</label>
                                         </div>
-                                        <div class="form-check ">
+
+                                        <div class="form-check">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
-                                                id="grupo_familiar" value="Grupo familiar">
-                                            <label class="form-check-label" for="grupo_familiar">
-                                                Grupo familiar
-                                            </label>
+                                                id="grupo_familiar" value="Grupo familiar"
+                                                {{ $caso->tipo_atencion == 'Grupo familiar' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="grupo_familiar">Grupo familiar</label>
                                         </div>
                                     </div>
                                 </div>
+
 
                             </div>
 
                             <div class="tab-pane" id="tab2">
-                                <div class="row">
-                                    <div class="col-12">
 
-                                        {{-- Beneficiario --}}
-                                        <div class="row mt-3">
-                                            <div class="col-md-8">
-                                                <label class="form-label mb-2">Beneficiaria/o del programa</label>
-                                                <div class="row">
-                                                    @php
-                                                        $beneficiarios = [
-                                                            'Niña adolescente',
-                                                            'Mujer joven',
-                                                            'Mujer adulta',
-                                                            'Niño adolescente',
-                                                            'Hombre joven',
-                                                            'Hombre adulto',
-                                                        ];
-                                                    @endphp
+                                @php
+                                    $estadoMujer = is_array($caso->estado_mujer)
+                                        ? $caso->estado_mujer
+                                        : explode(',', $caso->estado_mujer ?? '');
+                                    $acompanantes = is_array($caso->acompanante)
+                                        ? $caso->acompanante
+                                        : explode(',', $caso->acompanante ?? '');
+                                @endphp
+                                @php
+                                    $paises = [
+                                        'Venezuela',
+                                        'Argentina',
+                                        'Bolivia',
+                                        'Brasil',
+                                        'Chile',
+                                        'Colombia',
+                                        'Costa Rica',
+                                        'Cuba',
+                                        'Ecuador',
+                                        'El Salvador',
+                                        'Guayana Francesa',
+                                        'Granada',
+                                        'Guatemala',
+                                        'Guayana',
+                                        'Haití',
+                                        'Honduras',
+                                        'Jamaica',
+                                        'México',
+                                        'Nicaragua',
+                                        'Paraguay',
+                                        'Panamá',
+                                        'Perú',
+                                        'Puerto Rico',
+                                        'República Dominicana',
+                                        'Surinam',
+                                        'Uruguay',
+                                        'Estados Unidos',
+                                        'Otro País',
+                                    ];
 
-                                                    @foreach ($beneficiarios as $beneficiario)
-                                                        <div class="col-md-4 mb-1">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="radio"
-                                                                    name="beneficiario" value="{{ $beneficiario }}"
-                                                                    id="{{ Str::slug($beneficiario, '_') }}">
-                                                                <label class="form-check-label"
-                                                                    for="{{ Str::slug($beneficiario, '_') }}">
-                                                                    {{ $beneficiario }}
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
+                                    $etnias_indigenas = [
+                                        'Akawayo',
+                                        'Añu',
+                                        'Banova o Kurripako',
+                                        'Barí',
+                                        'Chaima',
+                                        'Cuiva',
+                                        'Gayón',
+                                        'Hoti',
+                                        'Japrería',
+                                        'Jirajara',
+                                        'Jivi',
+                                        'Kariña',
+                                        'Maki',
+                                        'Mapoyo',
+                                        'Panare',
+                                        'Pemón',
+                                        'Piapoko o Wenaiwika',
+                                        'Puinave',
+                                        'Pumé',
+                                        'Sáliba',
+                                        'Sanema',
+                                        'Sapé',
+                                        'Urak',
+                                        'Waike',
+                                        'Waikerí',
+                                        'Wanukia',
+                                        'Waraos',
+                                        'Wayúu',
+                                        'Wottuja-Piaroa',
+                                        'Yabarana',
+                                        'Yanomami',
+                                        'Yekuana',
+                                        'Yukpa',
+                                        'Otra Etnia',
+                                    ];
 
-                                        {{-- Educación --}}
-                                        <div class="row mt-3" id="bloque_educacion" style="display: none;">
-                                            <div class="col-md-12">
-                                                <label class="form-label fw-bold">* Educación</label>
-                                                <small class="d-block text-muted mb-2">Elegir si estudia NNA</small>
-                                                <div class="row">
-                                                    @php
-                                                        $opciones_educacion = ['Si estudia', 'No estudia', 'No Aplica'];
-                                                    @endphp
+                                    $tipo_documento = [
+                                        'Certificado de nacimiento',
+                                        'Acta de nacimiento (partida de nacimiento)',
+                                        'Cédula',
+                                        'Pasaporte',
+                                        'NO posee documentos',
+                                    ];
+                                @endphp
 
-                                                    @foreach ($opciones_educacion as $opcion)
-                                                        <div class="form-check mb-1">
-                                                            <input class="form-check-input" type="radio"
-                                                                name="educacion" value="{{ $opcion }}"
-                                                                id="{{ Str::slug($opcion, '_') }}">
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($opcion, '_') }}">
-                                                                {{ $opcion }}
-                                                            </label>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        {{-- Nivel educativo y tipo institución --}}
-                                        <div class="row mt-3" id="bloque_nivel_educativo_tipo_isntitucion"
-                                            style="display: none;">
-                                            <div class="col-md-6">
-                                                <label for="nivel_educativo_cursado" class="form-label fw-bold">* Nivel
-                                                    educativo cursado</label>
-                                                <small class="d-block text-muted mb-2">Elegir nivel educativo NNA</small>
-                                                <select class="form-select" name="nivel_educativo"
-                                                    id="nivel_educativo_cursado">
-                                                    <option value="">Seleccione</option>
-                                                    @foreach (['Inicial', 'Primaria', 'Media', 'Técnica', 'Universitaria', 'Misiones', 'Especial', 'Ninguna'] as $nivel)
-                                                        <option value="{{ $nivel }}">{{ $nivel }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <label for="tipo_institucion" class="form-label fw-bold">Tipo
-                                                    institución</label>
-                                                <small class="d-block text-muted mb-2">Elegir institución</small>
-                                                <select class="form-select" name="tipo_institucion"
-                                                    id="tipo_institucion">
-                                                    <option value="">Seleccione</option>
-                                                    @foreach (['Pública', 'Privada', 'Privada subsidiada', 'Ninguna institución'] as $tipo)
-                                                        <option value="{{ $tipo }}">{{ $tipo }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-8" id="estado-mujer-block" style="display: none;">
-                                                <div class="mt-3">
-                                                    <label class="form-label mb-2 ">Estado beneficiario (Si es
-                                                        mujer)</label>
-                                                    <div class="row">
-                                                        @php
-                                                            $beneficiario_estado = [
-                                                                'Embarazada',
-                                                                'Lactante',
-                                                                'No aplica estado',
-                                                            ];
-
-                                                        @endphp
-
-                                                        @foreach ($beneficiario_estado as $estado)
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="estado_mujer[]" value="{{ $estado }}"
-                                                                    id="{{ Str::slug($estado, '_') }}">
-                                                                <label class="form-check-label"
-                                                                    for="{{ Str::slug($estado, '_') }}">
-                                                                    {{ $estado }}
-                                                                </label>
-                                                            </div>
-                                                        @endforeach
+                                {{-- Beneficiaria/o del programa --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label mb-2">Beneficiaria/o del programa</label>
+                                        <div class="row">
+                                            @php
+                                                $beneficiarios = [
+                                                    'Niña adolescente',
+                                                    'Mujer joven',
+                                                    'Mujer adulta',
+                                                    'Niño adolescente',
+                                                    'Hombre joven',
+                                                    'Hombre adulto',
+                                                ];
+                                            @endphp
+                                            @foreach ($beneficiarios as $beneficiario)
+                                                <div class="col-md-4 mb-1">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="beneficiario" value="{{ $beneficiario }}"
+                                                            id="{{ Str::slug($beneficiario, '_') }}"
+                                                            {{ $caso->beneficiario == $beneficiario ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($beneficiario, '_') }}">
+                                                            {{ $beneficiario }}
+                                                        </label>
                                                     </div>
                                                 </div>
-                                            </div>
-
+                                            @endforeach
                                         </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-4 mt-0">
-                                                <label class="form-label mb-2">Edad del beneficiario</label>
-                                                <select class="form-select" name="edad_beneficiario"
-                                                    id="edad-beneficiario-select">
-                                                    <option value="">Seleccione</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <label for="" class="form-label mb-2">Poblacion LGBTI</label>
-                                                <br>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio" name="poblacion_lgbti"
-                                                        id="poblacion_si" value="Si">
-                                                    <label class="form-check-label" for="poblacion_si">
-                                                        Si
-                                                    </label>
-                                                </div>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio" name="poblacion_lgbti"
-                                                        id="poblacion_no" value="No">
-                                                    <label class="form-check-label" for="poblacion_no">
-                                                        No
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row mt-3">
-
-                                            <div class="col-md-8">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2 "> Acompanante</label>
-                                                    <div class="row">
-                                                        @php
-                                                            $acompantes = [
-                                                                'Padre',
-                                                                'Madre',
-                                                                'Representante legal',
-                                                                'No aplica acompanante',
-                                                            ];
-
-                                                        @endphp
-
-                                                        @foreach ($acompantes as $acompanante)
-                                                            <div class="form-check">
-                                                                <input class="form-check-input acompanante-opcion"
-                                                                    type="checkbox" name="acompanante[]"
-                                                                    value="{{ $acompanante }}"
-                                                                    id="{{ Str::slug($acompanante, '_') }}"
-                                                                    data-es-no-aplica="{{ $acompanante === 'No aplica acompanante' ? '1' : '0' }}">
-
-                                                                <label class="form-check-label"
-                                                                    for="{{ Str::slug($acompanante, '_') }}">
-                                                                    {{ $acompanante }}
-                                                                </label>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="row mt-3" id="genero_representante" style="display: none;">
-                                            <div class="col-md-6">
-                                                <label for="" class="form-label mb-2">Genero - Representante
-                                                    legal</label>
-                                                <br>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio"
-                                                        name="representante_legal" id="mujer" value="Mujer">
-                                                    <label class="form-check-label" for="mujer">
-                                                        Mujer
-                                                    </label>
-                                                </div>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio"
-                                                        name="representante_legal" id="hombre" value="Hombre">
-                                                    <label class="form-check-label" for="hombre">
-                                                        Hombre
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-
-                                            <div class="col-md-6">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2">País de procedencia</label>
-                                                    <select class="form-select" name="pais_procedencia"
-                                                        id="pais_procedencia">
-                                                        <option value="">Seleccione</option>
-                                                        @php
-                                                            $paises = [
-                                                                'Venezuela',
-                                                                'Argentina',
-                                                                'Bolivia',
-                                                                'Brasil',
-                                                                'Chile',
-                                                                'Colombia',
-                                                                'Costa Rica',
-                                                                'Cuba',
-                                                                'Ecuador',
-                                                                'El Salvador',
-                                                                'Guayana Francesa',
-                                                                'Granada',
-                                                                'Guatemala',
-                                                                'Guayana',
-                                                                'Haití',
-                                                                'Honduras',
-                                                                'Jamaica',
-                                                                'México',
-                                                                'Nicaragua',
-                                                                'Paraguay',
-                                                                'Panamá',
-                                                                'Perú',
-                                                                'Puerto Rico',
-                                                                'República Dominicana',
-                                                                'Surinam',
-                                                                'Uruguay',
-                                                                'Estados Unidos',
-                                                                'Otro País',
-                                                            ];
-                                                        @endphp
-
-                                                        @foreach ($paises as $pais)
-                                                            <option value="{{ $pais }}">{{ $pais }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6" id="otro_pais_container" style="display: none;">
-                                                <div class="mt-0">
-                                                    <label for="otro_pais" class="form-label mb-2">Indique otro
-                                                        pais</label>
-                                                    <input type="text" class="form-control" name="otro_pais"
-                                                        id="otro_pais">
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <label for="" class="form-label mb-2"> Nacionalidad del
-                                                    solicitante</label>
-                                                <br>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio"
-                                                        name="nacionalidad_solicitante" id="Venezolana"
-                                                        value="Venezolana">
-                                                    <label class="form-check-label" for="Venezolana">
-                                                        Venezolana
-                                                    </label>
-                                                </div>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio"
-                                                        name="nacionalidad_solicitante" id="Extranjera"
-                                                        value="Extranjera">
-                                                    <label class="form-check-label" for="Extranjera">
-                                                        Extranjera
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2">Tipo de documento</label>
-                                                    <select class="form-select" name="tipo_documento"
-                                                        id="tipo_documento">
-                                                        <option value="">Seleccione</option>
-                                                        @php
-                                                            $tipo_documento = [
-                                                                'Certificado de nacimiento',
-                                                                'Acta de nacimiento (partida de nacimiento)',
-                                                                'Cédula',
-                                                                'Pasaporte',
-                                                                'NO posee documentos',
-                                                            ];
-                                                        @endphp
-
-                                                        @foreach ($tipo_documento as $tipo)
-                                                            <option value="{{ $tipo }}">{{ $tipo }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2">País de nacimiento</label>
-                                                    <select class="form-select" name="pais_nacimiento"
-                                                        id="pais_nacimiento">
-                                                        <option value="">Seleccione</option>
-                                                        @php
-                                                            $paises = [
-                                                                'Venezuela',
-                                                                'Argentina',
-                                                                'Bolivia',
-                                                                'Brasil',
-                                                                'Chile',
-                                                                'Colombia',
-                                                                'Costa Rica',
-                                                                'Cuba',
-                                                                'Ecuador',
-                                                                'El Salvador',
-                                                                'Guayana Francesa',
-                                                                'Granada',
-                                                                'Guatemala',
-                                                                'Guayana',
-                                                                'Haití',
-                                                                'Honduras',
-                                                                'Jamaica',
-                                                                'México',
-                                                                'Nicaragua',
-                                                                'Paraguay',
-                                                                'Panamá',
-                                                                'Perú',
-                                                                'Puerto Rico',
-                                                                'República Dominicana',
-                                                                'Surinam',
-                                                                'Uruguay',
-                                                                'Estados Unidos',
-                                                                'Otro País',
-                                                            ];
-                                                        @endphp
-
-                                                        @foreach ($paises as $pais)
-                                                            <option value="{{ $pais }}">{{ $pais }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6" id="otro_pais_nacimiento_container"
-                                                style="display: none;">
-                                                <div class="mt-0">
-                                                    <label for="otro_pais" class="form-label mb-2">Indique otro
-                                                        país de nacimiento</label>
-                                                    <input type="text" class="form-control"
-                                                        name="otro_pais_nacimientos" id="otro_pais_nacimientos">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <div class="mt-3">
-                                                    <label class="form-label mb-2">Etnia indígena</label>
-                                                    <select class="form-select" name="etnia_indigena"
-                                                        id="etnia_indigena">
-                                                        <option value="">Seleccione</option>
-                                                        @php
-                                                            $etnias_indigenas = [
-                                                                'Akawayo',
-                                                                'Añu',
-                                                                'Banova o Kurripako',
-                                                                'Barí',
-                                                                'Chaima',
-                                                                'Cuiva',
-                                                                'Gayón',
-                                                                'Hoti',
-                                                                'Japrería',
-                                                                'Jirajara',
-                                                                'Jivi',
-                                                                'Kariña',
-                                                                'Maki',
-                                                                'Mapoyo',
-                                                                'Panare',
-                                                                'Pemón',
-                                                                'Piapoko o Wenaiwika',
-                                                                'Puinave',
-                                                                'Pumé',
-                                                                'Sáliba',
-                                                                'Sanema',
-                                                                'Sapé',
-                                                                'Urak',
-                                                                'Waike',
-                                                                'Waikerí',
-                                                                'Wanukia',
-                                                                'Waraos',
-                                                                'Wayúu',
-                                                                'Wottuja-Piaroa',
-                                                                'Yabarana',
-                                                                'Yanomami',
-                                                                'Yekuana',
-                                                                'Yukpa',
-                                                                'Otra Etnia',
-                                                            ];
-                                                        @endphp
-                                                        @foreach ($etnias_indigenas as $etnia)
-                                                            <option value="{{ $etnia }}">{{ $etnia }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6" id="otra_etnia_container" style="display: none;">
-                                                <div class="mt-3">
-                                                    <label for="otra_etnia" class="form-label mb-2">Indique otra
-                                                        etnia</label>
-                                                    <input type="text" class="form-control" name="otra_etnia"
-                                                        id="otra_etnia" disabled>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
                                     </div>
                                 </div>
+
+                                {{-- Educación --}}
+                                <div class="row mt-3" id="bloque_educacion" style="display: none;">
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">* Educación</label>
+                                        <small class="d-block text-muted mb-2">Elegir si estudia NNA</small>
+                                        <div class="row">
+                                            @foreach (['Si estudia', 'No estudia', 'No Aplica'] as $opcion)
+                                                <div class="form-check mb-1">
+                                                    <input class="form-check-input" type="radio" name="educacion"
+                                                        value="{{ $opcion }}" id="{{ Str::slug($opcion, '_') }}"
+                                                        {{ $caso->educacion == $opcion ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="{{ Str::slug($opcion, '_') }}">
+                                                        {{ $opcion }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Nivel educativo y tipo institución --}}
+                                <div class="row mt-3" id="bloque_nivel_educativo_tipo_isntitucion"
+                                    style="display: none;">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">* Nivel educativo cursado</label>
+                                        <select class="form-select" name="nivel_educativo">
+                                            <option value="">Seleccione</option>
+                                            @foreach (['Inicial', 'Primaria', 'Media', 'Técnica', 'Universitaria', 'Misiones', 'Especial', 'Ninguna'] as $nivel)
+                                                <option value="{{ $nivel }}"
+                                                    {{ $caso->nivel_educativo == $nivel ? 'selected' : '' }}>
+                                                    {{ $nivel }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tipo institución</label>
+                                        <select class="form-select" name="tipo_institucion">
+                                            <option value="">Seleccione</option>
+                                            @foreach (['Pública', 'Privada', 'Privada subsidiada', 'Ninguna institución'] as $tipo)
+                                                <option value="{{ $tipo }}"
+                                                    {{ $caso->tipo_institucion == $tipo ? 'selected' : '' }}>
+                                                    {{ $tipo }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Estado mujer --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-8" id="estado-mujer-block" style="display: none;">
+                                        <label class="form-label mb-2">Estado beneficiario (Si es mujer)</label>
+                                        <div class="row">
+                                            @foreach (['Embarazada', 'Lactante', 'No aplica estado'] as $estado)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="estado_mujer[]"
+                                                        value="{{ $estado }}" id="{{ Str::slug($estado, '_') }}"
+                                                        {{ in_array($estado, $estadoMujer) ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="{{ Str::slug($estado, '_') }}">{{ $estado }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Edad beneficiario --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-2">Edad del beneficiario</label>
+                                        <select class="form-select" t id="selectEdad"  name="edad_beneficiario">
+                                            <option value="">Seleccione</option>
+                                            @for ($i = 0; $i <= 100; $i++)
+                                                <option value="{{ $i }}"
+                                                    {{ $caso->edad_beneficiario == $i ? 'selected' : '' }}>
+                                                    {{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                
+
+                                {{-- Población LGBTI --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">Población LGBTI</label><br>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="poblacion_lgbti"
+                                                value="Si" id="poblacion_si"
+                                                {{ $caso->poblacion_lgbti == 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="poblacion_si">Sí</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="poblacion_lgbti"
+                                                value="No" id="poblacion_no"
+                                                {{ $caso->poblacion_lgbti == 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="poblacion_no">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Acompañante --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label mb-2">Acompañante</label>
+                                        <div class="row">
+                                            @foreach (['Padre', 'Madre', 'Representante legal', 'No aplica acompanante'] as $acomp)
+                                                <div class="form-check">
+                                                    <input class="form-check-input acompanante-opcion" type="checkbox"
+                                                        name="acompanante[]" value="{{ $acomp }}"
+                                                        id="{{ Str::slug($acomp, '_') }}"
+                                                        data-es-no-aplica="{{ $acomp === 'No aplica acompanante' ? '1' : '0' }}"
+                                                        {{ in_array($acomp, $acompanantes) ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="{{ Str::slug($acomp, '_') }}">{{ $acomp }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Género representante legal --}}
+                                <div class="row mt-3" id="genero_representante" style="display: none;">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">Género - Representante legal</label><br>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="representante_legal"
+                                                id="mujer" value="Mujer"
+                                                {{ $caso->representante_legal == 'Mujer' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="mujer">Mujer</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="representante_legal"
+                                                id="hombre" value="Hombre"
+                                                {{ $caso->representante_legal == 'Hombre' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="hombre">Hombre</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- País procedencia --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">País de procedencia</label>
+                                        <select class="form-select" name="pais_procedencia" id="pais_procedencia">
+                                            <option value="">Seleccione</option>
+                                            @foreach ($paises as $pais)
+                                                <option value="{{ $pais }}"
+                                                    {{ $caso->pais_procedencia == $pais ? 'selected' : '' }}>
+                                                    {{ $pais }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6" id="otro_pais_container"
+                                        style="{{ $caso->pais_procedencia == 'Otro País' ? '' : 'display: none;' }}">
+                                        <label class="form-label mb-2">Indique otro país</label>
+                                        <input type="text" class="form-control" name="otro_pais" id="otro_pais"
+                                            value="{{ $caso->otro_pais }}">
+                                    </div>
+                                </div>
+
+                                {{-- Nacionalidad del solicitante --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">Nacionalidad del solicitante</label><br>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                name="nacionalidad_solicitante" id="Venezolana" value="Venezolana"
+                                                {{ $caso->nacionalidad_solicitante == 'Venezolana' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="Venezolana">Venezolana</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio"
+                                                name="nacionalidad_solicitante" id="Extranjera" value="Extranjera"
+                                                {{ $caso->nacionalidad_solicitante == 'Extranjera' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="Extranjera">Extranjera</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">Tipo de documento</label>
+                                        <select class="form-select" name="tipo_documento" id="tipo_documento">
+                                            <option value="">Seleccione</option>
+                                            @foreach ($tipo_documento as $tipo)
+                                                <option value="{{ $tipo }}"
+                                                    {{ $caso->tipo_documento == $tipo ? 'selected' : '' }}>
+                                                    {{ $tipo }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- País de nacimiento --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">País de nacimiento</label>
+                                        <select class="form-select" name="pais_nacimiento" id="pais_nacimiento">
+                                            <option value="">Seleccione</option>
+                                            @foreach ($paises as $pais)
+                                                <option value="{{ $pais }}"
+                                                    {{ $caso->pais_nacimiento == $pais ? 'selected' : '' }}>
+                                                    {{ $pais }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6" id="otro_pais_nacimiento_container"
+                                        style="{{ $caso->pais_nacimiento == 'Otro País' ? '' : 'display: none;' }}">
+                                        <label class="form-label mb-2">Indique otro país de nacimiento</label>
+                                        <input type="text" class="form-control" name="otro_pais_nacimientos"
+                                            id="otro_pais_nacimientos" value="{{ $caso->otro_pais_nacimientos }}">
+                                    </div>
+                                </div>
+
+                                {{-- Etnia indígena --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-2">Etnia indígena</label>
+                                        <select class="form-select" name="etnia_indigena" id="etnia_indigena">
+                                            <option value="">Seleccione</option>
+                                            @foreach ($etnias_indigenas as $etnia)
+                                                <option value="{{ $etnia }}"
+                                                    {{ $caso->etnia_indigena == $etnia ? 'selected' : '' }}>
+                                                    {{ $etnia }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6" id="otra_etnia_container"
+                                        style="{{ $caso->etnia_indigena == 'Otra Etnia' ? '' : 'display: none;' }}">
+                                        <label class="form-label mb-2">Indique otra etnia</label>
+                                        <input type="text" class="form-control" name="otra_etnia" id="otra_etnia"
+                                            value="{{ $caso->otra_etnia }}">
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div class="tab-pane" id="tab3">
 
+                                @php
+                                    $servicios_cosude = [
+                                        'Kits de higiene personal',
+                                        'Kit de alimentación (cesta de alimentos)',
+                                        'Platos servidos',
+                                        'Movilizaciones por caso',
+                                        'Hospedaje',
+                                        'Ningún servicio COSUDE',
+                                    ];
+
+                                    $servicios_unicef = [
+                                        'Kits de higiene (NNA)',
+                                        'Viáticos alimentos',
+                                        'Traslado (NNA)',
+                                        'Traslado seguimiento',
+                                        'Traslado consejeros',
+                                        'Traslado personal ASONACOP',
+                                        'Orientación',
+                                        'Orientación legal',
+                                        'Kits de alimentación (ASONACOP)',
+                                        'Kits de higiene (ASONACOP)',
+                                        'Ningún servicio UNICEF',
+                                    ];
+
+                                    $tipos_actuacion = [
+                                        'Gestoría de casos',
+                                        'Derivaciones',
+                                        'Asistencia jurídica',
+                                        'Asesorías',
+                                        'Orientaciones',
+                                        'Otros tipos de actuación',
+                                    ];
+
+                                    $serviciosCosude = is_array($serviciosCosude ?? null)
+                                        ? $serviciosCosude
+                                        : explode(',', $caso->servicio_brindado_cosude ?? '');
+                                    $serviciosUnicef = is_array($serviciosUnicef ?? null)
+                                        ? $serviciosUnicef
+                                        : explode(',', $caso->servicio_brindado_unicef ?? '');
+                                    $tipoActuacion = is_array($tipoActuacion ?? null)
+                                        ? $tipoActuacion
+                                        : explode(',', $caso->tipo_actuacion ?? '');
+                                @endphp
+
+
                                 <div class="row mt-3" id="servicios_brindados_cosude_container" style="display: none;">
                                     <div class="col-md-12">
-                                        <div class="mt-0">
-                                            <label class="form-label mb-2 fw-bold">Servicios brindados
-                                                COSUDE</label>
-                                            <div class="row">
-                                                @php
-                                                    $servicios_cosude = [
-                                                        'Kits de higiene personal',
-                                                        'Kit de alimentación (cesta de alimentos)',
-                                                        'Platos servidos',
-                                                        'Movilizaciones por caso',
-                                                        'Hospedaje',
-                                                        'Ningún servicio COSUDE',
-                                                    ];
-
-                                                @endphp
-
-                                                @foreach ($servicios_cosude as $servicio)
-                                                    <div class="col-md-4">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="servicio_brindado_cosude[]"
-                                                                value="{{ $servicio }}"
-                                                                id="{{ Str::slug($servicio, '_') }}">
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($servicio, '_') }}">
-                                                                {{ $servicio }}
-                                                            </label>
-                                                        </div>
+                                        <label class="form-label mb-2 fw-bold">Servicios brindados COSUDE</label>
+                                        <div class="row">
+                                            @foreach ($servicios_cosude as $servicio)
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="servicio_brindado_cosude[]" value="{{ $servicio }}"
+                                                            id="{{ Str::slug($servicio, '_') }}"
+                                                            {{ in_array($servicio, $serviciosCosude) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($servicio, '_') }}">{{ $servicio }}</label>
                                                     </div>
-                                                @endforeach
-                                            </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row mt-3" id="servicios_brindados_unicef_block" style="display: none;">
-                                    <div class="mt-0 col-md-12">
-                                        <label class="form-label mb-2 fw-bold">Servicos brindados
-                                            UNICEF</label>
+                                    <div class="col-md-12">
+                                        <label class="form-label mb-2 fw-bold">Servicios brindados UNICEF</label>
                                         <div class="row">
-                                            @php
-                                                $servicios_unicef = [
-                                                    'Kits de higiene (NNA)',
-                                                    'Viáticos alimentos',
-                                                    'Traslado (NNA)',
-                                                    'Traslado seguimiento',
-                                                    'Traslado consejeros',
-                                                    'Traslado personal ASONACOP',
-                                                    'Orientación',
-                                                    'Orientación legal',
-                                                    'Kits de alimentación (ASONACOP)',
-                                                    'Kits de higiene (ASONACOP)',
-                                                    'Ningún servicio UNICEF',
-                                                ];
-
-                                            @endphp
-
                                             @foreach ($servicios_unicef as $servicio)
                                                 <div class="col-md-4">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox"
                                                             name="servicio_brindado_unicef[]" value="{{ $servicio }}"
-                                                            id="{{ Str::slug($servicio, '_') }}">
+                                                            id="{{ Str::slug($servicio, '_') }}"
+                                                            {{ in_array($servicio, $serviciosUnicef) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
-                                                            for="{{ Str::slug($servicio, '_') }}">
-                                                            {{ $servicio }}
-                                                        </label>
+                                                            for="{{ Str::slug($servicio, '_') }}">{{ $servicio }}</label>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -821,7 +761,10 @@
                                         <select id="estadoDestinoSelect" class="form-select" name="estado_destino_id">
                                             <option value="">Seleccione</option>
                                             @foreach ($estados as $estado)
-                                                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                                                <option value="{{ $estado->id }}"
+                                                    {{ $caso->estado_destino_id == $estado->id ? 'selected' : '' }}>
+                                                    {{ $estado->nombre }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -831,7 +774,9 @@
                                             destino</label>
                                         <select id="municipioDestinoSelect" class="form-select"
                                             name="municipio_destino_id">
-                                            <option value="">Seleccione</option>
+                                            <option value="{{ $caso->municipio_destino_id }}">
+                                                {{ $caso->municipioDestino->nombre ?? 'Seleccione' }}
+                                            </option>
                                         </select>
                                     </div>
 
@@ -840,29 +785,26 @@
                                             destino</label>
                                         <select id="parroquiaDestinoSelect" class="form-select"
                                             name="parroquia_destino_id">
-                                            <option value="">Seleccione</option>
+                                            <option value="{{ $caso->parroquia_destino_id }}">
+                                                {{ $caso->parroquiaDestino->nombre ?? 'Seleccione' }}
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
 
+
                                 <div class="row mt-3">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="direccion_domicilio" class="form-label mb-2">Direccion de
-                                                domicilio </label>
-                                            <input type="text" class="form-control" name="direccion_domicilio"
-                                                value="">
-                                        </div>
+                                        <label for="direccion_domicilio" class="form-label mb-2">Dirección de
+                                            domicilio</label>
+                                        <input type="text" class="form-control" name="direccion_domicilio"
+                                            value="{{ old('direccion_domicilio', $caso->direccion_domicilio) }}">
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="numero_contacto" class="form-label mb-2">Numero de
-                                                contacto</label>
-                                            <input type="text" class="form-control" name="numero_contacto"
-                                                value="">
-                                        </div>
+                                        <label for="numero_contacto" class="form-label mb-2">Número de contacto</label>
+                                        <input type="text" class="form-control" name="numero_contacto"
+                                            value="{{ old('numero_contacto', $caso->numero_contacto) }}">
                                     </div>
-
                                 </div>
 
                                 <div class="row mt-3">
@@ -870,35 +812,26 @@
                                         <label class="form-label fw-bold">* Tipo de actuación</label>
                                         <small class="d-block text-muted mb-2">Seleccionar si aplica</small>
                                         <div class="row">
-                                            @php
-                                                $tipos_actuacion = [
-                                                    'Gestoría de casos',
-                                                    'Derivaciones',
-                                                    'Asistencia jurídica',
-                                                    'Asesorías',
-                                                    'Orientaciones',
-                                                    'Otros tipos de actuación',
-                                                ];
-                                            @endphp
-
                                             @foreach ($tipos_actuacion as $tipo)
-                                                <div class="form-check">
+                                                <div class="form-check col-md-4">
                                                     <input class="form-check-input" type="checkbox"
                                                         name="tipo_actuacion[]" value="{{ $tipo }}"
-                                                        id="{{ Str::slug($tipo, '_') }}">
-                                                    <label class="form-check-label" for="{{ Str::slug($tipo, '_') }}">
-                                                        {{ $tipo }}
-                                                    </label>
+                                                        id="{{ Str::slug($tipo, '_') }}"
+                                                        {{ in_array($tipo, $tipoActuacion) ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="{{ Str::slug($tipo, '_') }}">{{ $tipo }}</label>
                                                 </div>
                                             @endforeach
                                         </div>
 
                                         {{-- Campo extra visible solo si se marca "Otros tipos de actuación" --}}
-                                        <div class="mt-3" id="otros_actuacion_container" style="display: none;">
+                                        <div class="mt-3" id="otros_actuacion_container"
+                                            style="{{ in_array('Otros tipos de actuación', $tipoActuacion) ? '' : 'display: none;' }}">
                                             <label for="otros_actuacion_texto" class="form-label">Describa otro tipo de
                                                 actuación</label>
                                             <input type="text" class="form-control" name="otros_actuacion_descripcion"
-                                                id="otros_actuacion_texto" placeholder="Especifique...">
+                                                id="otros_actuacion_texto" placeholder="Especifique..."
+                                                value="{{ old('otros_actuacion_descripcion', $caso->otros_actuacion_descripcion) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -907,179 +840,160 @@
 
                             <div class="tab-pane" id="tab4">
 
-                                {{-- VULNERABILIDADES --}}
-                                <div class="row mt-3">
-                                    <div class="col-md-12">
-                                        <label class="form-label fw-bold">Vulnerabilidades</label>
-                                        <small class="d-block text-muted mb-2">Elegir varias opciones de ser
-                                            necesario</small>
-                                        <div class="row">
-                                            @php
-                                                $vulnerabilidades = [
-                                                    'NNA separados',
-                                                    'NNA no acompañados',
-                                                    'Violencia física / abuso físico / castigo físico',
-                                                    'Violencia verbal / violencia emocional o psicológica / abuso emocional',
-                                                    'Violencia sexual / abuso sexual / explotación sexual / VBG / VSBG',
-                                                    'Negligencia',
-                                                    'Violencia familiar',
-                                                    'No tiene documentos de identidad o de identificación (EV25, acta de nacimiento u otro documento de identificación)',
-                                                    'NNA fuera de la escuela (NFE) / desescolarizados',
-                                                    'Acoso escolar',
-                                                    'Violencia online (grooming, sextorsión, cyberbullying)',
-                                                    'Aflicción emocional / alteraciones emocionales / trastorno psicosocial / problemas de salud mental / angustia / trastorno de estrés postraumático',
-                                                    'Matrimonio infantil / uniones tempranas',
-                                                    'Embarazo adolescente / niña o adolescente madre o niño o adolescente padre',
-                                                    'NNA con discapacidades o enfermedad crónica',
-                                                    'NNA privados de cuidados parentales o de sus cuidadores legales o consuetudinarios / NNA que aparentemente no tienen un cuidador principal o circunstancial / orfandad',
-                                                    'Uso o abuso de sustancias psicoactivas / consumo de drogas / dependencia de drogas',
-                                                    'Discriminación a grupos minoritarios (etnias, LGBTIQ+, VIH, etc)',
-                                                    'NNA asociados o involucrados con fuerzas o grupos armados irregulares',
-                                                    'Niños en situación de calle / mendicidad',
-                                                    'NNA que incurren en hechos punibles (menores de 14 años) / adolescentes en conflicto con la ley penal',
-                                                    'Trabajo infantil / explotación laboral',
-                                                    'NNA víctimas de trata o tráfico',
-                                                    'Dificultad o falta de acceso a servicios básicos',
-                                                    'No se identifica vulnerabilidad',
-                                                ];
-                                            @endphp
+                                @php
+                                    $vulnerabilidades = [
+                                        'NNA separados',
+                                        'NNA no acompañados',
+                                        'Violencia física / abuso físico / castigo físico',
+                                        'Violencia verbal / violencia emocional o psicológica / abuso emocional',
+                                        'Violencia sexual / abuso sexual / explotación sexual / VBG / VSBG',
+                                        'Negligencia',
+                                        'Violencia familiar',
+                                        'No tiene documentos de identidad o de identificación (EV25, acta de nacimiento u otro documento de identificación)',
+                                        'NNA fuera de la escuela (NFE) / desescolarizados',
+                                        'Acoso escolar',
+                                        'Violencia online (grooming, sextorsión, cyberbullying)',
+                                        'Aflicción emocional / alteraciones emocionales / trastorno psicosocial / problemas de salud mental / angustia / trastorno de estrés postraumático',
+                                        'Matrimonio infantil / uniones tempranas',
+                                        'Embarazo adolescente / niña o adolescente madre o niño o adolescente padre',
+                                        'NNA con discapacidades o enfermedad crónica',
+                                        'NNA privados de cuidados parentales o de sus cuidadores legales o consuetudinarios / NNA que aparentemente no tienen un cuidador principal o circunstancial / orfandad',
+                                        'Uso o abuso de sustancias psicoactivas / consumo de drogas / dependencia de drogas',
+                                        'Discriminación a grupos minoritarios (etnias, LGBTIQ+, VIH, etc)',
+                                        'NNA asociados o involucrados con fuerzas o grupos armados irregulares',
+                                        'Niños en situación de calle / mendicidad',
+                                        'NNA que incurren en hechos punibles (menores de 14 años) / adolescentes en conflicto con la ley penal',
+                                        'Trabajo infantil / explotación laboral',
+                                        'NNA víctimas de trata o tráfico',
+                                        'Dificultad o falta de acceso a servicios básicos',
+                                        'No se identifica vulnerabilidad',
+                                    ];
 
-                                            @foreach ($vulnerabilidades as $vulnerabilidad)
-                                                <div class="col-md-12">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="vulnerabilidades[]" value="{{ $vulnerabilidad }}"
-                                                            id="{{ Str::slug($vulnerabilidad, '_') }}">
-                                                        <label class="form-check-label"
-                                                            for="{{ Str::slug($vulnerabilidad, '_') }}">
-                                                            {{ $vulnerabilidad }}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            @endforeach
+                                    // Decodificar el JSON
+                                    $vulnerabilidadesSeleccionadas = json_decode($caso->vulnerabilidades ?? '[]', true);
+                                @endphp
+
+                                @foreach ($vulnerabilidades as $vulnerabilidad)
+                                    <div class="col-md-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="vulnerabilidades[]"
+                                                value="{{ $vulnerabilidad }}"
+                                                id="{{ Str::slug($vulnerabilidad, '_') }}"
+                                                {{ in_array($vulnerabilidad, $vulnerabilidadesSeleccionadas) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="{{ Str::slug($vulnerabilidad, '_') }}">
+                                                {{ $vulnerabilidad }}
+                                            </label>
                                         </div>
                                     </div>
-                                </div>
+                                @endforeach
 
                             </div>
 
                             <div class="tab-pane" id="tab5">
-                                {{-- DERECHOS VULNERADOS --}}
+                                @php
+                                    $derechosVulneradosSeleccionados = json_decode(
+                                        $caso->derechos_vulnerados ?? '[]',
+                                        true,
+                                    );
+
+                                    $derechos_vulnerados = [
+                                        'Artículo 15 Derecho a la vida',
+                                        'Artículo 16 Derecho a un nombre y a una nacionalidad',
+                                        'Artículo 17 Derecho a la identificación',
+                                        'Artículo 18 Derecho a ser inscrito o inscrita en el registro del estado civil',
+                                        'Artículo 22 Derecho a documentos públicos de identidad',
+                                        'Artículo 23 Dotación de recursos',
+                                        'Artículo 24 Promoción del reconocimiento de hijos e hijas',
+                                        'Artículo 25 Derecho a conocer a su padre y madre y a ser cuidados por ellos',
+                                        'Artículo 26 Derecho a ser criado en una familia',
+                                        'Artículo 27 Derecho a mantener relaciones personales y contacto directo con el padre y la madre',
+                                        'Artículo 28 Derecho al libre desarrollo de la personalidad',
+                                        'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades especiales',
+                                        'Artículo 30 Derecho a un nivel de vida adecuado',
+                                        'Artículo 32 Derecho a la integridad personal',
+                                        'Artículo 32-A. Derecho al buen trato',
+                                        'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación sexual',
+                                        'Artículo 34 Servicios forenses',
+                                        'Artículo 35 Derecho a la libertad de pensamiento, conciencia y religión',
+                                        'Artículo 36 Derechos culturales de las minorías',
+                                        'Artículo 37 Derecho a la libertad personal',
+                                        'Artículo 38 Prohibición de esclavitud, servidumbre y trabajo forzoso',
+                                        'Artículo 39 Derecho a la libertad de tránsito',
+                                        'Artículo 40 Protección contra el traslado ilícito',
+                                        'Artículo 41 Derecho a la salud y a servicios de salud',
+                                        'Artículo 42 Responsabilidad del padre, la madre, representantes o responsables en materia de salud',
+                                        'Artículo 43 Derecho a información en materia de salud',
+                                        'Artículo 44 Protección de la maternidad',
+                                        'Artículo 45 Protección del vínculo materno-filial',
+                                        'Artículo 46 Lactancia materna',
+                                        'Artículo 47 Derecho a ser vacunado o vacunada',
+                                        'Artículo 48 Derecho a atención médica de emergencia',
+                                        'Artículo 49 Permanencia del niño, niña o adolescente junto a su padre, madre, representante o responsable',
+                                        'Artículo 50 Salud sexual y reproductiva',
+                                        'Artículo 51 Protección contra sustancias alcohólicas, estupefacientes y psicotrópicas',
+                                        'Artículo 52 Derecho a la seguridad social',
+                                        'Artículo 53 Derecho a la educación',
+                                        'Artículo 54 Obligación del padre, de la madre, representantes o responsables en materia de educación',
+                                        'Artículo 55 Derecho a participar en el proceso de educación',
+                                        'Artículo 56 Derecho a ser respetados y respetadas por los educadores y educadoras',
+                                        'Artículo 57 Disciplina escolar acorde con los derechos y garantías de los niños, niñas y adolescentes',
+                                        'Artículo 58 Vínculo entre la educación y el trabajo',
+                                        'Artículo 59 Educación para niños, niñas y adolescentes trabajadores y trabajadoras',
+                                        'Artículo 60 Educación de niños, niñas y adolescentes indígenas',
+                                        'Artículo 61 Educación de niños, niñas y adolescentes con necesidades especiales',
+                                        'Artículo 62 Difusión de los derechos y garantías de los niños, niñas y adolescentes',
+                                        'Artículo 63 Derecho al descanso, recreación, esparcimiento, deporte y juego',
+                                        'Artículo 64 Espacios e instalaciones para el descanso, recreación, esparcimiento, deporte y juego',
+                                        'Artículo 65 Derecho al honor, reputación, propia imagen, vida privada e intimidad familiar',
+                                        'Artículo 66 Derecho a la inviolabilidad del hogar y de la correspondencia',
+                                        'Artículo 67 Derecho a la libertad de expresión',
+                                        'Artículo 68 Derecho a la información',
+                                        'Artículo 69 Educación crítica para medios de comunicación',
+                                        'Artículo 70 Mensajes de los medios de comunicación acordes con necesidades de los niños, niñas y adolescentes',
+                                        'Artículo 71 Garantía de mensajes e informaciones adecuadas',
+                                        'Artículo 72 Programaciones dirigidas a niños, niñas y adolescentes',
+                                        'Artículo 73 Del fomento a la creación, producción y difusión de información dirigida a niños, niñas y adolescentes',
+                                        'Artículo 74 Envoltura para los medios que contengan informaciones e imágenes inadecuadas para niños, niñas y adolescentes',
+                                        'Artículo 75 Informaciones e imágenes prohibidas en medios dirigidos a niños, niñas y adolescentes',
+                                        'Artículo 76 Acceso a espectáculos públicos, salas y lugares de exhibición',
+                                        'Artículo 77 Información sobre espectáculos públicos, exhibiciones y programas',
+                                        'Artículo 78 Prevención contra juegos computarizados y electrónicos nocivos',
+                                        'Artículo 79 Prohibiciones para la protección de los derechos de información y a un entorno sano',
+                                        'Artículo 80 Derecho a opinar y a ser oído y oída',
+                                        'Artículo 81 Derecho a participar',
+                                        'Artículo 82 Derecho de reunión',
+                                        'Artículo 83 Derecho de manifestar',
+                                        'Artículo 84 Derecho de libre asociación',
+                                        'Artículo 85 Derecho de petición',
+                                        'Artículo 86 Derecho a defender sus derechos',
+                                        'Artículo 87 Derecho a la justicia',
+                                        'Artículo 88 Derecho a la defensa y al debido proceso',
+                                        'Artículo 89 Derecho a un trato humanitario y digno',
+                                        'Artículo 90 Garantías del o de la adolescente sometido al sistema penal de responsabilidad de adolescentes',
+                                        'Artículo 91 Deber y derecho de denunciar amenazas y violaciones de los derechos y garantías de los niños, niñas y adolescentes',
+                                        'Artículo 92 Prevención',
+                                        'Artículo 93 Deberes NNA',
+                                        'Artículo 96 Edad mínima. Parágrafo Tercero',
+                                        'Artículo 96 Edad mínima. Parágrafo Quinto',
+                                        'Artículo 98 Registro adolescente trabajador',
+                                        'Artículo 99 Credencial de trabajador',
+                                        'NO Aplica Derechos Vulnerados',
+                                    ];
+                                @endphp
+
                                 <div class="row mt-3">
                                     <div class="col-md-12">
                                         <label class="form-label fw-bold">Derechos vulnerados</label>
                                         <small class="d-block text-muted mb-2">Elegir varias opciones de ser
                                             necesario</small>
                                         <div class="row">
-                                            @php
-                                                $derechos_vulnerados = [
-                                                    'Artículo 15 Derecho a la vida',
-                                                    'Artículo 16 Derecho a un nombre y a una nacionalidad',
-                                                    'Artículo 17 Derecho a la identificación',
-                                                    'Artículo 18 Derecho a ser inscrito o inscrita en el registro del estado civil',
-                                                    'Artículo 22 Derecho a documentos públicos de identidad',
-                                                    'Artículo 23 Dotación de recursos',
-                                                    'Artículo 24 Promoción del reconocimiento de hijos e hijas',
-                                                    'Artículo 25 Derecho a conocer a su padre y madre y a ser cuidados por ellos',
-                                                    'Artículo 26 Derecho a ser criado en una familia',
-                                                    'Artículo 27 Derecho a mantener relaciones personales y contacto directo con el padre y la madre',
-                                                    'Artículo 28 Derecho al libre desarrollo de la personalidad',
-                                                    'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades especiales',
-                                                    'Artículo 30 Derecho a un nivel de vida adecuado',
-                                                    'Artículo 32 Derecho a la integridad personal',
-                                                    'Artículo 32-A. Derecho al buen trato',
-                                                    'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación sexual',
-                                                    'Artículo 34 Servicios forenses',
-                                                    'Artículo 35 Derecho a la libertad de pensamiento, conciencia y religión',
-                                                    'Artículo 36 Derechos culturales de las minorías',
-                                                    'Artículo 37 Derecho a la libertad personal',
-                                                    'Artículo 38 Prohibición de esclavitud, servidumbre y trabajo forzoso',
-                                                    'Artículo 39 Derecho a la libertad de tránsito',
-                                                    'Artículo 40 Protección contra el traslado ilícito',
-                                                    'Artículo 41 Derecho a la salud y a servicios de salud',
-                                                    'Artículo 42 Responsabilidad del padre, la madre, representantes o responsables en materia de salud',
-                                                    'Artículo 43 Derecho a información en materia de salud',
-                                                    'Artículo 44 Protección de la maternidad',
-                                                    'Artículo 45 Protección del vínculo materno-filial',
-                                                    'Artículo 46 Lactancia materna',
-                                                    'Artículo 47 Derecho a ser vacunado o vacunada',
-                                                    'Artículo 48 Derecho a atención médica de emergencia',
-                                                    'Artículo 49 Permanencia del niño, niña o adolescente junto a su padre, madre,
-                                        representante o responsable',
-                                                    'Artículo 50 Salud sexual y reproductiva',
-                                                    'Artículo 51 Protección contra sustancias alcohólicas, estupefacientes y
-                                        psicotrópicas',
-                                                    'Artículo 52 Derecho a la seguridad social',
-                                                    'Artículo 53 Derecho a la educación',
-                                                    'Artículo 54 Obligación del padre, de la madre, representantes o responsables en
-                                        materia de educación',
-                                                    'Artículo 55 Derecho a participar en el proceso de educación',
-                                                    'Artículo 56 Derecho a ser respetados y respetadas por los educadores y
-                                        educadoras',
-                                                    'Artículo 57 Disciplina escolar acorde con los derechos y garantías de los
-                                        niños, niñas y adolescentes',
-                                                    'Artículo 58 Vínculo entre la educación y el trabajo',
-                                                    'Artículo 59 Educación para niños, niñas y adolescentes trabajadores y
-                                        trabajadoras',
-                                                    'Artículo 60 Educación de niños, niñas y adolescentes indígenas',
-                                                    'Artículo 61 Educación de niños, niñas y adolescentes con necesidades
-                                        especiales',
-                                                    'Artículo 62 Difusión de los derechos y garantías de los niños, niñas y
-                                        adolescentes',
-                                                    'Artículo 63 Derecho al descanso, recreación, esparcimiento, deporte y juego',
-                                                    'Artículo 64 Espacios e instalaciones para el descanso, recreación,
-                                        esparcimiento, deporte y juego',
-                                                    'Artículo 65 Derecho al honor, reputación, propia imagen, vida privada e
-                                        intimidad familiar',
-                                                    'Artículo 66 Derecho a la inviolabilidad del hogar y de la correspondencia',
-                                                    'Artículo 67 Derecho a la libertad de expresión',
-                                                    'Artículo 68 Derecho a la información',
-                                                    'Artículo 69 Educación crítica para medios de comunicación',
-                                                    'Artículo 70 Mensajes de los medios de comunicación acordes con necesidades de
-                                        los niños, niñas y adolescentes',
-                                                    'Artículo 71 Garantía de mensajes e informaciones adecuadas',
-                                                    'Artículo 72 Programaciones dirigidas a niños, niñas y adolescentes',
-                                                    'Artículo 73 Del fomento a la creación, producción y difusión de información
-                                        dirigida a niños, niñas y adolescentes',
-                                                    'Artículo 74 Envoltura para los medios que contengan informaciones e imágenes
-                                        inadecuadas para niños, niñas y adolescentes',
-                                                    'Artículo 75 Informaciones e imágenes prohibidas en medios dirigidos a niños,
-                                        niñas y adolescentes',
-                                                    'Artículo 76 Acceso a espectáculos públicos, salas y lugares de exhibición',
-                                                    'Artículo 77 Información sobre espectáculos públicos, exhibiciones y programas',
-                                                    'Artículo 78 Prevención contra juegos computarizados y electrónicos nocivos',
-                                                    'Artículo 79 Prohibiciones para la protección de los derechos de información y a
-                                        un entorno sano',
-                                                    'Artículo 80 Derecho a opinar y a ser oído y oída',
-                                                    'Artículo 81 Derecho a participar',
-                                                    'Artículo 82 Derecho de reunión',
-                                                    'Artículo 83 Derecho de manifestar',
-                                                    'Artículo 84 Derecho de libre asociación',
-                                                    'Artículo 85 Derecho de petición',
-                                                    'Artículo 86 Derecho a defender sus derechos',
-                                                    'Artículo 87 Derecho a la justicia',
-                                                    'Artículo 88 Derecho a la defensa y al debido proceso',
-                                                    'Artículo 89 Derecho a un trato humanitario y digno',
-                                                    'Artículo 90 Garantías del o de la adolescente sometido al sistema penal de
-                                        responsabilidad de adolescentes',
-                                                    'Artículo 91 Deber y derecho de denunciar amenazas y violaciones de los derechos
-                                        y garantías de los niños, niñas y adolescentes',
-                                                    'Artículo 92 Prevención',
-                                                    'Artículo 93 Deberes NNA',
-                                                    'Artículo 96 Edad mínima. Parágrafo Tercero',
-                                                    'Artículo 96 Edad mínima. Parágrafo Quinto',
-                                                    'Artículo 98 Registro adolescente trabajador',
-                                                    'Artículo 99 Credencial de trabajador',
-                                                    'NO Aplica Derechos Vulnerados',
-                                                ];
-                                            @endphp
-
                                             @foreach ($derechos_vulnerados as $derecho)
                                                 <div class="col-md-4">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox"
                                                             name="derechos_vulnerados[]" value="{{ $derecho }}"
-                                                            id="{{ Str::slug($derecho, '_') }}">
+                                                            id="{{ Str::slug($derecho, '_') }}"
+                                                            {{ in_array($derecho, $derechosVulneradosSeleccionados) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
                                                             for="{{ Str::slug($derecho, '_') }}">
                                                             {{ $derecho }}
@@ -1095,136 +1009,152 @@
                             </div>
 
                             <div class="tab-pane" id="tab6">
+                                @php
+                                    $tipos_violencia = [
+                                        'Violencia Psicológica (Conductas amenazantes que no necesariamente implican violencia física ni abuso verbal)',
+                                        'Violencia Física (Todo aquel acto que intenta provocar o provoca dolor o daño físico a la víctima que a través de la agresión)',
+                                        'Prácticas tradicionales nocivas (Prácticas discriminatorias que las comunidades y las sociedades realizan de manera regular)',
+                                        'Violencia Sexual (Todo acto sexual realizado contra la voluntad de otra persona)',
+                                        'Violencia Vicaría',
+                                        'Violencia Económica (Reducción y privación de recursos económicos)',
+                                        'No se identifica VBG',
+                                    ];
 
-                                {{-- IDENTIFICACIÓN DE VIOLENCIA BASADA EN GÉNERO --}}
-                                <div class="row mt-3">
-                                    <div class="col-md-12">
-                                        <label class="form-label fw-bold">Identificación de violencia basada en género
-                                            VBG</label>
-                                        <small class="d-block text-muted mb-2">Elegir varias opciones de ser
-                                            necesario</small>
-                                        <div class="row">
-                                            @php
-                                                $tipos_violencia = [
-                                                    'Violencia Psicológica (Conductas amenazantes que no necesariamente implican
-                                        violencia física ni abuso verbal)',
-                                                    'Violencia Física (Todo aquel acto que intenta provocar o provoca dolor o daño
-                                        físico a la víctima que a través de la agresión)',
-                                                    'Prácticas tradicionales nocivas (Prácticas discriminatorias que las comunidades
-                                        y las sociedades realizan de manera regular)',
-                                                    'Violencia Sexual (Todo acto sexual realizado contra la voluntad de otra
-                                        persona)',
-                                                    'Violencia Vicaría',
-                                                    'Violencia Económica (Reducción y privación de recursos económicos)',
-                                                    'No se identifica VBG',
-                                                ];
-                                            @endphp
+                                    $tipos_vicaria = [
+                                        'Violencia vincular (destruir el vínculo hijo/madre)',
+                                        'Violencia económica (privar de manutención)',
+                                        'Violencia psicológica y física (agresión directa a NNA, exposición a insultos de desvalorización madre)',
+                                        'Violencia judicial/administrativa (instrumentalización de entes abruman con demandas)',
+                                        'Negligencia (conductas de descuido a NNA)',
+                                        'Abuso sexual (asociados a VBG)',
+                                        'Muerte (a NNA vinculadas a la VBG padres/parejas)',
+                                        'Institucional (por no manejo de perspectiva de género por sesgo androadultocéntrico)',
+                                    ];
 
-                                            @foreach ($tipos_violencia as $violencia)
-                                                <div class="col-md-6">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="identificacion_violencia[]" value="{{ $violencia }}"
-                                                            id="{{ Str::slug($violencia, '_') }}">
-                                                        <label class="form-check-label"
-                                                            for="{{ Str::slug($violencia, '_') }}">
-                                                            {{ $violencia }}
-                                                        </label>
+                                    $remisiones = [
+                                        'Para EMD ASONACOP',
+                                        'Para Consejo de Proteccion NNA',
+                                        'Para Defensoría de NNA',
+                                        'A programas sociales del estado',
+                                        'Cita para seguimiento',
+                                        'Derivar a psiquiatría',
+                                        'Derivar a Servicios de atención en salud provenciado por otras organizaciones',
+                                        'Derivar a Servicios de atención Psicosocial',
+                                        'Para Ministerio Público /Fiscalía especializada',
+                                        'Para Registro civil',
+                                        'Para servicios de salud',
+                                        'Remitir con Informe diagnostico al Consejo de Proteccion NNA',
+                                        'Para SAIME',
+                                        'Otras Remisiones',
+                                        'Sin Remisión',
+                                    ];
+
+                                    $violenciasMarcadas = collect(
+                                        json_decode($caso->identificacion_violencia, true) ?: [],
+                                    )
+                                        ->map(fn($v) => trim(preg_replace('/\s+/', ' ', $v)))
+                                        ->toArray();
+
+                                    $vicariasMarcadas = collect(json_decode($caso->tipos_violencia_vicaria, true) ?: [])
+                                        ->map(fn($v) => trim(preg_replace('/\s+/', ' ', $v)))
+                                        ->toArray();
+
+                                    $remisionesMarcadas = collect(json_decode($caso->remisiones, true) ?: [])
+                                        ->map(fn($v) => trim($v))
+                                        ->toArray();
+                                @endphp
+
+                                <div>
+                                    {{-- IDENTIFICACIÓN DE VIOLENCIA BASADA EN GÉNERO --}}
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold">Identificación de violencia basada en género
+                                                VBG</label>
+                                            <small class="d-block text-muted mb-2">Elegir varias opciones de ser
+                                                necesario</small>
+                                            <div class="row">
+                                                @foreach ($tipos_violencia as $violencia)
+                                                    @php $valor = trim(preg_replace('/\s+/', ' ', $violencia)); @endphp
+                                                    <div class="col-md-6">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="identificacion_violencia[]"
+                                                                value="{{ $valor }}"
+                                                                id="{{ Str::slug($valor, '_') }}"
+                                                                {{ in_array($valor, $violenciasMarcadas) ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ Str::slug($valor, '_') }}">
+                                                                {{ $violencia }}
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {{-- TIPOS DE VIOLENCIA VICARIA --}}
-                                <div class="row mt-3" id="bloque_tipos_vicaria" style="display: none;">
-                                    <div class="col-md-12">
-                                        <label class="form-label fw-bold">Tipos de violencia vicaria</label>
-                                        <small class="d-block text-muted mb-2">Elegir varias opciones de ser
-                                            necesario</small>
-                                        <div class="row">
-                                            @php
-                                                $tipos_vicaria = [
-                                                    'Violencia vincular (destruir el vínculo hijo/madre)',
-                                                    'Violencia económica (privar de manutención)',
-                                                    'Violencia psicológica y física (agresión directa a NNA, exposición a
-                                            insultos de desvalorización madre)',
-                                                    'Violencia judicial/administrativa (instrumentalización de entes abruman con
-                                            demandas)',
-                                                    'Negligencia (conductas de descuido a NNA)',
-                                                    'Abuso sexual (asociados a VBG)',
-                                                    'Muerte (a NNA vinculadas a la VBG padres/parejas)',
-                                                    'Institucional (por no manejo de perspectiva de género por sesgo
-                                            androadultocéntrico)',
-                                                ];
-                                            @endphp
-
-                                            @foreach ($tipos_vicaria as $vicaria)
-                                                <div class="col-md-6">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="tipos_violencia_vicaria[]" value="{{ $vicaria }}"
-                                                            id="{{ Str::slug($vicaria, '_') }}">
-                                                        <label class="form-check-label"
-                                                            for="{{ Str::slug($vicaria, '_') }}">
-                                                            {{ $vicaria }}
-                                                        </label>
+                                    {{-- TIPOS DE VIOLENCIA VICARIA --}}
+                                    <div class="row mt-3" id="bloque_tipos_vicaria"
+                                        style="{{ in_array('Violencia Vicaría', $violenciasMarcadas) ? '' : 'display: none;' }}">
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold">Tipos de violencia vicaria</label>
+                                            <small class="d-block text-muted mb-2">Elegir varias opciones de ser
+                                                necesario</small>
+                                            <div class="row">
+                                                @foreach ($tipos_vicaria as $vicaria)
+                                                    @php $valor = trim(preg_replace('/\s+/', ' ', $vicaria)); @endphp
+                                                    <div class="col-md-6">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="tipos_violencia_vicaria[]"
+                                                                value="{{ $valor }}"
+                                                                id="{{ Str::slug($valor, '_') }}"
+                                                                {{ in_array($valor, $vicariasMarcadas) ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ Str::slug($valor, '_') }}">
+                                                                {{ $vicaria }}
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                {{-- REMISIONES --}}
-                                <div class="row mt-3">
-                                    <div class="col-md-12">
-                                        <label class="form-label fw-bold">Remisiones</label>
-                                        <div class="row">
-                                            @php
-                                                $remisiones = [
-                                                    'Para EMD ASONACOP',
-                                                    'Para Consejo de Proteccion NNA',
-                                                    'Para Defensoría de NNA',
-                                                    'A programas sociales del estado',
-                                                    'Cita para seguimiento',
-                                                    'Derivar a psiquiatría',
-                                                    'Derivar a Servicios de atención en salud provenciado por otras
-                                            organizaciones',
-                                                    'Derivar a Servicios de atención Psicosocial',
-                                                    'Para Ministerio Público /Fiscalía especializada',
-                                                    'Para Registro civil',
-                                                    'Para servicios de salud',
-                                                    'Remitir con Informe diagnostico al Consejo de Proteccion NNA',
-                                                    'Para SAIME',
-                                                    'Otras Remisiones',
-                                                    'Sin Remisión',
-                                                ];
-                                            @endphp
 
-                                            @foreach ($remisiones as $remision)
-                                                <div class="col-md-4 mb-1">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="remisiones[]" value="{{ $remision }}"
-                                                            id="{{ Str::slug($remision, '_') }}">
-                                                        <label class="form-check-label"
-                                                            for="{{ Str::slug($remision, '_') }}">
-                                                            {{ $remision }}
-                                                        </label>
+                                    {{-- REMISIONES --}}
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold">Remisiones</label>
+                                            <div class="row">
+                                                @foreach ($remisiones as $remision)
+                                                    @php $valor = trim($remision); @endphp
+                                                    <div class="col-md-4 mb-1">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="remisiones[]" value="{{ $valor }}"
+                                                                id="{{ Str::slug($valor, '_') }}"
+                                                                {{ in_array($valor, $remisionesMarcadas) ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="{{ Str::slug($valor, '_') }}">
+                                                                {{ $remision }}
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row mt-3" id="bloque_otras_remisiones" style="display: none;">
-                                    <div class="col-md-6">
-                                        <label for="detalle_otras_remisiones" class="form-label">Especifique otras
-                                            remisiones</label>
-                                        <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
-                                            class="form-control">
+                                    {{-- Campo adicional si hay "Otras Remisiones" --}}
+                                    <div class="row mt-3" id="bloque_otras_remisiones"
+                                        style="{{ in_array('Otras Remisiones', $remisionesMarcadas) ? '' : 'display: none;' }}">
+                                        <div class="col-md-6">
+                                            <label for="detalle_otras_remisiones" class="form-label">Especifique otras
+                                                remisiones</label>
+                                            <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
+                                                class="form-control"
+                                                value="{{ old('otras_remisiones', $caso->otras_remisiones ?? '') }}">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1232,110 +1162,185 @@
 
                             <div class="tab-pane" id="tab7">
 
-                                {{-- DOCUMENTOS ADJUNTOS --}}
+                                @php
+                                    $imagenesGuardadas = json_decode($caso->fotos, true) ?? [];
+                                    $documentosGuardados = json_decode($caso->archivos, true) ?? [];
+                                @endphp
 
-                                <div class="row mt-3">
-                                    <div class="card-body">
-                                        <h4 class="header-title">Fotos e Imágenes</h4>
-                                        <p class="sub-header">
-                                            Por favor, sube aquí las fotos o imágenes relacionadas con el caso. Puedes
-                                            arrastrarlas al área o hacer clic para seleccionarlas desde tu dispositivo. <br>
-                                            <strong>Formatos permitidos: .jpg, .jpeg, .png, .gif</strong>
-                                        </p>
+                                <div>
+                                    {{-- FOTOS E IMÁGENES --}}
+                                    <div class="row mt-3">
+                                        <div class="card-body">
+                                            <h4 class="header-title mb-2">Fotos e Imágenes</h4>
+                                            <p class="sub-header mb-3">
+                                                Por favor, sube aquí las fotos o imágenes relacionadas con el caso. Puedes
+                                                arrastrarlas al área o hacer clic para seleccionarlas desde tu dispositivo.
+                                                <br>
+                                                <strong>Formatos permitidos: .jpg, .jpeg, .png, .gif</strong>
+                                            </p>
 
-                                        <div class="dropzone" id="myAwesomeDropzone" data-plugin="dropzone"
-                                            data-previews-container="#file-previews"
-                                            data-upload-preview-template="#uploadPreviewTemplate">
-                                            <div class="fallback">
-                                                <input name="fotos" type="file" multiple
-                                                    accept=".jpg,.jpeg,.png,.gif" />
+                                            <div class="dropzone" id="myAwesomeDropzone" data-plugin="dropzone"
+                                                data-previews-container="#file-previews"
+                                                data-upload-preview-template="#uploadPreviewTemplate">
+                                                <div class="fallback">
+                                                    <input name="fotos[]" type="file" multiple
+                                                        accept=".jpg,.jpeg,.png,.gif" />
+                                                </div>
+
+                                                <div class="dz-message needsclick">
+                                                    <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                                    <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
+                                                    <span class="text-muted font-13">Puedes subir varias imágenes a la
+                                                        vez.</span>
+                                                </div>
                                             </div>
 
-                                            <div class="dz-message needsclick">
-                                                <i class="h1 text-muted dripicons-cloud-upload"></i>
-                                                <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
-                                                <h3>Formatos permitidos: .jpg, .jpeg, .png, .gif</h3>
-                                                <span class="text-muted font-13">Puedes subir varias imágenes a la
-                                                    vez.</span>
+                                            <div class="dropzone-previews mt-3" id="file-previews">
+                                                @foreach ($imagenesGuardadas as $img)
+                                                    <div
+                                                        class="card mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete position-relative">
+                                                        <div class="p-2">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-auto">
+                                                                    <img src="{{ asset('storage/' . $img) }}"
+                                                                        class="avatar-sm rounded bg-light" alt="Imagen">
+                                                                </div>
+                                                                <div class="col ps-0">
+                                                                    <p class="text-muted fw-bold mb-0">
+                                                                        {{ basename($img) }}</p>
+                                                                </div>
+                                                                <div class="col-auto d-flex align-items-center gap-2">
+                                                                    <a href="{{ asset('storage/' . $img) }}"
+                                                                        target="_blank" class="btn btn-link text-muted"
+                                                                        title="Ver">
+                                                                        <i class="mdi mdi-eye"></i>
+                                                                    </a>
+                                                                    <button type="button"
+                                                                        class="btn btn-link text-danger eliminar-archivo"
+                                                                        data-tipo="foto"
+                                                                        data-archivo="{{ $img }}"
+                                                                        title="Eliminar">
+                                                                        <i class="mdi mdi-delete-outline"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        </div>
 
-                                        <div class="dropzone-previews mt-3" id="file-previews"></div>
-                                    </div>
-
-                                    <div class="d-none" id="uploadPreviewTemplate">
-                                        <div class="card mt-1 mb-0 shadow-none border">
-                                            <div class="p-2">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <img data-dz-thumbnail src="#"
-                                                            class="avatar-sm rounded bg-light" alt="">
-                                                    </div>
-                                                    <div class="col ps-0">
-                                                        <a href="javascript:void(0);" class="text-muted fw-bold"
-                                                            data-dz-name></a>
-                                                        <p class="mb-0" data-dz-size></p>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <a href="" class="btn btn-link btn-lg text-muted"
-                                                            data-dz-remove>
-                                                            <i class="dripicons-cross"></i>
-                                                        </a>
+                                            <div class="d-none" id="uploadPreviewTemplate">
+                                                <div class="card mt-1 mb-0 shadow-none border">
+                                                    <div class="p-2">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <img data-dz-thumbnail src="#"
+                                                                    class="avatar-sm rounded bg-light" alt="">
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <a href="javascript:void(0);" class="text-muted fw-bold"
+                                                                    data-dz-name></a>
+                                                                <p class="mb-0" data-dz-size></p>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <a href="javascript:void(0);"
+                                                                    class="btn btn-link btn-lg text-muted" data-dz-remove>
+                                                                    <i class="dripicons-cross"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row mt-3">
-                                    <div class="card-body">
-                                        <h4 class="header-title">Documentos</h4>
-                                        <p class="sub-header">
-                                            Puedes subir aquí cualquier documento relevante al caso, como informes,
-                                            certificados o autorizaciones. Arrastra los archivos o haz clic para cargarlos.
-                                            <br>
-                                            <strong>Formatos permitidos: .pdf, .doc, .docx</strong>
-                                        </p>
+                                    {{-- DOCUMENTOS --}}
+                                    <div class="row mt-3">
+                                        <div class="card-body">
+                                            <h4 class="header-title mb-2">Documentos</h4>
+                                            <p class="sub-header mb-3">
+                                                Puedes subir aquí cualquier documento relevante al caso. <br>
+                                                <strong>Formatos permitidos: .pdf, .doc, .docx</strong>
+                                            </p>
 
-                                        <div class="dropzone" id="docuemntosDropzone" data-plugin="dropzone"
-                                            data-previews-container="#file-previews2"
-                                            data-upload-preview-template="#uploadPreviewTemplate2">
-                                            <div class="fallback">
-                                                <input name="archivos" type="file" multiple
-                                                    accept=".pdf,.doc,.docx" />
+                                            <div class="dropzone" id="docuemntosDropzone" data-plugin="dropzone"
+                                                data-previews-container="#file-previews2"
+                                                data-upload-preview-template="#uploadPreviewTemplate2">
+                                                <div class="fallback">
+                                                    <input name="archivos[]" type="file" multiple
+                                                        accept=".pdf,.doc,.docx" />
+                                                </div>
+
+                                                <div class="dz-message needsclick">
+                                                    <i class="h1 text-muted dripicons-cloud-upload"></i>
+                                                    <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
+                                                    <span class="text-muted font-13">Puedes subir varios documentos en esta
+                                                        sección.</span>
+                                                </div>
                                             </div>
 
-                                            <div class="dz-message needsclick">
-                                                <i class="h1 text-muted dripicons-cloud-upload"></i>
-                                                <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
-                                                <h3>Formatos permitidos: .pdf, .doc, .docx</h3>
-                                                <span class="text-muted font-13">Puedes subir varios documentos en esta
-                                                    sección.</span>
+                                            <div class="dropzone-previews mt-3" id="file-previews2">
+                                                @foreach ($documentosGuardados as $doc)
+                                                    <div
+                                                        class="card mt-1 mb-0 shadow-none border dz-processing dz-success dz-complete position-relative">
+                                                        <div class="p-2">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-auto">
+                                                                    @if (Str::endsWith($doc, '.pdf'))
+                                                                        <i
+                                                                            class="mdi mdi-file-pdf-outline text-danger mdi-24px"></i>
+                                                                    @elseif(Str::endsWith($doc, ['.doc', '.docx']))
+                                                                        <i
+                                                                            class="mdi mdi-file-word-outline text-primary mdi-24px"></i>
+                                                                    @else
+                                                                        <i class="mdi mdi-file-outline mdi-24px"></i>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="col ps-0">
+                                                                    <p class="text-muted fw-bold mb-0">
+                                                                        {{ basename($doc) }}</p>
+                                                                </div>
+                                                                <div class="col-auto d-flex align-items-center gap-2">
+                                                                    <a href="{{ asset('storage/' . $doc) }}"
+                                                                        target="_blank" class="btn btn-link text-muted"
+                                                                        title="Ver">
+                                                                        <i class="mdi mdi-eye"></i>
+                                                                    </a>
+                                                                    <button type="button"
+                                                                        class="btn btn-link text-danger eliminar-archivo"
+                                                                        data-tipo="archivo"
+                                                                        data-archivo="{{ $doc }}"
+                                                                        title="Eliminar">
+                                                                        <i class="mdi mdi-delete-outline"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        </div>
 
-                                        <div class="dropzone-previews mt-3" id="file-previews2"></div>
-                                    </div>
-
-                                    <div class="d-none" id="uploadPreviewTemplate2">
-                                        <div class="card mt-1 mb-0 shadow-none border">
-                                            <div class="p-2">
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <img data-dz-thumbnail src="#"
-                                                            class="avatar-sm rounded bg-light" alt="">
-                                                    </div>
-                                                    <div class="col ps-0">
-                                                        <a href="javascript:void(0);" class="text-muted fw-bold"
-                                                            data-dz-name></a>
-                                                        <p class="mb-0" data-dz-size></p>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <a href="" class="btn btn-link btn-lg text-muted"
-                                                            data-dz-remove>
-                                                            <i class="dripicons-cross"></i>
-                                                        </a>
+                                            <div class="d-none" id="uploadPreviewTemplate2">
+                                                <div class="card mt-1 mb-0 shadow-none border">
+                                                    <div class="p-2">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <img data-dz-thumbnail src="#"
+                                                                    class="avatar-sm rounded bg-light" alt="">
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <a href="javascript:void(0);" class="text-muted fw-bold"
+                                                                    data-dz-name></a>
+                                                                <p class="mb-0" data-dz-size></p>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <a href="javascript:void(0);"
+                                                                    class="btn btn-link btn-lg text-muted" data-dz-remove>
+                                                                    <i class="dripicons-cross"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1348,89 +1353,85 @@
 
                             <div class="tab-pane" id="tab8">
 
-                                <div class="row mt-3">
-                                    <div class="col-md-6">
+                                @php
+                                    $indicadoresMarcados = is_array($caso->indicadores)
+                                        ? $caso->indicadores
+                                        : json_decode($caso->indicadores, true) ?? [];
+                                @endphp
+
+                                <div class="row">
+                                    {{-- FECHA ACTUAL --}}
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="fecha_actual" class="form-label mb-2">Fecha actual</label>
+                                                <input type="date" class="form-control" name="fecha_actual"
+                                                    value="{{ old('fecha_actual', $caso->fecha_actual ?? date('Y-m-d')) }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- ESTATUS DE LA ATENCIÓN --}}
+                                    <div class="row mt-3">
                                         <div class="mb-3">
-                                            <label for="fecha_atencion" class="form-label mb-2">Fecha
-                                                actual</label>
-                                            <input type="date" class="form-control" name="fecha_actual"
-                                                value="{{ date('Y-m-d') }}">
+                                            <label class="form-label d-block">Estatus de la atención <span
+                                                    class="text-danger">*</span></label>
+                                            <small class="text-muted d-block mb-2">Elegir estatus del
+                                                caso/expediente</small>
+
+                                            @foreach (['En proceso', 'En seguimiento', 'Cierre de atención'] as $i => $estatus)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="estatus"
+                                                        id="estatus{{ $i + 1 }}" value="{{ $estatus }}"
+                                                        {{ old('estatus', $caso->estatus) == $estatus ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="estatus{{ $i + 1 }}">{{ $estatus }}</label>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
 
-                                </div>
+                                    {{-- INDICADORES --}}
+                                    <div class="row mt-3">
+                                        <label class="form-label">Indicadores</label>
+                                        <div>
+                                            @php
+                                                $indicadoresDisponibles = [
+                                                    'PSEA.01' =>
+                                                        'PSEA.01: Difusión comunitaria de mensajes y sensibilización en materia de Protección contra la Explotación y el Abuso Sexual',
+                                                    'encuesta_satisfaccion' => 'Encuesta de satisfacción',
+                                                    'no_aplica' => 'No aplica Indicadores',
+                                                ];
+                                            @endphp
 
-                                <div class="row mt-3">
-                                    <div class="mb-3">
-                                        <label class="form-label d-block">Estatus de la atención <span
-                                                class="text-danger">*</span></label>
-                                        <small class="text-muted d-block mb-2">Elegir estatus del caso/expediente</small>
-
-                                        <div class="form-check ">
-                                            <input class="form-check-input" type="radio" name="estatus" id="estatus1"
-                                                value="En proceso">
-                                            <label class="form-check-label" for="estatus1">En proceso</label>
+                                            @foreach ($indicadoresDisponibles as $valor => $texto)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="indicadores[]"
+                                                        id="indicador_{{ $valor }}" value="{{ $valor }}"
+                                                        {{ in_array($valor, $indicadoresMarcados) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="indicador_{{ $valor }}">
+                                                        {{ $texto }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
                                         </div>
+                                    </div>
 
-                                        <div class="form-check ">
-                                            <input class="form-check-input" type="radio" name="estatus" id="estatus2"
-                                                value="En seguimiento">
-                                            <label class="form-check-label" for="estatus2">En seguimiento</label>
-                                        </div>
+                                    {{-- OBSERVACIONES --}}
+                                    <div class="row mt-3">
+                                        <label for="observaciones" class="form-label">Observaciones</label>
+                                        <textarea name="observaciones" id="summernote" class="form-control">{{ old('observaciones', $caso->observaciones) }}</textarea>
+                                    </div>
 
-                                        <div class="form-check ">
-                                            <input class="form-check-input" type="radio" name="estatus" id="estatus3"
-                                                value="Cierre de atención">
-                                            <label class="form-check-label" for="estatus3">Cierre de atención</label>
+                                    {{-- VERIFICADOR --}}
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <label for="verificador" class="form-label mb-2">Verificador</label>
+                                            <input type="number" class="form-control" name="verificador"
+                                                value="{{ old('verificador', $caso->verificador) }}">
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row mt-3">
-                                    <label class="form-label">Indicadores</label>
-                                    <div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="indicadores[]"
-                                                id="indicador1" value="PSEA.01">
-                                            <label class="form-check-label" for="indicador1">
-                                                PSEA.01: Difusión comunitaria de mensajes y sensibilización en materia de
-                                                Protección contra la Explotación y el Abuso Sexual
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="indicadores[]"
-                                                id="indicador2" value="encuesta_satisfaccion">
-                                            <label class="form-check-label" for="indicador2">
-                                                Encuesta de satisfacción
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="indicadores[]"
-                                                id="indicador3" value="no_aplica">
-                                            <label class="form-check-label" for="indicador3">
-                                                No aplica Indicadores
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="row mt-3">
-                                    <label for="observaciones" class="form-label">Observaciones</label>
-                                    <textarea name="observaciones" id="summernote" class="form-control"></textarea>
-                                </div>
-
-
-                                <div class="row mt-3">
-                                    <div class="col-md-6">
-                                        <label for="verificador" class="form-label mb-2">Verificador </label>
-                                        <input type="number" class="form-control" name="verificador" value="">
-                                    </div>
-                                </div>
-
-
 
 
                             </div>
@@ -1538,13 +1539,13 @@
                 }
             });
         });
+    </script>
 
-
+    <script>
         Dropzone.autoDiscover = false;
 
-        // Dropzone para imágenes
         const imagenesDropzone = new Dropzone("#myAwesomeDropzone", {
-            url: "#", // será ignorado si usas formData
+            url: "#", // este valor es ignorado
             autoProcessQueue: false,
             uploadMultiple: true,
             parallelUploads: 10,
@@ -1555,10 +1556,8 @@
             previewTemplate: document.querySelector("#uploadPreviewTemplate").innerHTML
         });
 
-        Dropzone.autoDiscover = false;
-
         const documentosDropzone = new Dropzone("#docuemntosDropzone", {
-            url: "#", // será reemplazado al enviar el formulario
+            url: "#",
             autoProcessQueue: false,
             uploadMultiple: true,
             parallelUploads: 10,
@@ -1570,7 +1569,7 @@
             init: function() {
                 this.on("addedfile", function(file) {
                     const ext = file.name.split('.').pop().toLowerCase();
-                    let iconPath = "/assets/icons/file.png"; // por defecto
+                    let iconPath = "/assets/icons/file.png";
 
                     if (['doc', 'docx'].includes(ext)) {
                         iconPath = "/assets/icons/word.png";
@@ -1580,7 +1579,6 @@
                         iconPath = "/assets/icons/excel.png";
                     }
 
-                    // Cambiar la miniatura manualmente
                     const thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]");
                     thumbnail.src = iconPath;
                 });
@@ -1593,17 +1591,20 @@
 
             let formData = new FormData(this);
 
-            // Agregar imágenes
-            imagenesDropzone.files.forEach((file, i) => {
-                formData.append('fotos[]', file);
+            // Agregar imágenes nuevas
+            imagenesDropzone.files.forEach(file => {
+                if (file.upload) { // evitar archivos ya cargados que fueron solo previsualizados
+                    formData.append('fotos[]', file);
+                }
             });
 
-            // Agregar documentos
-            documentosDropzone.files.forEach((file, i) => {
-                formData.append('archivos[]', file);
+            // Agregar documentos nuevos
+            documentosDropzone.files.forEach(file => {
+                if (file.upload) {
+                    formData.append('archivos[]', file);
+                }
             });
 
-            // Enviar formulario completo por AJAX
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -1615,24 +1616,22 @@
                     Swal.fire({
                         position: "top-end",
                         icon: 'success',
-                        title: '¡Caso guardado!',
-                        text: 'El registro se completó correctamente.',
-                        showConfirmButton: !1,
+                        title: '¡Caso actualizado!',
+                        text: 'Los cambios se guardaron correctamente.',
+                        showConfirmButton: false,
                         timer: 1500,
                     }).then(() => {
                         window.location.href = "{{ route('casos.index') }}";
                     });
                     imagenesDropzone.removeAllFiles();
                     documentosDropzone.removeAllFiles();
-                    this.reset();
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error al guardar',
-                        text: 'No se pudo registrar el caso. Por favor, intente nuevamente.',
+                        text: 'No se pudo actualizar el caso. Por favor, intente nuevamente.',
                         footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el Desarrollador</a>'
                     });
-
                 }
             }).catch(error => {
                 console.error(error);
@@ -1640,27 +1639,91 @@
             });
         });
     </script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
-            const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
+        $(document).ready(function() {
+            $('.eliminar-archivo').on('click', function() {
+                const boton = $(this);
+                const tipo = boton.data('tipo'); // 'foto' o 'archivo'
+                const archivo = boton.data('archivo');
 
-            // Al seleccionar "No aplica", desmarcar los demás
-            noAplica.addEventListener('change', function() {
-                if (this.checked) {
-                    checkboxes.forEach(cb => cb.checked = false);
-                }
-            });
-
-            // Al seleccionar otro, desmarcar "No aplica"
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', function() {
-                    if (this.checked) {
-                        noAplica.checked = false;
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Este archivo será eliminado permanentemente.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{{ route('casos.eliminar-archivo', $caso->id) }}',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                tipo: tipo,
+                                archivo: archivo
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Eliminado',
+                                        text: 'El archivo ha sido eliminado.',
+                                        timer: 1200,
+                                        showConfirmButton: false
+                                    });
+                                    boton.closest('.card')
+                                        .remove(); // Eliminar bloque visualmente
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'No se pudo eliminar el archivo.'
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error de red',
+                                    text: 'Ocurrió un problema al intentar eliminar el archivo.'
+                                });
+                            }
+                        });
                     }
                 });
             });
         });
+    </script>
+
+
+
+    <script>
+   document.addEventListener('DOMContentLoaded', function () {
+    const noAplica = document.getElementById('indicador3');
+    const checkboxes = document.querySelectorAll('input[name="indicadores[]"]:not(#indicador3)');
+
+    if (noAplica) {
+        // Al seleccionar "No aplica", desmarcar los demás
+        noAplica.addEventListener('change', function () {
+            if (this.checked) {
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+        });
+
+        // Al seleccionar otro, desmarcar "No aplica"
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                if (this.checked) {
+                    noAplica.checked = false;
+                }
+            });
+        });
+    }
+});
 
 
 
@@ -2058,7 +2121,8 @@
 
 
         document.addEventListener("DOMContentLoaded", function() {
-            const selectEdad = document.getElementById("edad-beneficiario-select");
+            const selectEdad = document.getElementById('selectEdad');
+
             const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
 
             const rangos = {

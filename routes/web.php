@@ -46,6 +46,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
 
     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
+
+    Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
+    
+
 });
 
 
