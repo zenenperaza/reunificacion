@@ -8,20 +8,18 @@
 
 
    <!-- Plugins js-->
-<script src="{{ asset('assets/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js') }}"></script><!-- Init js-->
-{{-- <script src="{{ asset('assets/js/pages/form-wizard.init.js') }}"></script> --}}
+<script src="{{ asset('assets/libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js') }}"></script>
 
 
-
-<!-- knob plugin -->
-{{-- <script src="{{ asset('assets/libs/jquery-knob/jquery.knob.min.js') }}"></script>
+ <script src="{{ asset('assets/libs/jquery-knob/jquery.knob.min.js') }}"></script>
 
 <!-- Morris Chart -->
 <script src="{{ asset('assets/libs/morris.js06/morris.min.js') }}"></script>
 <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
 
+
 <!-- Dashboard init js -->
-<script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script> --}}
+<script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
 
 <!-- App js -->
 <script src="{{ asset('assets/js/app.min.js') }}"></script>

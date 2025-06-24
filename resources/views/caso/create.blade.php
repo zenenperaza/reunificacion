@@ -296,7 +296,7 @@
                                                 <label class="form-label mb-2">Beneficiaria/o del programa</label>
                                                 <div class="row">
                                                     @php
-                                                        $beneficiario_programa = [
+                                                        $beneficiarios = [
                                                             'Niña adolescente',
                                                             'Mujer joven',
                                                             'Mujer adulta',
@@ -306,7 +306,7 @@
                                                         ];
                                                     @endphp
 
-                                                    @foreach ($beneficiario_programa as $beneficiario)
+                                                    @foreach ($beneficiarios as $beneficiario)
                                                         <div class="col-md-4 mb-1">
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio"

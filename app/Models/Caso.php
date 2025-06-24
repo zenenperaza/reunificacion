@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class Caso extends Model
 {
 
-    
+     use HasFactory;
 
      protected $fillable = [
         'user_id', 'periodo', 'fecha_atencion', 'estado_id', 'municipio_id', 'parroquia_id',

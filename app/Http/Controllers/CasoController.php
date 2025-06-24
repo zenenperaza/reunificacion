@@ -43,6 +43,10 @@ class CasoController extends Controller
             ->editColumn('fecha_atencion', function ($caso) {
                 return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
             })
+            ->editColumn('fecha_actual', function ($caso) {
+                return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
+            })
+
             ->rawColumns(['acciones'])
             ->make(true);
     }
