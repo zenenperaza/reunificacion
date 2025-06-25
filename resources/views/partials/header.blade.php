@@ -20,62 +20,14 @@
                             <h5 class="text-overflow mb-2">22 resultados encontrados</h5>
                         </div>
 
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="fe-home me-1"></i>
-                            <span>Informe Analítico</span>
-                        </a>
-
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="fe-aperture me-1"></i>
-                            <span>¿Cómo puedo ayudarte?</span>
-                        </a>
-
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="fe-settings me-1"></i>
-                            <span>Configuración del perfil</span>
-                        </a>
-
-                        <div class="dropdown-header noti-title">
-                            <h6 class="text-overflow mb-2 text-uppercase">Usuarios</h6>
-                        </div>
-
-                        <div class="notification-list">
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <div class="d-flex align-items-start">
-                                    <img class="d-flex me-2 rounded-circle" src="{{ asset('assets/images/users/user-2.jpg') }}" alt="Usuario" height="32">
-                                    <div class="w-100">
-                                        <h5 class="m-0 font-14">Erwin E. Brown</h5>
-                                        <span class="font-12 mb-0">Diseñador UI</span>
-                                    </div>
-                                </div>
-                            </a>
-
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <div class="d-flex align-items-start">
-                                    <img class="d-flex me-2 rounded-circle" src="{{ asset('assets/images/users/user-5.jpg') }}" alt="Usuario" height="32">
-                                    <div class="w-100">
-                                        <h5 class="m-0 font-14">Jacob Deo</h5>
-                                        <span class="font-12 mb-0">Desarrollador</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                        
 
                     </div>
                 </div>
             </form>
         </li>
 
-        <li class="dropdown d-inline-block d-lg-none">
-            <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-bs-toggle="dropdown" href="#">
-                <i class="fe-search noti-icon"></i>
-            </a>
-            <div class="dropdown-menu dropdown-lg dropdown-menu-end p-0">
-                <form class="p-3">
-                    <input type="text" class="form-control" name="buscar" placeholder="Buscar..." aria-label="Buscar">
-                </form>
-            </div>
-        </li>
+ 
 
         <li class="dropdown notification-list topbar-dropdown">
             <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#">
@@ -94,63 +46,18 @@
                 </div>
 
                 <div class="noti-scroll" data-simplebar>
-                    <a href="javascript:void(0);" class="dropdown-item notify-item active">
-                        <div class="notify-icon">
-                            <img src="{{ asset('assets/images/users/user-1.jpg') }}" class="img-fluid rounded-circle" alt="" />
-                        </div>
-                        <p class="notify-details">Cristina Pride</p>
-                        <p class="text-muted mb-0 user-msg">
-                            <small>Hola, ¿cómo estás? ¿Qué tal nuestra próxima reunión?</small>
-                        </p>
-                    </a>
+                    
 
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <div class="notify-icon bg-primary">
                             <i class="mdi mdi-comment-account-outline"></i>
                         </div>
-                        <p class="notify-details">Caleb Flakelar comentó en Admin
+                        <p class="notify-details">Nuevos casos por aprobar
                             <small class="text-muted">Hace 1 min</small>
                         </p>
                     </a>
 
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon">
-                            <img src="{{ asset('assets/images/users/user-4.jpg') }}" class="img-fluid rounded-circle" alt="" />
-                        </div>
-                        <p class="notify-details">Karen Robinson</p>
-                        <p class="text-muted mb-0 user-msg">
-                            <small>¡Wow! Este panel se ve genial y tiene un diseño increíble</small>
-                        </p>
-                    </a>
-
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-warning">
-                            <i class="mdi mdi-account-plus"></i>
-                        </div>
-                        <p class="notify-details">Nuevo usuario registrado.
-                            <small class="text-muted">Hace 5 horas</small>
-                        </p>
-                    </a>
-
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-info">
-                            <i class="mdi mdi-comment-account-outline"></i>
-                        </div>
-                        <p class="notify-details">Caleb Flakelar comentó en Admin
-                            <small class="text-muted">Hace 4 días</small>
-                        </p>
-                    </a>
-
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-secondary">
-                            <i class="mdi mdi-heart"></i>
-                        </div>
-                        <p class="notify-details">A Carlos Crouch le gustó
-                            <b>Admin</b>
-                            <small class="text-muted">Hace 13 días</small>
-                        </p>
-                    </a>
-                </div>
+                   </div>
 
                 <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
                     Ver todo
