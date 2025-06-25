@@ -15,8 +15,10 @@
                             <div class="widget-chart-1">
                                 <div class="widget-chart-box-1 float-start" dir="ltr">
                                     <input data-plugin="knob" data-width="70" data-height="70" data-fgColor="#f05050"
-                                        data-bgColor="#F9B9B9" value="{{ $totales['casos'] }}" data-skin="tron"
-                                        data-angleOffset="180" data-readOnly=true data-thickness=".15" />
+                                        data-bgColor="#F9B9B9" value="{{ $totales['casos'] }}" data-max="10000"
+                                         data-skin="tron" data-angleOffset="180" data-readOnly="true"
+                                        data-thickness=".15" />
+
                                 </div>
                                 <div class="widget-detail-1 text-end">
                                     <h2 class="fw-normal pt-2 mb-1">{{ $totales['casos'] }}</h2>
@@ -35,7 +37,7 @@
                             <div class="widget-chart-1">
                                 <div class="widget-chart-box-1 float-start" dir="ltr">
                                     <input data-plugin="knob" data-width="70" data-height="70" data-fgColor="#4fc6e1"
-                                        data-bgColor="#cceeff" value="{{ $totales['masculino'] }}" data-skin="tron"
+                                        data-bgColor="#cceeff" value="{{ $totales['masculino'] }}" data-max="10000" data-skin="tron"
                                         data-angleOffset="180" data-readOnly=true data-thickness=".15" />
                                 </div>
                                 <div class="widget-detail-1 text-end">
@@ -55,7 +57,7 @@
                             <div class="widget-chart-1">
                                 <div class="widget-chart-box-1 float-start" dir="ltr">
                                     <input data-plugin="knob" data-width="70" data-height="70" data-fgColor="#f78fb3"
-                                        data-bgColor="#fddde6" value="{{ $totales['femenino'] }}" data-skin="tron"
+                                        data-bgColor="#fddde6" value="{{ $totales['femenino'] }}" data-max="10000" data-skin="tron"
                                         data-angleOffset="180" data-readOnly=true data-thickness=".15" />
                                 </div>
                                 <div class="widget-detail-1 text-end">
@@ -75,7 +77,7 @@
                             <div class="widget-chart-1">
                                 <div class="widget-chart-box-1 float-start" dir="ltr">
                                     <input data-plugin="knob" data-width="70" data-height="70" data-fgColor="#1abc9c"
-                                        data-bgColor="#bfffe0" value="{{ $totales['mes_actual'] }}" data-skin="tron"
+                                        data-bgColor="#bfffe0" value="{{ $totales['mes_actual'] }}" data-max="10000" data-skin="tron"
                                         data-angleOffset="180" data-readOnly=true data-thickness=".15" />
                                 </div>
                                 <div class="widget-detail-1 text-end">
@@ -194,6 +196,23 @@
         });
     </script>
 
+
+
+<script>
+    $(window).on('load', function () {
+        $('[data-plugin="knob"]').each(function () {
+            const $knob = $(this);
+            const valorActual = parseInt($knob.attr('value')) || 0;
+
+            // Establece un data-max dinámico si no existe
+            const max = Math.ceil((valorActual + 1) / 1000) * 1000;
+            $knob.attr('data-max', max);
+
+            // Asegúrate de que se inicialice después de configurar el data-max
+            $knob.knob();
+        });
+    });
+</script>
 
 
 @endsection

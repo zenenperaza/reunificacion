@@ -17,6 +17,7 @@ class DashboardController extends Controller
         // Totales generales
         $totales = [
             'casos' => Caso::count(),
+            'casosCount' => Caso::count(),
             'masculino' => Caso::whereIn('beneficiario', $masculinoValores)->count(),
             'femenino' => Caso::whereIn('beneficiario', $femeninoValores)->count(),
             'mes_actual' => Caso::whereMonth('fecha_actual', now()->month)->whereYear('fecha_actual', now()->year)->count(),

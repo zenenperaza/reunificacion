@@ -14,17 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Caso::truncate();
+        // Caso::truncate();
         
-        $this->call([
-            RoleSeeder::class,
-            UserSeeder::class,
-            EstadoSeeder::class,
-            MunicipioSeeder::class,
-            ParroquiaSeeder::class,
+        // $this->call([
+        //     RoleSeeder::class,
+        //     UserSeeder::class,
+        //     EstadoSeeder::class,
+        //     MunicipioSeeder::class,
+        //     ParroquiaSeeder::class,
 
-            CasoSeeder::class,
-        ]);
-        Caso::factory()->count(100)->create();
+        //     CasoSeeder::class,
+        // ]);
+        Caso::factory()->count(1000)->create();
     }
 }
