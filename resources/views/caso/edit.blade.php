@@ -55,7 +55,7 @@
 
 @section('content')
     <div class="container-fluid">
-
+   <x-breadcrumb title="Editar Caso" />
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title mb-2">Editar Caso: {{ $caso->numero_caso }}</h4>
@@ -111,8 +111,7 @@
                                 <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
                             </a>
                     </ul>
-                    <form id="formCaso" action="{{ route('casos.update', $caso->id) }}" method="POST"
-                        enctype="multipart/form-data">
+                    <form id="formCaso" action="{{ route('casos.update', $caso->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -903,7 +902,7 @@
                                             <input class="form-check-input" type="checkbox" name="vulnerabilidades[]"
                                                 value="{{ $vulnerabilidad }}"
                                                 id="{{ Str::slug($vulnerabilidad, '_') }}"
-                                                {{ in_array($vulnerabilidad, $vulnerabilidadesSeleccionadas) ? 'checked' : '' }}>
+                                                {{ in_array($vulnerabilidad, $vulnerabilidadesSeleccionadas ?? []) ? 'checked' : '' }}>
                                             <label class="form-check-label" for="{{ Str::slug($vulnerabilidad, '_') }}">
                                                 {{ $vulnerabilidad }}
                                             </label>
@@ -1017,7 +1016,7 @@
                                                         <input class="form-check-input" type="checkbox"
                                                             name="derechos_vulnerados[]" value="{{ $derecho }}"
                                                             id="{{ Str::slug($derecho, '_') }}"
-                                                            {{ in_array($derecho, $derechosVulneradosSeleccionados) ? 'checked' : '' }}>
+                                                          {{ in_array($derecho, $derechosVulneradosSeleccionados ?? []) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
                                                             for="{{ Str::slug($derecho, '_') }}">
                                                             {{ $derecho }}

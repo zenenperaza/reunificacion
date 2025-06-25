@@ -11,6 +11,7 @@
 
 @section('content')
 <div class="container-fluid">
+       <x-breadcrumb title="Editar usuario" />
     <div class="row mx-4">
         <div class="col-12">
             <h4 class="mb-3">Editar Usuario</h4>

@@ -30,6 +30,35 @@ class CasoFactory extends Factory
         $estadoDestino = Estado::has('municipios.parroquias')->inRandomOrder()->first();
         $municipioDestino = $estadoDestino->municipios()->has('parroquias')->inRandomOrder()->first();
         $parroquiaDestino = $municipioDestino->parroquias()->inRandomOrder()->first();
+        $estados = [
+            'AMA',
+            'ANZ',
+            'APU',
+            'ARA',
+            'BAR',
+            'BOL',
+            'CAR',
+            'COJ',
+            'DEL',
+            'DIS',
+            'FAL',
+            'GUA',
+            'LAR',
+            'MER',
+            'MIR',
+            'MON',
+            'NUE',
+            'POR',
+            'SUC',
+            'TAC',
+            'TRU',
+            'LAG',
+            'YAR',
+            'ZUL'
+        ];
+        $codigoEstado = $this->faker->randomElement($estados);
+        $numero = str_pad($this->faker->numberBetween(1, 999), 3, '0', STR_PAD_LEFT);
+
 
         // Listas de datos
         $beneficiarios = ['Niña adolescente', 'Mujer joven', 'Mujer adulta', 'Niño adolescente', 'Hombre joven', 'Hombre adulto'];
@@ -162,7 +191,7 @@ class CasoFactory extends Factory
             'parroquia_destino_id' => $parroquiaDestino->id,
 
             'elaborado_por' => $this->faker->name,
-            'numero_caso' => 'ASONACOP-' . strtoupper(Str::random(5)),
+            'numero_caso' => 'RLF-' . $codigoEstado . '-' . $numero,
             'organizacion_programa' => implode(', ', $this->faker->randomElements(['UNICEF', 'COSUDE'], rand(1, 2))),
             'organizacion_solicitante' => implode(', ', $this->faker->randomElements($organizaciones, rand(1, 3))),
             'otras_organizaciones' => 'Save the Children',

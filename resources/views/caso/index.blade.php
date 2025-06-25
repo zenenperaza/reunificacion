@@ -14,28 +14,61 @@
 @endsection
 
 @section('content')
+
+
+
     <div class="container-fluid">
+   <x-breadcrumb title="Gestión de Casos" />
+
         <div class="row mb-3">
             <div class="col-sm-12">
-                <a href="{{ route('casos.create') }}" class="btn btn-success">
+                <a href="{{ route('casos.create') }}" class="btn btn btn-primary">
                     <i class="mdi mdi-plus"></i> Nuevo Caso
                 </a>
             </div>
         </div>
-        <div class="form-group d-flex m-2">
+        <div class="form-group d-flex my-2">
             <div class="input-group  d-flex justify-content-start">
                 <button type="button" class="btn btn btn-outline-primary" id="daterange-btn">
                     <i class="far fa-calendar-alt"></i> Buscar por fecha actual
                     <i class="fas fa-caret-down"></i>
                 </button>
+                <button id="clear-daterange" class="btn btn-outline-secondary btn-sm">
+                    <i class="mdi mdi-filter-remove"></i> Limpiar filtro
+                </button>
+
             </div>
+
             <div class="col-md-3 d-flex align-items-end justify-content-end">
-                <a id="exportExcel" href="#"
-                    class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2">
-                    <img src="{{ asset('assets/images/excel.jpg') }}" alt="Excel" width="20" height="20">
-                    Exportar a Excel
-                </a>
+                <div class="dropdown w-100">
+                    <button
+                        class="btn btn-outline-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
+                        type="button" id="dropdownExportExcel" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ asset('assets/images/excel.jpg') }}" alt="Excel" width="20" height="20">
+                        Exportar Excel
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownExportExcel">
+                        <li>
+                            <a id="exportExcel" class="dropdown-item" href="#">
+                                <i class="mdi mdi-file-excel"></i> Exportar todos los casos
+                            </a>
+                        </li>
+                        <li>
+                            <a id="exportPorEstatus" class="dropdown-item" href="#">
+                                <i class="mdi mdi-file-excel"></i> Exportar por Estatus
+                            </a>
+                        </li>
+                        <li>
+                            <a id="exportPorEstado" class="dropdown-item"
+                                href="{{ route('casos.exportarPorEstado', ['start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
+                                <i class="mdi mdi-file-excel"></i> Exportar por Estado
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
+
 
         </div>
 
@@ -91,34 +124,34 @@
 @section('scripts')
 
     <!-- DataTables núcleo + Bootstrap 5 -->
-<script src="{{ asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
 
-<!-- Responsive -->
-<script src="{{ asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+    <!-- Responsive -->
+    <script src="{{ asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
 
-<!-- Botones -->
-<script src="{{ asset('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
-<script src="{{ asset('assets/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset('assets/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+    <!-- Botones -->
+    <script src="{{ asset('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
 
-<!-- Sweet Alerts js -->
-<script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
+    <!-- Sweet Alerts js -->
+    <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
-<!-- PDF y Excel -->
-<script src="{{ asset('assets/libs/pdfmake/build/pdfmake.min.js') }}"></script>
-<script src="{{ asset('assets/libs/pdfmake/build/vfs_fonts.js') }}"></script>
-<script src="{{ asset('assets/libs/jszip/jszip.min.js') }}"></script>
+    <!-- PDF y Excel -->
+    <script src="{{ asset('assets/libs/pdfmake/build/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/pdfmake/build/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/libs/jszip/jszip.min.js') }}"></script>
 
-<!-- Moment y Rango de Fechas -->
-<script src="{{ asset('assets/libs/moment/moment.js') }}"></script>
-<script src="{{ asset('assets/libs/daterangepicker/daterangepicker.js') }}"></script>
+    <!-- Moment y Rango de Fechas -->
+    <script src="{{ asset('assets/libs/moment/moment.js') }}"></script>
+    <script src="{{ asset('assets/libs/daterangepicker/daterangepicker.js') }}"></script>
 
     <script>
-        let startDate = '';
-        let endDate = '';
+        let startDate = null;
+        let endDate = null;
 
         // Inicializar DataTable
         const dataTable = $('#casos-table').DataTable({
@@ -133,9 +166,10 @@
             ajax: {
                 url: '{{ route('casos.data') }}',
                 data: function(d) {
-                    d.start_date = startDate;
-                    d.end_date = endDate;
+                    d.start_date = startDate ?? '';
+                    d.end_date = endDate ?? '';
                 }
+
             },
             order: [
                 [0, 'desc']
@@ -213,43 +247,57 @@
                 }
             ]
         });
+    </script>
 
+
+    <script>
         // Inicializar el DateRangePicker
         $('#daterange-btn').daterangepicker({
-                ranges: {
-                    'Hoy': [moment(), moment()],
-                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
-                    'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf(
-                        'month')]
-                },
-                locale: {
-                    format: 'YYYY-MM-DD',
-                    applyLabel: 'Aplicar',
-                    cancelLabel: 'Cancelar',
-                    customRangeLabel: 'Rango personalizado'
-                },
-                startDate: moment().startOf('month'),
-                endDate: moment().endOf('month')
+            autoUpdateInput: false,
+            showCustomRangeLabel: true,
+            locale: {
+                format: 'YYYY-MM-DD',
+                applyLabel: 'Aplicar',
+                cancelLabel: 'Cancelar',
+                customRangeLabel: 'Rango personalizado'
             },
-            function(start, end) {
-                startDate = start.format('YYYY-MM-DD');
-                endDate = end.format('YYYY-MM-DD');
-                dataTable.ajax.reload(); // Recarga la tabla con los filtros
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf(
+                    'month')]
             }
-        );
+        }, function(start, end, label) {
+            // Este callback se llama en cualquier selección válida
+            startDate = start.format('YYYY-MM-DD');
+            endDate = end.format('YYYY-MM-DD');
 
-        // Exportar a Excel con filtros activos
-        document.getElementById('exportExcel').addEventListener('click', function(e) {
-            e.preventDefault();
+            $('#daterange-btn span').text(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+            dataTable.ajax.reload();
+        });
 
-            const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
-            url.searchParams.append('start_date', startDate || '');
-            url.searchParams.append('end_date', endDate || '');
+        // Forzar que al hacer click sobre “Hoy” (u otra opción) se vuelva a ejecutar el callback
+        $(document).on('click', '.ranges li', function() {
+            const label = $(this).text().trim();
+            const picker = $('#daterange-btn').data('daterangepicker');
 
-            window.location.href = url.toString();
+            if (picker.ranges[label]) {
+                const range = picker.ranges[label];
+                picker.setStartDate(range[0]);
+                picker.setEndDate(range[1]);
+                picker.callback(range[0], range[1], label);
+            }
+        });
+
+        // Botón de cancelar
+        $('#daterange-btn').on('cancel.daterangepicker', function(ev, picker) {
+            startDate = null;
+            endDate = null;
+            $('#daterange-btn span').text('Buscar por fecha actual');
+            dataTable.ajax.reload();
         });
     </script>
 
@@ -270,80 +318,79 @@
         $('#exportExcel').on('click', function(e) {
             e.preventDefault();
 
-            // Construye la URL con los filtros aplicados
-            let url = '{{ route('casos.exportarExcel') }}?start_date=' + startDate + '&end_date=' + endDate;
+            const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
 
-            window.location.href = url;
+            if (startDate && endDate) {
+                url.searchParams.append('start_date', startDate);
+                url.searchParams.append('end_date', endDate);
+            }
+
+            window.location.href = url.toString();
         });
-
-
-
-        // //Date range as a button
-        // $('#daterange-btn').daterangepicker({
-        //         ranges: {
-        //             'Today': [moment(), moment()],
-        //             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        //             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-        //             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-        //             'This Month': [moment().startOf('month'), moment().endOf('month')],
-        //             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf(
-        //                 'month')]
-        //         },
-        //         startDate: moment().subtract(29, 'days'),
-        //         endDate: moment()
-        //     },
-        //     function(start, end) {
-        //         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-        //     }
-        // )
     </script>
 
-<script>
-    let tablaCasos = $('#casos-table').DataTable(); // reemplaza #miTabla con el ID real de tu tabla
+    <script>
+        let tablaCasos = $('#casos-table').DataTable(); // reemplaza #miTabla con el ID real de tu tabla
 
-    $(document).on('click', '.btn-delete', function (e) {
-        e.preventDefault();
-        let url = $(this).data('url');
-        let nombre = $(this).data('nombre');
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            let url = $(this).data('url');
+            let nombre = $(this).data('nombre');
 
-        Swal.fire({
-            title: '¿Está seguro?',
-            text: "Se eliminará el caso: " + nombre,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        _method: 'DELETE'
-                    },
-                    success: function (respuesta) {
-                        Swal.fire(
-                            '¡Eliminado!',
-                            'El caso ha sido eliminado.',
-                            'success'
-                        );
-                        tablaCasos.ajax.reload(null, false); // recargar sin reiniciar la paginación
-                    },
-                    error: function () {
-                        Swal.fire(
-                            'Error',
-                            'Ocurrió un error al intentar eliminar.',
-                            'error'
-                        );
-                    }
-                });
-            }
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "Se eliminará el caso: " + nombre,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            _method: 'DELETE'
+                        },
+                        success: function(respuesta) {
+                            Swal.fire(
+                                '¡Eliminado!',
+                                'El caso ha sido eliminado.',
+                                'success'
+                            );
+                            tablaCasos.ajax.reload(null,
+                                false); // recargar sin reiniciar la paginación
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Error',
+                                'Ocurrió un error al intentar eliminar.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
         });
-    });
-</script>
+    </script>
+
+    <script>
+        document.getElementById('exportPorEstatus').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const url = new URL('{{ route('casos.exportarPorEstatus') }}', window.location.origin);
+            if (startDate && endDate) {
+                url.searchParams.append('start_date', startDate);
+                url.searchParams.append('end_date', endDate);
+            }
+
+            window.location.href = url.toString();
+        });
+    </script>
+
 
 
     @if (session('success'))

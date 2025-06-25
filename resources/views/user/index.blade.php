@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="container-fluid">
+       <x-breadcrumb title="Gestión de usuarios" />
     <div class="row mb-3">
         <div class="col-sm-12">
             <a href="{{ route('users.create') }}" class="btn btn-success">

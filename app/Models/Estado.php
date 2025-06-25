@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Estado extends Model
 {
-   protected $fillable = ['nombre'];
+    protected $fillable = ['nombre'];
 
     public function municipios()
     {
@@ -21,5 +21,11 @@ class Estado extends Model
     public function casosDestino()
     {
         return $this->hasMany(Caso::class, 'estado_destino_id');
+    }
+    // app/Models/Estado.php
+
+    public function casos()
+    {
+        return $this->hasMany(Caso::class);
     }
 }

@@ -25,7 +25,10 @@
                     @auth
                         <a href="{{ url('/dashboard') }}" class="text-blue-800 hover:underline">Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="text-blue-800 hover:underline">Iniciar Sesión</a>
+                        <a href="{{ route('login') }}"
+                    class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
+                    Iniciar Sesión
+                </a>
                     @endauth
                 </nav>
             @endif

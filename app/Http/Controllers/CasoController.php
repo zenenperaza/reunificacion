@@ -9,9 +9,12 @@ use App\Models\Parroquia;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Exports\CasosExport;
+use App\Exports\CasosPorEstadoExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CasosPorEstatusExport;
 
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class CasoController extends Controller
@@ -30,22 +33,31 @@ class CasoController extends Controller
             $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
         }
 
+
         return datatables()->of($query)
 
             ->addColumn('acciones', function ($caso) {
-                $edit = route('casos.edit', $caso->id);
+                $show   = route('casos.show', $caso->id);
+                $edit   = route('casos.edit', $caso->id);
                 $delete = route('casos.destroy', $caso->id);
+
                 return '
-        <a href="' . $edit . '" class="btn btn-sm btn-primary" title="Editar">
-            <i class="mdi mdi-pencil"></i>
-        </a>
-        <button class="btn btn-sm btn-danger btn-delete" 
-            data-url="' . $delete . '" 
-            data-nombre="' . $caso->numero_caso . '">
-            <i class="mdi mdi-delete"></i>
-        </button>
-    ';
+                <div class="btn-group" role="group">
+                    <a href="' . $show . '" class="btn btn-sm btn-outline-primary" title="Ver">
+                        <i class="mdi mdi-eye"></i>
+                    </a>
+                    <a href="' . $edit . '" class="btn btn-sm btn-outline-warning" title="Editar">
+                        <i class="mdi mdi-pencil"></i>
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger btn-delete"
+                        data-url="' . $delete . '"
+                        data-nombre="' . $caso->numero_caso . '">
+                        <i class="mdi mdi-trash-can-outline"></i>
+                    </button>
+                </div>
+            ';
             })
+
 
 
             ->editColumn('fecha_atencion', function ($caso) {
@@ -132,7 +144,7 @@ class CasoController extends Controller
             'tipo_atencion' => $request->tipo_atencion,
             'beneficiario' => $request->beneficiario,
             'edad_beneficiario' => $request->edad_beneficiario,
-            'poblacion_lgbti' => $request->poblacion_lgbti == 'Si' ? true : false,
+            'poblacion_lgbti' => $request->poblacion_lgbti,
             'representante_legal' => $request->representante_legal,
             'pais_procedencia' => $request->pais_procedencia,
             'otro_pais' => $request->otro_pais,
@@ -180,8 +192,17 @@ class CasoController extends Controller
         $caso->otras_remisiones = $request->otras_remisiones;
         $caso->indicadores = json_encode($request->indicadores);
 
-        $caso->save();
-
+        if (
+            $request->tipo_atencion === 'Grupo familiar' &&
+            $request->has('clonar_integrantes') &&
+            $request->numero_integrantes > 0
+        ) {
+            for ($i = 0; $i < $request->numero_integrantes; $i++) {
+                $nuevo = $caso->replicate();
+                $nuevo->tipo_atencion = 'Individual'; // cambiar tipo de atención
+                $nuevo->save();
+            }
+        }
         return redirect()->route('casos.index')->with('success', 'Caso registrado correctamente.');
     }
 
@@ -198,23 +219,91 @@ class CasoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'numero_caso' => 'required|string|max:255',
-            'fecha_atencion' => 'nullable|date',
-            'estado_id' => 'nullable|exists:estados,id',
-            // agrega validaciones para otros campos
-        ]);
-
         $caso = Caso::findOrFail($id);
 
-        $caso->numero_caso = $request->numero_caso;
-        $caso->fecha_atencion = $request->fecha_atencion;
-        $caso->estado_id = $request->estado_id;
-        // agrega los demás campos
+        // Recuperar archivos ya existentes
+        $fotosAnteriores = json_decode($caso->fotos ?? '[]', true);
+        $archivosAnteriores = json_decode($caso->archivos ?? '[]', true);
+
+        // Guardar nuevas fotos
+        $nuevasFotos = [];
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $foto) {
+                $path = $foto->store('fotos', 'public');
+                $nuevasFotos[] = $path;
+            }
+        }
+
+        // Guardar nuevos documentos
+        $nuevosArchivos = [];
+        if ($request->hasFile('archivos')) {
+            foreach ($request->file('archivos') as $archivo) {
+                $path = $archivo->store('archivos', 'public');
+                $nuevosArchivos[] = $path;
+            }
+        }
+
+        // Combinar los archivos viejos con los nuevos
+        $caso->fotos = json_encode(array_merge($fotosAnteriores, $nuevasFotos));
+        $caso->archivos = json_encode(array_merge($archivosAnteriores, $nuevosArchivos));
+
+        // Resto de campos
+        $caso->fill([
+            'periodo' => $request->periodo,
+            'fecha_atencion' => $request->fecha_atencion,
+            'estado_id' => $request->estado_id,
+            'municipio_id' => $request->municipio_id,
+            'parroquia_id' => $request->parroquia_id,
+            'estado_destino_id' => $request->estado_destino_id,
+            'municipio_destino_id' => $request->municipio_destino_id,
+            'parroquia_destino_id' => $request->parroquia_destino_id,
+            'direccion_domicilio' => $request->direccion_domicilio,
+            'numero_contacto' => $request->numero_contacto,
+            'elaborado_por' => $request->elaborado_por,
+            'numero_caso' => $request->numero_caso,
+            'tipo_atencion' => $request->tipo_atencion,
+            'beneficiario' => $request->beneficiario,
+            'edad_beneficiario' => $request->edad_beneficiario,
+            'poblacion_lgbti' => $request->poblacion_lgbti,
+            'educacion' => $request->educacion,
+            'nivel_educativo' => $request->nivel_educativo,
+            'tipo_institucion' => $request->tipo_institucion,
+            'estado_mujer' => implode(',', $request->estado_mujer ?? []),
+            'acompanante' => implode(',', $request->acompanante ?? []),
+            'representante_legal' => $request->representante_legal,
+            'pais_procedencia' => $request->pais_procedencia,
+            'otro_pais' => $request->otro_pais,
+            'nacionalidad_solicitante' => $request->nacionalidad_solicitante,
+            'tipo_documento' => $request->tipo_documento,
+            'pais_nacimiento' => $request->pais_nacimiento,
+            'otro_pais_nacimientos' => $request->otro_pais_nacimientos,
+            'etnia_indigena' => $request->etnia_indigena,
+            'otra_etnia' => $request->otra_etnia,
+            'discapacidad' => $request->discapacidad,
+            'organizacion_programa' => implode(',', $request->organizacion_programa ?? []),
+            'organizacion_solicitante' => implode(',', $request->organizacion_solicitante ?? []),
+            'otras_organizaciones' => $request->otras_organizaciones,
+            'tipo_atencion_programa' => implode(',', $request->tipo_atencion_programa ?? []),
+            'servicio_brindado_cosude' => implode(',', $request->servicio_brindado_cosude ?? []),
+            'servicio_brindado_unicef' => implode(',', $request->servicio_brindado_unicef ?? []),
+            'tipo_actuacion' => implode(',', $request->tipo_actuacion ?? []),
+            'otros_actuacion_descripcion' => $request->otros_actuacion_descripcion,
+            'vulnerabilidades' => json_encode($request->vulnerabilidades ?? []),
+            'derechos_vulnerados' => json_encode($request->derechos_vulnerados ?? []),
+            'identificacion_violencia' => json_encode($request->identificacion_violencia ?? []),
+            'tipos_violencia_vicaria' => json_encode($request->tipos_violencia_vicaria ?? []),
+            'remisiones' => json_encode($request->remisiones ?? []),
+            'otras_remisiones' => $request->otras_remisiones,
+            'fecha_actual' => $request->fecha_actual,
+            'estatus' => $request->estatus,
+            'indicadores' => json_encode($request->indicadores ?? []),
+            'observaciones' => $request->observaciones,
+            'verificador' => $request->verificador,
+        ]);
 
         $caso->save();
 
-        return redirect()->route('casos.index')->with('success', 'Caso actualizado correctamente');
+        return redirect()->route('casos.index')->with('success', 'Caso actualizado correctamente.');
     }
 
 
@@ -255,24 +344,42 @@ class CasoController extends Controller
 
     public function exportarExcel(Request $request)
     {
-        $start = $request->start_date;
-        $end = $request->end_date;
+        $start = $request->input('start_date');
+        $end = $request->input('end_date');
 
-        // Formatear el nombre del archivo con la fecha
         $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
 
-        return Excel::download(new CasosExport($start, $end), $filename);
+        return Excel::download(new CasosExport($start ?: null, $end ?: null), $filename);
     }
 
 
+    public function exportarPorEstado(Request $request)
+    {
+        $start = $request->start_date;
+        $end = $request->end_date;
+
+        return Excel::download(new CasosPorEstadoExport($start, $end), 'casos_por_estado.xlsx');
+    }
+
+
+    public function exportarPorEstatus(Request $request)
+    {
+        $start = $request->input('start_date');
+        $end = $request->input('end_date');
+
+        return Excel::download(
+            new CasosPorEstatusExport($start, $end),
+            'casos_por_estatus.xlsx'
+        );
+    }
 
 
     public function show($id)
     {
-        $caso = Caso::with(['estado', 'municipio', 'parroquia'])->findOrFail($id);
-
-        return view('casos.show', compact('caso'));
+        $caso = Caso::with(['estado', 'municipio', 'parroquia', 'user'])->findOrFail($id);
+        return view('caso.show', compact('caso'));
     }
+
 
 
     public function eliminarArchivo(Request $request, $id)
@@ -310,6 +417,17 @@ class CasoController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+
+
+    public function exportarPDF($id)
+    {
+        $caso = Caso::with(['estado', 'municipio', 'parroquia', 'estadoDestino', 'municipioDestino', 'parroquiaDestino', 'user'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('caso.pdf', compact('caso'));
+        return $pdf->download('caso_' . $caso->numero_caso . '.pdf');
+    }
+
 
 
 

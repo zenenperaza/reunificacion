@@ -17,19 +17,13 @@
     <!-- Sweet Alert-->
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
 
-
-
     <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
-    {{-- <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
-
-
-
-
 
 @endsection
 
 @section('content')
     <div class="container-fluid">
+        <x-breadcrumb title="Crear Caso" />
 
         <div class="card">
             <div class="card-body">
@@ -262,24 +256,35 @@
 
                                 <div class="row mt-3">
                                     <div class="col-md-4">
-                                        <label for="" class="form-label mb-2">Tipo de atencion</label>
-                                        <br>
-                                        <div class="form-check ">
+                                        <label for="" class="form-label mb-2">Tipo de atención</label><br>
+                                        <div class="form-check">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
                                                 id="individual" value="Individual">
-                                            <label class="form-check-label" for="individual">
-                                                Individual
-                                            </label>
+                                            <label class="form-check-label" for="individual">Individual</label>
                                         </div>
-                                        <div class="form-check ">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
                                                 id="grupo_familiar" value="Grupo familiar">
-                                            <label class="form-check-label" for="grupo_familiar">
-                                                Grupo familiar
-                                            </label>
+                                            <label class="form-check-label" for="grupo_familiar">Grupo familiar</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4" id="integrantesFields" style="display: none;">
+                                        <div class="mb-2">
+                                            <label for="numero_integrantes" class="form-label">N° de integrantes</label>
+                                            <input type="number" name="numero_integrantes" id="numero_integrantes"
+                                                class="form-control" min="1">
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="clonar_integrantes"
+                                                id="clonar_integrantes" value="1">
+                                            <label class="form-check-label" for="clonar_integrantes">Clonar este registro
+                                                para cada integrante</label>
                                         </div>
                                     </div>
                                 </div>
+
+
 
                             </div>
 
@@ -581,28 +586,25 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
-                                                <div class="mt-0">
-                                                    <label class="form-label mb-2">Tipo de documento</label>
-                                                    <select class="form-select" name="tipo_documento"
-                                                        id="tipo_documento">
-                                                        <option value="">Seleccione</option>
-                                                        @php
-                                                            $tipo_documento = [
-                                                                'Certificado de nacimiento',
-                                                                'Acta de nacimiento (partida de nacimiento)',
-                                                                'Cédula',
-                                                                'Pasaporte',
-                                                                'NO posee documentos',
-                                                            ];
-                                                        @endphp
+                                            <div class="col-md-6 mt-3">
+                                                <label class="form-label mb-2">Tipo de documento</label>
+                                                <select class="form-select" name="tipo_documento" id="tipo_documento">
+                                                    <option value="">Seleccione</option>
+                                                    @php
+                                                        $tipo_documento = [
+                                                            'Certificado de nacimiento',
+                                                            'Acta de nacimiento (partida de nacimiento)',
+                                                            'Cédula',
+                                                            'Pasaporte',
+                                                            'NO posee documentos',
+                                                        ];
+                                                    @endphp
 
-                                                        @foreach ($tipo_documento as $tipo)
-                                                            <option value="{{ $tipo }}">{{ $tipo }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
+                                                    @foreach ($tipo_documento as $tipo)
+                                                        <option value="{{ $tipo }}">{{ $tipo }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
 
@@ -674,6 +676,7 @@
                                                         <option value="">Seleccione</option>
                                                         @php
                                                             $etnias_indigenas = [
+                                                                'Ninguna',
                                                                 'Akawayo',
                                                                 'Añu',
                                                                 'Banova o Kurripako',
@@ -727,6 +730,9 @@
                                                 </div>
                                             </div>
 
+                                        </div>
+
+                                        <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <div class="mt-0">
                                                     <label class="form-label mb-2">Discapacidad</label>
@@ -734,13 +740,13 @@
                                                         <option value="">Seleccione</option>
                                                         @php
                                                             $discapacidades = [
+                                                                'Ninguna',
                                                                 'Física o Motora',
                                                                 'Sensorial (auditiva y visual)',
                                                                 'Auditiva',
                                                                 'Visual',
                                                                 'Intelectual',
                                                                 'Psíquica',
-                                                                'Ninguna',
                                                             ];
                                                         @endphp
 
@@ -752,7 +758,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-
                                         </div>
 
 
@@ -1715,6 +1720,26 @@
 
 
 
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const estadoSelect = document.getElementById('estadoSelect');
+        //     const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
+
+        //     estadoSelect.addEventListener('change', function() {
+        //         const estadoId = this.value;
+
+        //         fetch(`/casos/contador-estado/${estadoId}`)
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 if (data.estado_nombre === 'Táchira') {
+        //                     const nuevoNumero = String(data.conteo + 1).padStart(3, '0');
+        //                     numeroCasoInput.value = `TCT-25-${nuevoNumero}`;
+        //                 } else {
+        //                     numeroCasoInput.value = '';
+        //                 }
+        //             });
+        //     });
+        // });
+        // <script>
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
@@ -1722,18 +1747,29 @@
             estadoSelect.addEventListener('change', function() {
                 const estadoId = this.value;
 
+                if (!estadoId) {
+                    numeroCasoInput.value = '';
+                    return;
+                }
+
                 fetch(`/casos/contador-estado/${estadoId}`)
                     .then(response => response.json())
                     .then(data => {
-                        if (data.estado_nombre === 'Táchira') {
-                            const nuevoNumero = String(data.conteo + 1).padStart(3, '0');
-                            numeroCasoInput.value = `TCT-25-${nuevoNumero}`;
-                        } else {
-                            numeroCasoInput.value = '';
-                        }
+                        let nombre = data.estado_nombre.trim().normalize("NFD").replace(
+                            /[\u0300-\u036f]/g, ""); // Quitar acentos
+                        let siglas = nombre.substring(0, 3).toUpperCase();
+
+                        const numero = String(data.conteo + 1).padStart(3, '0');
+                        numeroCasoInput.value = `RLF-${siglas}-${numero}`;
+                    })
+                    .catch(err => {
+                        console.error('Error al obtener datos del estado:', err);
+                        numeroCasoInput.value = '';
                     });
             });
         });
+
+
 
 
 
@@ -2422,5 +2458,24 @@
 
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
+            const integrantesFields = document.getElementById('integrantesFields');
+
+            tipoAtencionRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    integrantesFields.style.display = this.value === 'Grupo familiar' ? 'block' :
+                        'none';
+                });
+            });
+
+            // Mostrar al recargar si está preseleccionado
+            const selected = document.querySelector('input[name="tipo_atencion"]:checked');
+            if (selected && selected.value === 'Grupo familiar') {
+                integrantesFields.style.display = 'block';
+            }
+        });
+    </script>
 
 @endsection

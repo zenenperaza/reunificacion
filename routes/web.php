@@ -33,6 +33,10 @@ Route::middleware(['auth'])->group(function () {
 
     // ✅ Primero rutas específicas
     Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');
+    Route::get('/casos/exportar-por-estatus', [CasoController::class, 'exportarPorEstatus'])->name('casos.exportarPorEstatus');
+    Route::get('/casos/exportar-por-estado', [CasoController::class, 'exportarPorEstado'])->name('casos.exportarPorEstado');
+    Route::get('/casos/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('casos.pdf');
+
 
     // ✅ Luego el resource completo
     Route::resource('casos', CasoController::class);
@@ -48,6 +52,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
 
     Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
+
+
     
 
 });
