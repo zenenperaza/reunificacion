@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('photo')->nullable();            
             $table->enum('estatus', ['activo', 'inactivo'])->default('activo');
-            $table->foreignId('role_id')->constrained()->onDelete('restrict');
+            // $table->foreignId('role_id')->constrained()->onDelete('restrict');
             $table->timestamps();
         });
 

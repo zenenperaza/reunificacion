@@ -13,6 +13,7 @@ php artisan storage:link
 php artisan migrate --path=database/migrations/2025_06_16_175037_create_municipios_table.php
 
 RESET MIGRACIONES 
+php artisan migrate:fresh
 php artisan migrate:reset
 
 php artisan migrate

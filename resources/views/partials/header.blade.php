@@ -20,14 +20,14 @@
                             <h5 class="text-overflow mb-2">22 resultados encontrados</h5>
                         </div>
 
-                        
+
 
                     </div>
                 </div>
             </form>
         </li>
 
- 
+
 
         <li class="dropdown notification-list topbar-dropdown">
             <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#">
@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="noti-scroll" data-simplebar>
-                    
+
 
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <div class="notify-icon bg-primary">
@@ -57,7 +57,7 @@
                         </p>
                     </a>
 
-                   </div>
+                </div>
 
                 <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
                     Ver todo
@@ -67,40 +67,45 @@
             </div>
         </li>
 
-      <li class="dropdown notification-list topbar-dropdown">
-    <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown" href="#">
-       <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/small/default.png') }}" alt="user-image" class="rounded-circle" height="32">
+        <li class="dropdown notification-list topbar-dropdown">
+            <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
+                href="#">
+                <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/small/default.png') }}"
+                    alt="user-image" class="rounded-circle" height="32">
 
-        <span class="pro-user-name ms-1">
-            {{ $user->name ?? 'Invitado' }} <i class="mdi mdi-chevron-down"></i>
-        </span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-end profile-dropdown">
-        <div class="dropdown-header noti-title">
-            <h6 class="text-overflow m-0">¡Bienvenido, {{ $user->role->nombre ?? 'Sin rol' }}!</h6>
-        </div>
+                <span class="pro-user-name ms-1">
+                    {{ $user->name ?? 'Invitado' }} <i class="mdi mdi-chevron-down"></i>
+                </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end profile-dropdown">
+                <div class="dropdown-header noti-title">
+                    <h6 class="text-overflow m-0">
+                        ¡Bienvenido, {{ ucfirst($user->getRoleNames()->first() ?? 'Sin rol') }}!
+                    </h6>
+                </div>
 
-        <a href="{{ route('profile.edit') }}" class="dropdown-item notify-item">
-            <i class="fe-user"></i>
-            <span>Mi cuenta</span>
-        </a>
 
-        <a href="#" class="dropdown-item notify-item">
-            <i class="fe-lock"></i>
-            <span>Bloquear pantalla</span>
-        </a>
+                <a href="{{ route('profile.edit') }}" class="dropdown-item notify-item">
+                    <i class="fe-user"></i>
+                    <span>Mi cuenta</span>
+                </a>
 
-        <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item notify-item">
+                    <i class="fe-lock"></i>
+                    <span>Bloquear pantalla</span>
+                </a>
 
-       <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="dropdown-item notify-item">
-                    <i class="fe-log-out"></i>
-                    <span>Cerrar sesión</span>
-                </button>
-            </form>
-    </div>
-</li>
+                <div class="dropdown-divider"></div>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item notify-item">
+                        <i class="fe-log-out"></i>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
+            </div>
+        </li>
         <li class="dropdown notification-list">
             <a href="javascript:void(0);" class="nav-link right-bar-toggle waves-effect waves-light">
                 <i class="fe-settings noti-icon"></i>

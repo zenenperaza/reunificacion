@@ -12,17 +12,18 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
-    {
-        Caso::truncate();        
-        $this->call([
-            RoleSeeder::class,
-            UserSeeder::class,
-            EstadoSeeder::class,
-            MunicipioSeeder::class,
-            ParroquiaSeeder::class,
-            CasoSeeder::class,
-        ]);
-        Caso::factory()->count(1000)->create();
-    }
+public function run(): void
+{
+    $this->call([
+        RoleSeeder::class,
+        UserSeeder::class,
+        EstadoSeeder::class,
+        MunicipioSeeder::class,
+        ParroquiaSeeder::class,
+    ]);
+
+    // Crea los casos después de que existan los datos relacionados
+    \App\Models\Caso::factory()->count(1000)->create();
+}
+
 }

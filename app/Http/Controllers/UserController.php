@@ -3,52 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Permission\Models\Role;
+
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('role')->get();
-        return view('user.index', compact('users'));
+        return view('user.index');
     }
+
+
 
     public function create()
     {
-        $roles = Role::all();
+        $roles = Role::all(); // roles con nombre (Spatie)
         return view('user.create', compact('roles'));
     }
 
 
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6|confirmed',
-        'phone' => 'nullable',
-        'address' => 'nullable',
-        'photo' => 'nullable|image|max:2048',
-        'role_id' => 'required|exists:roles,id',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'phone' => 'nullable',
+            'address' => 'nullable',
+            'photo' => 'nullable|image|max:2048',
+            'role' => 'required|exists:roles,name',
+        ]);
 
-    // Carga todos los datos
-    $data = $request->all();
-    $data['password'] = Hash::make($request->password);
+        $data = $request->except('role'); // excluye 'role' del insert directo
+        $data['password'] = Hash::make($request->password);
 
-    // Maneja la foto después de cargar $data
-    if ($request->hasFile('photo')) {
-        $data['photo'] = $request->file('photo')->store('users', 'public');
+        if ($request->hasFile('photo')) {
+            $data['photo'] = $request->file('photo')->store('users', 'public');
+        }
+
+        // Crear el usuario
+        $user = User::create($data);
+
+        // Asignar rol
+        $user->assignRole($request->role);
+
+        return redirect()->route('users.index')->with('success', 'Usuario creado correctamente.');
     }
 
-    User::create($data);
 
-    return redirect()->route('users.index')->with('success', 'Usuario creado correctamente.');
-}
 
 
 
@@ -67,10 +73,10 @@ public function store(Request $request)
             'phone' => 'nullable',
             'address' => 'nullable',
             'photo' => 'nullable|image|max:2048',
-            'role_id' => 'required|exists:roles,id',
+            'role' => 'required|exists:roles,name',
         ]);
 
-        $data = $request->all();
+        $data = $request->except('role'); // excluye el campo role del update directo
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -79,11 +85,16 @@ public function store(Request $request)
         }
 
         if ($request->hasFile('photo')) {
-            if ($user->photo) Storage::disk('public')->delete($user->photo);
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
             $data['photo'] = $request->file('photo')->store('users', 'public');
         }
 
         $user->update($data);
+
+        // Actualizar rol con Spatie
+        $user->syncRoles($request->role);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
     }
@@ -99,12 +110,13 @@ public function store(Request $request)
         return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente.');
     }
 
-    
 
-
-   public function data()
+public function data()
 {
-    return DataTables::of(User::with('role')->select('users.*'))
+    return DataTables::of(User::with('roles')->select('users.*'))
+        ->addColumn('roles', function ($user) {
+            return $user->roles->pluck('name')->implode(', ');
+        })
         ->addColumn('photo', function ($user) {
             if ($user->photo) {
                 $url = asset('storage/' . $user->photo);
@@ -123,11 +135,8 @@ public function store(Request $request)
                     <i class="mdi mdi-pencil"></i>
                 </a>';
         })
-        ->rawColumns(['acciones', 'photo'])
+        ->rawColumns(['acciones', 'photo', 'roles'])
         ->make(true);
 }
-
-
-
 
 }

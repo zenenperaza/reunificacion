@@ -67,27 +67,27 @@
 <script src="{{ asset('assets/libs/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
 
 <script>
-$('#users-table').DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: '{{ route("users.data") }}',
-    columns: [
-        { data: 'id', name: 'id' },
-        { data: 'name', name: 'name' },
-        { data: 'email', name: 'email' },
-        { data: 'role.name', name: 'role.name' }, 
-        { data: 'photo', name: 'photo', orderable: false, searchable: false },
-        { data: 'estatus', name: 'estatus' },
-        { data: 'acciones', name: 'acciones', orderable: false, searchable: false }
-    ],
-    language: {
-        url: 'https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-    }
-
-
+$(function () {
+    $('#users-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route("users.data") }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'roles', name: 'roles' },
+            { data: 'photo', name: 'photo', orderable: false, searchable: false },
+            { data: 'estatus', name: 'estatus' },
+            { data: 'acciones', name: 'acciones', orderable: false, searchable: false }
+        ],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        }
+    });
 });
-
 </script>
+
 
 <script>
 $('#deleteModal').on('show.bs.modal', function (event) {
