@@ -126,7 +126,7 @@
         <p><span class="label">Fecha Actual:</span> <span
                 class="value">{{ \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') }}</span></p>
         <p><span class="label">Estatus:</span> <span class="value">{{ $caso->estatus }}</span></p>
-        <p><span class="label">Descripción:</span> <span class="value">{{ $caso->descripcion }}</span></p>
+        <p><span class="label">Descripción:</span> <span class="value">{{ $caso->observaciones }}</span></p>
     </div>
 
     {{-- Ubicación --}}

@@ -18,14 +18,38 @@
 
 
     <div class="container-fluid">
-   <x-breadcrumb title="Gestión de Casos" />
+        <x-breadcrumb title="Gestión de Casos" />
 
-        <div class="row mb-3">
-            <div class="col-sm-12">
+        <div class="row mb-3  d-flex my-2 justify-content-between">
+            <div class="col-sm-3">
                 <a href="{{ route('casos.create') }}" class="btn btn btn-primary">
                     <i class="mdi mdi-plus"></i> Nuevo Caso
                 </a>
             </div>
+            <div class="col-md-3 d-flex align-items-end justify-content-end">
+                <div class="dropdown w-100">
+                    <button
+                        class="btn btn-outline-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
+                        type="button" id="dropdownImportarExcel" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ asset('assets/images/excel.jpg') }}" alt="Excel" width="20" height="20">
+                        Importar casos por Excel
+                    </button>
+
+                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownImportarExcel">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('casos.importar.vista') }}">
+                                <i class="mdi mdi-file-excel"></i> Importar casos (previsualización)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('casos.plantilla') }}">
+                                <i class="mdi mdi-download"></i> Descargar excel de ejemplo
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
         <div class="form-group d-flex my-2">
             <div class="input-group  d-flex justify-content-start">
@@ -33,6 +57,15 @@
                     <i class="far fa-calendar-alt"></i> Buscar por fecha actual
                     <i class="fas fa-caret-down"></i>
                 </button>
+                <div class="btn btn-outline-secondary btn-sm">
+                    <select id="filtro_estatus" class="form-select w-auto mx-2">
+                        <option value="">Todos los estatus</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="En seguimiento">En seguimiento</option>
+                        <option value="Cierre de atención">Cierre de atención</option>
+                    </select>
+                </div>
+
                 <button id="clear-daterange" class="btn btn-outline-secondary btn-sm">
                     <i class="mdi mdi-filter-remove"></i> Limpiar filtro
                 </button>
@@ -67,10 +100,43 @@
                     </ul>
                 </div>
             </div>
-
-
-
         </div>
+        {{-- @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif --}}
+
+        {{-- @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif --}}
+
+        @if (session('errores_importacion'))
+            <div class="alert alert-warning">
+                <strong>Detalles:</strong>
+                <ul class="mb-0">
+                    @foreach (session('errores_importacion') as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        {{-- @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>¡Éxito!</strong> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        @endif --}}
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error:</strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        @endif
+
 
         <div class="card">
             <div class="card-body">
@@ -85,9 +151,9 @@
                             <th>Tipo Atención</th>
                             <th>Fecha atencion</th>
                             <th>Fecha actual</th>
+                            <th>Estatus</th>
                             <th>Estado</th>
                             <th>Municipio</th>
-                            <th>Estatus</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -119,6 +185,7 @@
             </form>
         </div>
     </div>
+
 @endsection
 
 @section('scripts')
@@ -168,6 +235,7 @@
                 data: function(d) {
                     d.start_date = startDate ?? '';
                     d.end_date = endDate ?? '';
+                    d.estatus = $('#filtro_estatus').val(); // <-- Agregar esta línea
                 }
 
             },
@@ -201,16 +269,17 @@
                     name: 'fecha_actual'
                 },
                 {
+                    data: 'estatus',
+                    name: 'estatus'
+                }, // ✅ Aquí
+                {
                     data: 'estado.nombre',
-                    name: 'estado.nombre'
-                },
+                    name: 'estado.nombre',
+                    className: 'none'
+                }, // ✅ Luego estado
                 {
                     data: 'municipio.nombre',
-                    name: 'municipio.nombre'
-                },
-                {
-                    data: 'estatus',
-                    name: 'estatus',
+                    name: 'municipio.nombre',
                     className: 'none'
                 },
                 {
@@ -245,7 +314,33 @@
                     text: '<i class="mdi mdi-printer"></i> Imprimir',
                     className: 'btn btn-sm btn-outline-dark'
                 }
-            ]
+            ],
+            createdRow: function(row, data, dataIndex) {
+                let badgeClass = '';
+                switch (data.estatus) {
+                    case 'En proceso':
+                        badgeClass = 'bg-warning text-dark';
+                        break;
+                    case 'En seguimiento':
+                        badgeClass = 'bg-primary';
+                        break;
+                    case 'Cierre de atención':
+                        badgeClass = 'bg-success';
+                        break;
+                }
+
+                if (badgeClass !== '') {
+                    const badgeHTML = `<span class="badge ${badgeClass}">${data.estatus}</span>`;
+                    $('td', row).eq(6).html(badgeHTML); // reemplaza contenido de la celda de estatus
+                }
+            }
+
+
+
+        });
+
+        $('#filtro_estatus').on('change', function() {
+            dataTable.ajax.reload();
         });
     </script>
 
@@ -325,6 +420,11 @@
                 url.searchParams.append('end_date', endDate);
             }
 
+            const estatus = $('#filtro_estatus').val();
+            if (estatus) {
+                url.searchParams.append('estatus', estatus);
+            }
+
             window.location.href = url.toString();
         });
     </script>
@@ -391,12 +491,28 @@
         });
     </script>
 
+    <script>
+        document.getElementById('importarCasosPorExcel').addEventListener('click', function() {
+            document.getElementById('inputArchivoExcel').click();
+        });
+
+        document.getElementById('inputArchivoExcel').addEventListener('change', function() {
+            document.getElementById('formImportarExcel').submit();
+        });
+
+        document.getElementById('descargarExcelEjemplo').addEventListener('click', function() {
+            window.location.href = "{{ route('casos.plantilla') }}";
+        });
+    </script>
+
+
+
 
 
     @if (session('success'))
         <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
-            <div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive"
-                aria-atomic="true">
+            <div class="toast align-items-center text-white bg-success border-0 show" role="alert"
+                aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
                         {{ session('success') }}
@@ -426,5 +542,6 @@
             </div>
         </div>
     @endif
+
 
 @endsection

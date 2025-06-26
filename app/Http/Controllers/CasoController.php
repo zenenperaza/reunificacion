@@ -12,9 +12,17 @@ use App\Exports\CasosExport;
 use App\Exports\CasosPorEstadoExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CasosPorEstatusExport;
-
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\CasosPlantillaExport;
+use App\Imports\CasosImport;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+
+
+
+
+
 
 
 class CasoController extends Controller
@@ -24,30 +32,36 @@ class CasoController extends Controller
         return view('caso.index');
     }
 
-    public function data(Request $request)
-    {
-        $query = Caso::with(['estado', 'municipio']);
+public function data(Request $request)
+{
+    $query = Caso::with(['estado', 'municipio']);
 
-        // Filtro por rango de fechas
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
-        }
+    // Filtro por rango de fechas
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
+    }
 
+    // ✅ Filtro por estatus
+    if ($request->filled('estatus')) {
+        $query->where('estatus', $request->estatus);
+    }
 
-        return datatables()->of($query)
+    return datatables()->of($query)
+        ->addColumn('acciones', function ($caso) {
+            $show   = route('casos.show', $caso->id);
+            $edit   = route('casos.edit', $caso->id);
+            $delete = route('casos.destroy', $caso->id);
 
-            ->addColumn('acciones', function ($caso) {
-                $show   = route('casos.show', $caso->id);
-                $edit   = route('casos.edit', $caso->id);
-                $delete = route('casos.destroy', $caso->id);
-
-                return '
+            return '
                 <div class="btn-group" role="group">
                     <a href="' . $show . '" class="btn btn-sm btn-outline-primary" title="Ver">
                         <i class="mdi mdi-eye"></i>
                     </a>
                     <a href="' . $edit . '" class="btn btn-sm btn-outline-warning" title="Editar">
                         <i class="mdi mdi-pencil"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success" title="Clonar">
+                        <i class="mdi mdi-account-multiple-plus-outline"></i>
                     </a>
                     <button class="btn btn-sm btn-outline-danger btn-delete"
                         data-url="' . $delete . '"
@@ -56,20 +70,16 @@ class CasoController extends Controller
                     </button>
                 </div>
             ';
-            })
-
-
-
-            ->editColumn('fecha_atencion', function ($caso) {
-                return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
-            })
-            ->editColumn('fecha_actual', function ($caso) {
-                return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
-            })
-
-            ->rawColumns(['acciones'])
-            ->make(true);
-    }
+        })
+        ->editColumn('fecha_atencion', function ($caso) {
+            return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
+        })
+        ->editColumn('fecha_actual', function ($caso) {
+            return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
+        })
+        ->rawColumns(['acciones'])
+        ->make(true);
+}
 
 
 
@@ -104,7 +114,7 @@ class CasoController extends Controller
         //     'municipio_id' => 'required|exists:municipios,id',
         //     'parroquia_id' => 'required|exists:parroquias,id',
         //     'estatus' => 'required',
-        //     'descripcion' => 'nullable|string',
+        //     'observaciones' => 'nullable|string',
         //     'fotos.*' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
         //     'archivos.*' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         // ]);
@@ -157,7 +167,7 @@ class CasoController extends Controller
             'discapacidad' => $request->discapacidad,
             'fecha_actual' => $request->fecha_actual,
             'estatus' => $request->estatus,
-            'descripcion' => $request->descripcion,
+            'observaciones' => $request->observaciones,
             'verificador' => $request->verificador,
             'user_id' => auth()->id(),
             'fotos' => json_encode($fotos),
@@ -342,15 +352,17 @@ class CasoController extends Controller
 
 
 
-    public function exportarExcel(Request $request)
-    {
-        $start = $request->input('start_date');
-        $end = $request->input('end_date');
+public function exportarExcel(Request $request)
+{
+    $start = $request->input('start_date');
+    $end = $request->input('end_date');
+    $estatus = $request->input('estatus');
 
-        $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
+    $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
 
-        return Excel::download(new CasosExport($start ?: null, $end ?: null), $filename);
-    }
+    return Excel::download(new CasosExport($start, $end, null, $estatus), $filename);
+}
+
 
 
     public function exportarPorEstado(Request $request)
@@ -428,7 +440,80 @@ class CasoController extends Controller
         return $pdf->download('caso_' . $caso->numero_caso . '.pdf');
     }
 
+    public function importarExcel(Request $request)
+    {
+        Excel::import(new CasosImport, $request->file('archivo_excel'));
 
+        $importados = session('importados', 0);
+        $errores = session('errores_importacion', []);
+
+        if ($importados > 0) {
+            return back()->with('success', "$importados casos importados correctamente.")
+                ->with('errores_importacion', $errores);
+        } else {
+            return back()->with('error', 'No se importaron casos. Verifica el archivo.')
+                ->with('errores_importacion', $errores);
+        }
+    }
+
+
+
+
+    public function descargarPlantilla()
+    {
+        return Excel::download(new CasosPlantillaExport, 'plantilla_casos.xlsx');
+    }
+
+
+    public function importarVista()
+    {
+        return view('caso.importar');
+    }
+
+    public function previsualizarExcel(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        $filename = Str::random(20) . '.xlsx';
+
+        // Guardar en disco 'local' (ya configurado con storage_path('app/private'))
+        $path = $request->file('archivo_excel')->storeAs('temp', $filename, 'local');
+
+        // Ruta absoluta correcta
+        $rutaAbsoluta = Storage::disk('local')->path($path);
+
+        // Leer datos
+        $data = Excel::toArray([], $rutaAbsoluta);
+        $rows = $data[0];
+
+        // Guardar solo la ruta relativa para luego ubicarla con disk('local')
+        session(['archivo_excel_temporal' => $path]);
+
+        return response()->json([
+            'columns' => $rows[0] ?? [],
+            'rows' => array_slice($rows, 1),
+        ]);
+    }
+    
+    public function confirmarImportacion()
+    {
+        $path = session('archivo_excel_temporal');
+
+        if (!$path || !Storage::disk('local')->exists($path)) {
+            return back()->with('error', 'No se encontró el archivo a importar.');
+        }
+
+        $rutaAbsoluta = Storage::disk('local')->path($path);
+
+        Excel::import(new \App\Imports\CasosImport, $rutaAbsoluta);
+
+        Storage::disk('local')->delete($path);
+        session()->forget('archivo_excel_temporal');
+
+        return redirect()->route('casos.index')->with('success', 'Casos importados correctamente.');
+    }
 
 
     // public function upload(Request $request)

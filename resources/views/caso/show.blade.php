@@ -50,7 +50,7 @@
                 <x-readonly-input label="Edad del Beneficiario" value="{{ $caso->edad_beneficiario }}" />
                 <x-readonly-input label="Población LGBTI" value="{{ $caso->poblacion_lgbti }}" />
                 <x-readonly-input label="Estatus" value="{{ $caso->estatus }}" />
-                <x-readonly-input label="Descripción" value="{{ $caso->descripcion }}" />
+                <x-readonly-input label="Obsrvaciones" value="{{ $caso->observaciones }}" />
                 <x-readonly-input label="Verificador" value="{{ $caso->verificador }}" />
             </div>
 
@@ -100,6 +100,11 @@
             <button onclick="window.print();" class="btn btn-outline-dark">
                 <i class="mdi mdi-printer"></i> Imprimir
             </button>
+
+            {{-- Botón para clonar --}}
+            <a href="#" class="btn btn-outline-success" target="_blank">
+                <i class="mdi mdi-clone"></i> Clona caso actual
+            </a>
         </div>
 
 

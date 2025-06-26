@@ -148,7 +148,7 @@ class CasosExport implements
             $caso->etnia_indigena,
             $caso->otra_etnia,
             $caso->estatus,
-            $caso->descripcion,
+            $caso->observaciones,
             $caso->verificador,
             $caso->organizacion_programa,
             $caso->organizacion_solicitante,

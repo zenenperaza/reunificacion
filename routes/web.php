@@ -36,6 +36,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/casos/exportar-por-estatus', [CasoController::class, 'exportarPorEstatus'])->name('casos.exportarPorEstatus');
     Route::get('/casos/exportar-por-estado', [CasoController::class, 'exportarPorEstado'])->name('casos.exportarPorEstado');
     Route::get('/casos/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('casos.pdf');
+    // Route::post('/casos/importar', [CasoController::class, 'importarExcel'])->name('casos.importar');
+    Route::get('/casos/plantilla-ejemplo', [CasoController::class, 'descargarPlantilla'])->name('casos.plantilla');
+    // Vista opcional para testeo
+    Route::get('/casos/importar', [CasoController::class, 'importarVista'])->name('casos.importar.vista');
+
+
+
+    // Lógica AJAX de previsualización
+    Route::post('/casos/preview-excel', [CasoController::class, 'previsualizarExcel'])->name('casos.preview');
+
+    // Confirmar la importación real
+    Route::post('/casos/confirmar-importacion', [CasoController::class, 'confirmarImportacion'])->name('casos.confirmar');
+
+
 
 
     // ✅ Luego el resource completo
@@ -52,10 +66,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
 
     Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
-
-
-    
-
 });
 
 

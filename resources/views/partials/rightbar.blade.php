@@ -79,14 +79,14 @@
                         <label class="form-check-label" for="default-size-check">Por Defecto</label>
                     </div>
                     <div class="form-check form-switch mb-1">
-                        <input type="radio" class="form-check-input" name="leftbar-size" value="condensed"
-                            id="condensed-check" />
-                        <label class="form-check-label" for="condensed-check">Reducido <small>(Tamaño Extra Pequeño)</small></label>
-                    </div>
-                    <div class="form-check form-switch mb-1">
                         <input type="radio" class="form-check-input" name="leftbar-size" value="compact"
                             id="compact-check" />
                         <label class="form-check-label" for="compact-check">Compacto <small>(Tamaño Pequeño)</small></label>
+                    </div>
+                    <div class="form-check form-switch mb-1">
+                        <input type="radio" class="form-check-input" name="leftbar-size" value="condensed"
+                            id="condensed-check" />
+                        <label class="form-check-label" for="condensed-check">Reducido <small>(Tamaño Extra Pequeño)</small></label>
                     </div>
 
                     <!-- Información de Usuario -->
