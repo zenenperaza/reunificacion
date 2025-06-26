@@ -12,6 +12,17 @@
         <div class="tab-content pt-0">
             <div class="tab-pane active" id="settings-tab" role="tabpanel">
                 <div class="p-3">
+
+<div class="alert alert-secondary" role="alert">
+                       <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="dropdown-item notify-item">
+                    <i class="fe-log-out"></i>
+                    <span>Cerrar sesión</span>
+                </button>
+            </form>
+        </div>
+
                     <div class="alert alert-warning" role="alert">
                         <strong>Personaliza</strong> el esquema de colores, diseño, etc.
                     </div>

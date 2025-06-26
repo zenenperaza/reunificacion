@@ -19,6 +19,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

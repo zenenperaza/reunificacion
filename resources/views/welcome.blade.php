@@ -23,7 +23,7 @@
             @if (Route::has('login'))
                 <nav>
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="text-blue-800 hover:underline">Dashboard</a>
+                        <a href="{{ url('/dashboard') }}" class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}"
                     class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
