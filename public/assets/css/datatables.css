@@ -102,3 +102,9 @@ body[data-layout-color="dark"] .dataTables_filter input {
     color: #fff;
 }
 
+div#casos-table_length {
+    margin: 15px 5px;
+}
+.container-fluid {
+    margin-left: 5px;
+}

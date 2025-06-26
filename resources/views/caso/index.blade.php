@@ -7,6 +7,8 @@
     <link href="{{ asset('assets/css/datatables.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet">
 
+{{-- Núcleo de DataTables + Bootstrap 5 --}}
+<link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
     <!-- Sweet Alert-->
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/daterangepicker/daterangepicker.css') }}" rel="stylesheet">
@@ -26,15 +28,14 @@
                     <i class="mdi mdi-plus"></i> Nuevo Caso
                 </a>
             </div>
-            <div class="col-md-3 d-flex align-items-end justify-content-end">
+            <div class="col-md-3 ms-auto text-end">
                 <div class="dropdown w-100">
                     <button
                         class="btn btn-outline-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
                         type="button" id="dropdownImportarExcel" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ asset('assets/images/excel.jpg') }}" alt="Excel" width="20" height="20">
-                        Importar casos por Excel
+                        Importar Excel
                     </button>
-
                     <ul class="dropdown-menu w-100" aria-labelledby="dropdownImportarExcel">
                         <li>
                             <a class="dropdown-item" href="{{ route('casos.importar.vista') }}">
@@ -51,28 +52,32 @@
             </div>
 
         </div>
-        <div class="form-group d-flex my-2">
-            <div class="input-group  d-flex justify-content-start">
-                <button type="button" class="btn btn btn-outline-primary" id="daterange-btn">
-                    <i class="far fa-calendar-alt"></i> Buscar por fecha actual
-                    <i class="fas fa-caret-down"></i>
-                </button>
-                <div class="btn btn-outline-secondary btn-sm">
-                    <select id="filtro_estatus" class="form-select w-auto mx-2">
-                        <option value="">Todos los estatus</option>
-                        <option value="En proceso">En proceso</option>
-                        <option value="En seguimiento">En seguimiento</option>
-                        <option value="Cierre de atención">Cierre de atención</option>
-                    </select>
-                </div>
-
-                <button id="clear-daterange" class="btn btn-outline-secondary btn-sm">
-                    <i class="mdi mdi-filter-remove"></i> Limpiar filtro
+        {{-- Bloque de filtros y exportación --}}
+        <div class="row mb-3  d-flex my-2 justify-content-between">
+            {{-- Filtros: Fecha y Estatus --}}
+            <div class="col-md-9 d-flex flex-wrap gap-2">
+                {{-- Selector de Rango de Fecha --}}
+                <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="daterange-btn">
+                    <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
+                    <i class="fas fa-caret-down ms-1"></i>
                 </button>
 
+                {{-- Selector de Estatus --}}
+                <select id="filtro_estatus" class="btn btn-outline-primary">
+                    <option value="">Todos los estatus</option>
+                    <option value="En proceso">En proceso</option>
+                    <option value="En seguimiento">En seguimiento</option>
+                    <option value="Cierre de atención">Cierre de atención</option>
+                </select>
+
+                {{-- Limpiar Filtros --}}
+                <button id="clear-daterange" class="btn btn-outline-secondary">
+                    <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
+                </button>
             </div>
 
-            <div class="col-md-3 d-flex align-items-end justify-content-end">
+            {{-- Botón de Exportación --}}
+            <div class="col-md-3 text-end">
                 <div class="dropdown w-100">
                     <button
                         class="btn btn-outline-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
@@ -83,7 +88,7 @@
                     <ul class="dropdown-menu w-100" aria-labelledby="dropdownExportExcel">
                         <li>
                             <a id="exportExcel" class="dropdown-item" href="#">
-                                <i class="mdi mdi-file-excel"></i> Exportar todos los casos
+                                <i class="mdi mdi-file-excel"></i> Exportar casos
                             </a>
                         </li>
                         <li>
@@ -101,34 +106,6 @@
                 </div>
             </div>
         </div>
-        {{-- @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif --}}
-
-        {{-- @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif --}}
-
-        @if (session('errores_importacion'))
-            <div class="alert alert-warning">
-                <strong>Detalles:</strong>
-                <ul class="mb-0">
-                    @foreach (session('errores_importacion') as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        {{-- @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>¡Éxito!</strong> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-        @endif --}}
 
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -242,6 +219,7 @@
             order: [
                 [0, 'desc']
             ],
+            lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"] ],
             columns: [{
                     data: 'id',
                     name: 'id',
@@ -293,7 +271,7 @@
             language: {
                 url: "{{ asset('assets/lang/datatables/es-ES.json') }}"
             },
-            dom: 'Bfrtip',
+            dom: 'lBfrtip',
             buttons: [{
                     extend: 'copy',
                     text: '<i class="mdi mdi-content-copy"></i> Copiar',
