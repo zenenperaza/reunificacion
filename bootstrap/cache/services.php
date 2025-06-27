@@ -44,10 +44,11 @@
     40 => 'Carbon\\Laravel\\ServiceProvider',
     41 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     42 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    43 => 'Spatie\\Permission\\PermissionServiceProvider',
-    44 => 'Yajra\\DataTables\\DataTablesServiceProvider',
-    45 => 'App\\Providers\\AppServiceProvider',
-    46 => 'App\\Providers\\RouteServiceProvider',
+    43 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+    44 => 'Spatie\\Permission\\PermissionServiceProvider',
+    45 => 'Yajra\\DataTables\\DataTablesServiceProvider',
+    46 => 'App\\Providers\\AppServiceProvider',
+    47 => 'App\\Providers\\RouteServiceProvider',
   ),
   'eager' => 
   array (
@@ -78,10 +79,11 @@
     24 => 'Carbon\\Laravel\\ServiceProvider',
     25 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     26 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    27 => 'Spatie\\Permission\\PermissionServiceProvider',
-    28 => 'Yajra\\DataTables\\DataTablesServiceProvider',
-    29 => 'App\\Providers\\AppServiceProvider',
-    30 => 'App\\Providers\\RouteServiceProvider',
+    27 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+    28 => 'Spatie\\Permission\\PermissionServiceProvider',
+    29 => 'Yajra\\DataTables\\DataTablesServiceProvider',
+    30 => 'App\\Providers\\AppServiceProvider',
+    31 => 'App\\Providers\\RouteServiceProvider',
   ),
   'deferred' => 
   array (

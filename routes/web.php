@@ -10,7 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\PermissionController;
-
+use App\Http\Controllers\BitacoraController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,6 +35,15 @@ Route::middleware(['auth', 'permission:Gestion configuracion'])->group(function 
     Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
 });
 
+// Route::middleware(['auth', 'permission:ver bitacora'])->get('/bitacora', function () {
+//     $logs = \Spatie\Activitylog\Models\Activity::latest()->paginate(20);
+//     return view('bitacora.index', compact('logs'));
+// })->name('bitacora.index');
+
+Route::middleware(['auth', 'permission:ver bitacora'])->group(function () {
+    Route::get('/bitacora', [BitacoraController::class, 'index'])->name('bitacora.index');
+    Route::get('/bitacora/data', [BitacoraController::class, 'data'])->name('bitacora.data');
+});
 
 
 // Gestión de roles y permisos (solo Admin)

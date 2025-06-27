@@ -95,6 +95,15 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('ver bitacora')
+                                    <li>
+                                        <a href="{{ route('bitacora.index') }}">
+                                            <i class="mdi mdi-history"></i>
+                                            <span> Bitácora </span>
+                                        </a>
+                                    </li>
+                                @endcan
+
 
                             </ul>
                         </div>
