@@ -32,54 +32,67 @@ class CasoController extends Controller
         return view('caso.index');
     }
 
-public function data(Request $request)
-{
-    $query = Caso::with(['estado', 'municipio']);
+    public function data(Request $request)
+    {
+        $query = Caso::with(['estado', 'municipio']);
 
-    // Filtro por rango de fechas
-    if ($request->filled('start_date') && $request->filled('end_date')) {
-        $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
+        // Filtro por rango de fechas
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
+        }
+
+        // ✅ Filtro por estatus
+        if ($request->filled('estatus')) {
+            $query->where('estatus', $request->estatus);
+        }
+
+        return datatables()->of($query)
+            ->addColumn('acciones', function ($caso) {
+                $botones = '<div class="btn-group" role="group">';
+
+                if (auth()->user()->can('ver casos')) {
+                    $botones .= '
+            <a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-outline-primary" title="Ver">
+                <i class="mdi mdi-eye"></i>
+            </a>';
+                }
+
+                if (auth()->user()->can('editar casos')) {
+                    $botones .= '
+            <a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-outline-warning" title="Editar">
+                <i class="mdi mdi-pencil"></i>
+            </a>';
+                }
+
+                // Clonar no tiene permiso aún, opcional:
+                $botones .= '
+        <a href="#" class="btn btn-sm btn-outline-success" title="Clonar">
+            <i class="mdi mdi-account-multiple-plus-outline"></i>
+        </a>';
+
+                if (auth()->user()->can('eliminar casos')) {
+                    $botones .= '
+            <button class="btn btn-sm btn-outline-danger btn-delete"
+                data-url="' . route('casos.destroy', $caso->id) . '"
+                data-nombre="' . e($caso->numero_caso) . '">
+                <i class="mdi mdi-trash-can-outline"></i>
+            </button>';
+                }
+
+                $botones .= '</div>';
+
+                return $botones;
+            })
+
+            ->editColumn('fecha_atencion', function ($caso) {
+                return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
+            })
+            ->editColumn('fecha_actual', function ($caso) {
+                return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
+            })
+            ->rawColumns(['acciones'])
+            ->make(true);
     }
-
-    // ✅ Filtro por estatus
-    if ($request->filled('estatus')) {
-        $query->where('estatus', $request->estatus);
-    }
-
-    return datatables()->of($query)
-        ->addColumn('acciones', function ($caso) {
-            $show   = route('casos.show', $caso->id);
-            $edit   = route('casos.edit', $caso->id);
-            $delete = route('casos.destroy', $caso->id);
-
-            return '
-                <div class="btn-group" role="group">
-                    <a href="' . $show . '" class="btn btn-sm btn-outline-primary" title="Ver">
-                        <i class="mdi mdi-eye"></i>
-                    </a>
-                    <a href="' . $edit . '" class="btn btn-sm btn-outline-warning" title="Editar">
-                        <i class="mdi mdi-pencil"></i>
-                    </a>
-                    <a href="#" class="btn btn-sm btn-outline-success" title="Clonar">
-                        <i class="mdi mdi-account-multiple-plus-outline"></i>
-                    </a>
-                    <button class="btn btn-sm btn-outline-danger btn-delete"
-                        data-url="' . $delete . '"
-                        data-nombre="' . $caso->numero_caso . '">
-                        <i class="mdi mdi-trash-can-outline"></i>
-                    </button>
-                </div>
-            ';
-        })
-        ->editColumn('fecha_atencion', function ($caso) {
-            return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
-        })
-        ->editColumn('fecha_actual', function ($caso) {
-            return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
-        })
-        ->rawColumns(['acciones'])
-        ->make(true);
-}
 
 
 
@@ -352,16 +365,16 @@ public function data(Request $request)
 
 
 
-public function exportarExcel(Request $request)
-{
-    $start = $request->input('start_date');
-    $end = $request->input('end_date');
-    $estatus = $request->input('estatus');
+    public function exportarExcel(Request $request)
+    {
+        $start = $request->input('start_date');
+        $end = $request->input('end_date');
+        $estatus = $request->input('estatus');
 
-    $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
+        $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
 
-    return Excel::download(new CasosExport($start, $end, null, $estatus), $filename);
-}
+        return Excel::download(new CasosExport($start, $end, null, $estatus), $filename);
+    }
 
 
 
@@ -496,7 +509,7 @@ public function exportarExcel(Request $request)
             'rows' => array_slice($rows, 1),
         ]);
     }
-    
+
     public function confirmarImportacion()
     {
         $path = session('archivo_excel_temporal');

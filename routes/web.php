@@ -7,6 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\CasoUploadController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RoleController;
+
+use App\Http\Controllers\PermissionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +21,15 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('role', RoleController::class)->except(['show']);
+});
+
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('permission', PermissionController::class)->except(['show', 'create', 'edit']);
+});
 
 
 Route::middleware('auth')->group(function () {

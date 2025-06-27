@@ -7,8 +7,8 @@
     <link href="{{ asset('assets/css/datatables.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet">
 
-{{-- Núcleo de DataTables + Bootstrap 5 --}}
-<link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+    {{-- Núcleo de DataTables + Bootstrap 5 --}}
+    <link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
     <!-- Sweet Alert-->
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/daterangepicker/daterangepicker.css') }}" rel="stylesheet">
@@ -24,9 +24,11 @@
 
         <div class="row mb-3  d-flex my-2 justify-content-between">
             <div class="col-sm-3">
-                <a href="{{ route('casos.create') }}" class="btn btn btn-primary">
+                {{-- <a href="{{ route('casos.create') }}" class="btn btn btn-primary">
                     <i class="mdi mdi-plus"></i> Nuevo Caso
-                </a>
+                </a> --}}
+                <x-boton.crear ruta="casos.create" permiso="crear casos" texto="Nuevo Caso" />
+
             </div>
             <div class="col-md-3 ms-auto text-end">
                 <div class="dropdown w-100">
@@ -219,7 +221,10 @@
             order: [
                 [0, 'desc']
             ],
-            lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"] ],
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "Todos"]
+            ],
             columns: [{
                     data: 'id',
                     name: 'id',
@@ -407,8 +412,10 @@
         });
     </script>
 
+
+
     <script>
-        let tablaCasos = $('#casos-table').DataTable(); // reemplaza #miTabla con el ID real de tu tabla
+        let tablaCasos = $('#casos-table').DataTable();
 
         $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
@@ -434,13 +441,14 @@
                             _method: 'DELETE'
                         },
                         success: function(respuesta) {
-                            Swal.fire(
-                                '¡Eliminado!',
-                                'El caso ha sido eliminado.',
-                                'success'
-                            );
-                            tablaCasos.ajax.reload(null,
-                                false); // recargar sin reiniciar la paginación
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Eliminado',
+                                text: 'El caso ha sido eliminado.',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            tablaCasos.ajax.reload(null, false);
                         },
                         error: function() {
                             Swal.fire(
@@ -454,6 +462,7 @@
             });
         });
     </script>
+
 
     <script>
         document.getElementById('exportPorEstatus').addEventListener('click', function(e) {

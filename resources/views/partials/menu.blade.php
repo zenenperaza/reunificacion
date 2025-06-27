@@ -1,93 +1,89 @@
-        <!-- ========== Left Sidebar Start ========== -->
-        <div class="left-side-menu">
+<!-- ========== Left Sidebar Start ========== -->
+<div class="left-side-menu">
+    <div class="h-100" data-simplebar>
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <ul id="side-menu">
+                <li class="menu-title"> </li>
 
-            <div class="h-100" data-simplebar>
+                @can('Dashboard')
+                <li>
+                    <a href="{{ route('dashboard') }}">
+                        <i class="mdi mdi-view-dashboard-outline"></i>
+                        <span> Dashboard </span>
+                    </a>
+                </li>
+                @endcan
 
+                <li class="menu-title mt-2">Apps</li>
 
+                @can('Gestion casos')
+                <li>
+                    <a href="#casos" data-bs-toggle="collapse">
+                        <i class="mdi mdi-file-multiple-outline"></i>
+                        <span> Casos </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="casos">
+                        <ul class="nav-second-level">
+                            @can('ver casos')
+                            <li><a href="{{ route('casos.index') }}">Ver</a></li>
+                            @endcan
 
-                <!--- Sidemenu -->
-                <div id="sidebar-menu">
+                            <li><a href="{{ route('profile.edit') }}">Informes</a></li>
+                        </ul>
+                    </div>
+                </li>
+                @endcan
 
-                    <ul id="side-menu">
+                @can('Gestion usuarios')
+                <li class="menu-title mt-2">Usuarios</li>
 
-                        <li class="menu-title"> </li>
+                <li>
+                    <a href="#usuarios" data-bs-toggle="collapse">
+                        <i class="mdi mdi-account-outline"></i>
+                        <span> Usuario </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="usuarios">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{ route('users.index') }}">Usuarios</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                @endcan
 
-                        <li>
-                            <a href="{{ route('dashboard') }}">
-                                <i class="mdi mdi-view-dashboard-outline"></i>
-                                <span> Dashboard </span>
-                            </a>
-                        </li>
+                @if(auth()->user()->can('Gestion roles') || auth()->user()->can('Gestion permisos') || auth()->user()->can('Gestion configuracion'))
+                <li>
+                    <a href="#contacts" data-bs-toggle="collapse">
+                        <i class="mdi mdi-book-open-page-variant-outline"></i>
+                        <span> Configuración </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="contacts">
+                        <ul class="nav-second-level">
+                            @can('Gestion roles')
+                            <li><a href="{{ route('role.index') }}">Roles</a></li>
+                            @endcan
 
-                        <li class="menu-title mt-2">Apps</li>
+                            @can('Gestion permisos')
+                            <li><a href="{{ route('permission.index') }}">Permisos</a></li>
+                            @endcan
 
-                         <li>
-                            <a href="#casos" data-bs-toggle="collapse">
-                                <i class="mdi mdi-file-multiple-outline"></i>
-                                <span> Casos </span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <div class="collapse" id="casos">
-                                <ul class="nav-second-level">
-                                    <li>
-                                        <a href="{{ route('casos.index') }}">Ver </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('profile.edit') }}">Informes</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+                            @can('Gestion configuracion')
+                            <li><a href="{{ route('profile.edit') }}">Estados</a></li>
+                            @endcan
+                        </ul>
+                    </div>
+                </li>
+                @endif
 
-                        <li class="menu-title mt-2">Usuarios</li>
-
-                         <li>
-                            <a href="#usuarios" data-bs-toggle="collapse">
-                                <i class="mdi mdi-account-outline"></i>
-                                <span> Usuario </span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <div class="collapse" id="usuarios">
-                                <ul class="nav-second-level">
-                                    <li>
-                                        <a href="{{ route('users.index') }}">Usuarios </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('users.index') }}">Roles</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                
-
-                  
-
-                        <li>
-                            <a href="#contacts" data-bs-toggle="collapse">
-                                <i class="mdi mdi-book-open-page-variant-outline"></i>
-                                <span> Configuracion </span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <div class="collapse" id="contacts">
-                                <ul class="nav-second-level">
-                                    <li>
-                                        <a href="{{ route('profile.edit') }}">Estados</a>
-                                    </li>
-                                   
-                                </ul>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </div>
-                <!-- End Sidebar -->
-
-                <div class="clearfix"></div>
-
-            </div>
-            <!-- Sidebar -left -->
-
+            </ul>
         </div>
-        <!-- Left Sidebar End -->
+        <!-- End Sidebar -->
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!-- Left Sidebar End -->
