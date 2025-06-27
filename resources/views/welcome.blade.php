@@ -29,6 +29,10 @@
                     class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
                     Iniciar Sesión
                 </a>
+                <a href="{{ route('register') }}"
+                    class="text-black ">
+                    Registrate
+                </a>
                     @endauth
                 </nav>
             @endif

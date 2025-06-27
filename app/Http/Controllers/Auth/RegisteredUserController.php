@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -39,12 +39,20 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'estatus' => 'activo', // opcional si lo usas en tu modelo
         ]);
+
+        // ✅ Asignar automáticamente el rol "Usuario"
+        $user->assignRole('Usuario');
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        if (Auth::user()->hasRole('Usuario')) {
+            return redirect()->route('dashboard.user');
+        } else {
+            return redirect()->route('dashboard');
+        }
     }
 }

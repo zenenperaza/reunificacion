@@ -8,26 +8,38 @@ use App\Http\Controllers\CasoController;
 use App\Http\Controllers\CasoUploadController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
-
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\PermissionController;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Dashboard por roles
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard')->middleware('role:Administrador');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard-user', [DashboardController::class, 'usuario'])
+        ->name('dashboard.user')->middleware('role:Usuario');
 
+    Route::get('/dashboard-coordinador', [DashboardController::class, 'coordinador'])
+        ->name('dashboard.coordinador')->middleware('role:Coordinador');
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/dashboard-trabajador', [DashboardController::class, 'trabajador'])
+        ->name('dashboard.trabajador')->middleware('role:Trabajador Social');
+});
 
-
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('role', RoleController::class)->except(['show']);
+Route::middleware(['auth', 'permission:Gestion configuracion'])->group(function () {
+    Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
 });
 
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+
+// Gestión de roles y permisos (solo Admin)
+Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::resource('role', RoleController::class)->except(['show']);
     Route::resource('permission', PermissionController::class)->except(['show', 'create', 'edit']);
 });
 

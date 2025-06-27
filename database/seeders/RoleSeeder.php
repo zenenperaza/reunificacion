@@ -10,32 +10,37 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        // Crear permisos básicos
+        // Usar exactamente los nombres como están en el menú
         $permisos = [
-            'ver dashboard',
-            'gestionar usuarios',
-            'crear casos',
-            'editar casos',
-            'eliminar casos',
+            'Dashboard',
+            'dashboard-user',
+            'Gestion casos',
             'ver casos',
+            'ver roles',
+            'editar roles',
+            'crear roles',
+            'eliminar roles',
+            'ver usuarios',
+            'editar usuarios',
+            'crear usuarios',
+            'eliminar usuarios',
+            'Gestion usuarios',
+            'Gestion roles',
+            'Gestion permisos',
+            'Gestion configuracion',
         ];
 
         foreach ($permisos as $permiso) {
             Permission::firstOrCreate(['name' => $permiso]);
         }
 
-        // Crear roles
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $usuario = Role::firstOrCreate(['name' => 'usuario']);
+        $admin = Role::firstOrCreate(['name' => 'Administrador']);
+        $usuario = Role::firstOrCreate(['name' => 'Usuario']);
 
-        // Asignar todos los permisos al admin
         $admin->syncPermissions(Permission::all());
 
-        // Asignar solo algunos al usuario
         $usuario->syncPermissions([
-            'ver dashboard',
-            'crear casos',
-            'ver casos',
+            'dashboard-user',
         ]);
     }
 }

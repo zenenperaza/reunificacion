@@ -12,22 +12,22 @@ class UserSeeder extends Seeder
     {
         // Crear usuario administrador
         $admin = User::create([
-            'name' => 'Admin Principal',
+            'name' => 'Zenen Peraza',
             'email' => 'peraza@outlook.com',
             'password' => Hash::make('123456'),
             'phone' => '0000000000',
             'address' => 'Dirección Central',
             'estatus' => 'activo',
         ]);
-        $admin->assignRole('admin');
+        $admin->assignRole('Administrador');
 
         // Crear trabajador
         $trabajador = User::create([
-            'name' => 'Trabajador 1',
-            'email' => 'trabajador1@reunificacion.com',
+            'name' => 'Mary Melendez',
+            'email' => 'mmelendez@asonacop.org',
             'password' => Hash::make('123456'),
             'estatus' => 'activo',
         ]);
-        $trabajador->assignRole('usuario');
+        $trabajador->assignRole('Administrador');
     }
 }

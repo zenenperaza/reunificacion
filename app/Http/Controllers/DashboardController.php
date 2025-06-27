@@ -70,4 +70,11 @@ class DashboardController extends Controller
             'porBeneficiario'
         ));
     }
+
+    public function usuario()
+    {
+        return view('dashboard-user'); 
+    }
+
+
 }
