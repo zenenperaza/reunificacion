@@ -6,6 +6,8 @@ php artisan make:migration create_casos_table
 
 2025_06_16_175037_create_estados_table.php
 
+composer install
+
 php artisan db:seed
 
 php artisan storage:link

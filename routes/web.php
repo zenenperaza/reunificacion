@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/casos/plantilla-ejemplo', [CasoController::class, 'descargarPlantilla'])->name('casos.plantilla');
     // Vista opcional para testeo
     Route::get('/casos/importar', [CasoController::class, 'importarVista'])->name('casos.importar.vista');
+    Route::get('/casos/{id}/descargar-archivos', [CasoController::class, 'descargarArchivos'])->name('casos.descargarArchivos');
 
 
 

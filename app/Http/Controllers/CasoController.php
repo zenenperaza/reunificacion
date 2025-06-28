@@ -528,6 +528,30 @@ class CasoController extends Controller
         return redirect()->route('casos.index')->with('success', 'Casos importados correctamente.');
     }
 
+    public function descargarArchivos($id)
+    {
+        $caso = Caso::findOrFail($id);
+        $zip = new \ZipArchive();
+        $filename = storage_path("app/public/caso_{$caso->id}_archivos.zip");
+
+        if ($zip->open($filename, \ZipArchive::CREATE | \ZipArchive::OVERWRITE)) {
+            $fotos = json_decode($caso->fotos, true) ?? [];
+            $archivos = json_decode($caso->archivos, true) ?? [];
+
+            foreach (array_merge($fotos, $archivos) as $file) {
+                $path = storage_path("app/public/" . $file);
+                if (file_exists($path)) {
+                    $zip->addFile($path, basename($path));
+                }
+            }
+
+            $zip->close();
+            return response()->download($filename)->deleteFileAfterSend(true);
+        }
+
+        return back()->with('error', 'No se pudo generar el archivo ZIP.');
+    }
+
 
     // public function upload(Request $request)
     // {

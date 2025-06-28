@@ -57,25 +57,38 @@
         {{-- Bloque de filtros y exportación --}}
         <div class="row mb-3  d-flex my-2 justify-content-between">
             {{-- Filtros: Fecha y Estatus --}}
-            <div class="col-md-9 d-flex flex-wrap gap-2">
-                {{-- Selector de Rango de Fecha --}}
-                <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="daterange-btn">
-                    <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
-                    <i class="fas fa-caret-down ms-1"></i>
-                </button>
+            <div class="col-md-9 gap-2">
+      <div class="accordion" id="accordionFiltros">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFiltros">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros" style="padding: 4px 20px">
+                Filtros
+            </button>
+        </h2>
+        <div id="collapseFiltros" class="accordion-collapse collapse" aria-labelledby="headingFiltros" data-bs-parent="#accordionFiltros">
+            <div class="accordion-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="daterange-btn">
+                        <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
+                        <i class="fas fa-caret-down ms-1"></i>
+                    </button>
 
-                {{-- Selector de Estatus --}}
-                <select id="filtro_estatus" class="btn btn-outline-primary">
-                    <option value="">Todos los estatus</option>
-                    <option value="En proceso">En proceso</option>
-                    <option value="En seguimiento">En seguimiento</option>
-                    <option value="Cierre de atención">Cierre de atención</option>
-                </select>
+                    <select id="filtro_estatus" class="btn btn-outline-primary">
+                        <option value="">Todos los estatus</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="En seguimiento">En seguimiento</option>
+                        <option value="Cierre de atención">Cierre de atención</option>
+                    </select>
 
-                {{-- Limpiar Filtros --}}
-                <button id="clear-daterange" class="btn btn-outline-secondary">
-                    <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
-                </button>
+                    <button id="clear-daterange" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
             </div>
 
             {{-- Botón de Exportación --}}
@@ -492,7 +505,16 @@
         });
     </script>
 
+<script>
+    $('#clear-daterange').on('click', function() {
+    startDate = null;
+    endDate = null;
+    $('#filtro_estatus').val('');
+    $('#daterange-btn span').text('Buscar por fecha actual');
+    dataTable.ajax.reload();
+});
 
+</script>
 
 
 
