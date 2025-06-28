@@ -24,3 +24,8 @@ php artisan migrate:reset
 php artisan migrate
 
 php artisan migrate:fresh --seed
+
+
+sist_reunificacion
+sist_zenen
+3317397jB.
