@@ -30,7 +30,7 @@
                     Iniciar Sesión
                 </a>
                 <a href="{{ route('register') }}"
-                    class="text-black ">
+                    class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
                     Registrate
                 </a>
                     @endauth
@@ -87,8 +87,6 @@
             <div class="flex flex-wrap justify-center items-center gap-10">
                 <img src="{{ asset('assets/images/logos/unicef.png') }}" alt="UNICEF" class="h-14 object-contain">
                 <img src="{{ asset('assets/images/logos/asonacop.png') }}" alt="ASONACOP" class="h-14 object-contain">
-                <img src="{{ asset('assets/images/logos/worldvision.png') }}" alt="World Vision" class="h-14 object-contain">
-                <img src="{{ asset('assets/images/logos/save-the-children.png') }}" alt="Save the Children" class="h-14 object-contain">
             </div>
         </section>
 
