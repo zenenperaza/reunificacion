@@ -21,10 +21,6 @@ use Illuminate\Support\Str;
 
 
 
-
-
-
-
 class CasoController extends Controller
 {
     public function index()
@@ -552,6 +548,32 @@ class CasoController extends Controller
         return back()->with('error', 'No se pudo generar el archivo ZIP.');
     }
 
+    public function cerrar(Caso $caso)
+    {
+        $caso->estatus = 'Cierre de atención';
+        $caso->save();
+        return response()->json(['success' => true]);
+    }
+
+    public function eliminados()
+    {
+        return view('caso.eliminados');
+    }
+
+
+    public function dataEliminados()
+    {
+        $query = Caso::onlyTrashed();
+        return datatables()->of($query)
+            ->addColumn('acciones', function ($caso) {
+                if (auth()->user()->can('restaurar casos eliminados')) {
+                    return '<button class="btn btn-sm btn-success btn-restore" data-id="' . $caso->id . '">Restaurar</button>';
+                }
+                return '';
+            })
+            ->rawColumns(['acciones'])
+            ->make(true);
+    }
 
     // public function upload(Request $request)
     // {

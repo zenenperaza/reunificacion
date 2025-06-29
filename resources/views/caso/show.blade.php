@@ -2,6 +2,12 @@
 
 @section('title', 'Detalle del Caso')
 
+@section('style')
+    <!-- Sweet Alert-->
+    <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+
+
+@endsection
 @section('content')
 
     <div class="container-fluid">
@@ -94,28 +100,32 @@
             </div>
         </div>
 
-        <div class="mt-4 d-flex justify-content-center gap-3">
-            {{-- Botón para descargar PDF --}}
-            <a href="{{ route('casos.pdf', $caso->id) }}" class="btn btn-outline-danger" target="_blank">
+        <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
+            <a href="{{ route('casos.pdf', $caso->id) }}" class="btn btn-outline-danger">
                 <i class="mdi mdi-file-pdf"></i> Descargar PDF
             </a>
-
-            {{-- Botón para imprimir --}}
 
             <button onclick="printCasoCompleto()" class="btn btn-outline-dark">
                 <i class="mdi mdi-printer"></i> Imprimir
             </button>
 
-            {{-- Botón para clonar --}}
-            <a href="#" class="btn btn-outline-success" target="_blank">
+            <a href="#" class="btn btn-outline-success">
                 <i class="mdi mdi-clone"></i> Clona caso actual
             </a>
 
             <a href="{{ route('casos.descargarArchivos', $caso->id) }}" class="btn btn-outline-primary">
                 <i class="mdi mdi-folder-download"></i> Descargar Fotos y Archivos
             </a>
+            
+            @can('cierre atencion')
+                <a href="#" class="btn btn-outline-warning btn-cerrar-atencion" data-id="{{ $caso->id }}">
+                    <i class="fas fa-door-closed"></i> Cerrar atención
+                </a>
+            @endcan
+
 
         </div>
+
 
 
         <div class="mt-4">
@@ -129,6 +139,8 @@
 @endsection
 
 @section('scripts')
+    <!-- Sweet Alerts js -->
+    <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script>
         function printCasoCompleto() {
             const contenido = document.getElementById('caso-completo').innerHTML;
@@ -140,5 +152,46 @@
             ventana.document.close();
             ventana.print();
         }
+    </script>
+
+    <script>
+        $(document).on('click', '.btn-cerrar-atencion', function(e) {
+            e.preventDefault();
+            let id = $(this).data('id');
+            let url = '{{ url('/casos') }}/' + id + '/cerrar';
+            let token = '{{ csrf_token() }}';
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Se cerrará la atención del caso.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _token: token
+                        },
+                        success: function() {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Caso cerrado',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire('Error', 'No se pudo cerrar el caso.', 'error');
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endsection

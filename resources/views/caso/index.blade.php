@@ -7,9 +7,8 @@
     <link href="{{ asset('assets/css/datatables.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/libs/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}" rel="stylesheet">
 
-    {{-- Núcleo de DataTables + Bootstrap 5 --}}
     <link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
-    <!-- Sweet Alert-->
+
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/daterangepicker/daterangepicker.css') }}" rel="stylesheet">
 

@@ -108,3 +108,8 @@ div#casos-table_length {
 .container-fluid {
     margin-left: 5px;
 }
+
+#casos-table {
+    position: relative;
+    z-index: 1;
+}

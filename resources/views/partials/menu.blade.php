@@ -1,5 +1,5 @@
 <!-- ========== Left Sidebar Start ========== -->
-<div class="left-side-menu">
+<div class="left-side-menu" style="z-index: 10">
     <div class="h-100" data-simplebar>
         <!--- Sidemenu -->
         <div id="sidebar-menu">
@@ -40,10 +40,23 @@
                         <div class="collapse" id="casos">
                             <ul class="nav-second-level">
                                 @can('ver casos')
-                                    <li><a href="{{ route('casos.index') }}">Ver</a></li>
+                                    <li><a href="{{ route('casos.index') }}">
+                                            <i class="fas fa-tachometer-alt"></i>
+                                            <span>Ver Casos</span></a></li>
+                                @endcan
+                                @can('ver casos eliminados')
+                                    <li>
+                                        <a href="{{ route('casos.eliminados') }}">
+                                            <i class="mdi mdi-trash-can-outline"></i>
+                                            <span>Casos Eliminados</span>
+                                        </a>
+                                    </li>
                                 @endcan
 
-                                <li><a href="{{ route('profile.edit') }}">Informes</a></li>
+                                <li><a href="{{ route('profile.edit') }}">
+                                        <i class="fas fa-receipt"></i>
+                                        <span>Informes</span></a>
+                                </li>
                             </ul>
                         </div>
                     </li>
@@ -55,13 +68,15 @@
                     <li>
                         <a href="#usuarios" data-bs-toggle="collapse">
                             <i class="mdi mdi-account-outline"></i>
-                            <span> Usuario </span>
+                            <span> Usuarios </span>
                             <span class="menu-arrow"></span>
                         </a>
                         <div class="collapse" id="usuarios">
                             <ul class="nav-second-level">
                                 <li>
-                                    <a href="{{ route('users.index') }}">Usuarios</a>
+                                    <a href="{{ route('users.index') }}">
+                                        <i class="fas fa-user-shield"></i>
+                                        <span> Usuarios </span></a>
                                 </li>
                             </ul>
                         </div>
@@ -80,11 +95,18 @@
                         <div class="collapse" id="contacts">
                             <ul class="nav-second-level">
                                 @can('Gestion roles')
-                                    <li><a href="{{ route('role.index') }}">Roles</a></li>
+                                    <li><a href="{{ route('role.index') }}">
+                                            <i class="fab fa-critical-role"></i>
+                                            <span> Roles </span></a></li>
                                 @endcan
 
                                 @can('Gestion permisos')
-                                    <li><a href="{{ route('permission.index') }}">Permisos</a></li>
+                                    <li>
+                                        <a href="{{ route('permission.index') }}">
+                                            <i class="fas fa-list-ul"></i>
+                                            <span> Permisos </span>
+                                        </a>
+                                    </li>
                                 @endcan
 
                                 @can('Gestion configuracion')

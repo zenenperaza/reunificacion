@@ -64,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
+    Route::post('/users/{user}/estatus', [UserController::class, 'cambiarEstatus']);
+
 
     // ✅ Primero rutas específicas
     Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');
@@ -74,6 +76,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/casos/plantilla-ejemplo', [CasoController::class, 'descargarPlantilla'])->name('casos.plantilla');
     // Vista opcional para testeo
     Route::get('/casos/importar', [CasoController::class, 'importarVista'])->name('casos.importar.vista');
+    Route::get('/casos/eliminados/data', [CasoController::class, 'dataEliminados'])->name('casos.eliminados.data');
+
     Route::get('/casos/{id}/descargar-archivos', [CasoController::class, 'descargarArchivos'])->name('casos.descargarArchivos');
 
 
@@ -84,9 +88,12 @@ Route::middleware(['auth'])->group(function () {
     // Confirmar la importación real
     Route::post('/casos/confirmar-importacion', [CasoController::class, 'confirmarImportacion'])->name('casos.confirmar');
 
+    Route::post('/casos/{caso}/cerrar', [CasoController::class, 'cerrar'])->middleware('can:cierre atencion');
 
 
+    Route::get('/casos/eliminados', [CasoController::class, 'eliminados'])->name('casos.eliminados');
 
+    
     // ✅ Luego el resource completo
     Route::resource('casos', CasoController::class);
 
@@ -101,6 +108,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
 
     Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
+
+
 });
 
 

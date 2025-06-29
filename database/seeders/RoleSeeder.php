@@ -32,6 +32,9 @@ class RoleSeeder extends Seeder
             'Gestion permisos',
             'Gestion configuracion',
             'ver bitacora',
+            'cierre atencion',
+            'ver casos eliminados',
+            'restaurar casos eliminados',
         ];
 
         foreach ($permisos as $permiso) {

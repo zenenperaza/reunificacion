@@ -111,32 +111,45 @@ class UserController extends Controller
     }
 
 
-public function data()
-{
-    return DataTables::of(User::with('roles')->select('users.*'))
-        ->addColumn('roles', function ($user) {
-            return $user->roles->pluck('name')->implode(', ');
-        })
-        ->addColumn('photo', function ($user) {
-            if ($user->photo) {
-                $url = asset('storage/' . $user->photo);
-                return '<img src="' . $url . '" alt="Foto" class="img-thumbnail" width="50">';
-            }
-            return '<span class="text-muted">Sin foto</span>';
-        })
-        ->addColumn('acciones', function ($user) {
-            return '
+    public function data()
+    {
+        return DataTables::of(User::with('roles')->select('users.*'))
+            ->addColumn('roles', function ($user) {
+                return $user->roles->pluck('name')->implode(', ');
+            })
+            ->addColumn('photo', function ($user) {
+                if ($user->photo) {
+                    $url = asset('storage/' . $user->photo);
+                    return '<img src="' . $url . '" alt="Foto" class="img-thumbnail" width="50">';
+                }
+                return '<span class="text-muted">Sin foto</span>';
+            })
+            ->addColumn('acciones', function ($user) {
+                return '
                 <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#deleteModal" data-user-id="'.$user->id.'"
-                    data-user-name="'.$user->name.'">
+                    data-bs-target="#deleteModal" data-user-id="' . $user->id . '"
+                    data-user-name="' . $user->name . '">
                     <i class="mdi mdi-delete"></i>
                 </button>
-                <a href="'.route('users.edit', $user->id).'" class="btn btn-sm btn-primary">
+                <a href="' . route('users.edit', $user->id) . '" class="btn btn-sm btn-primary">
                     <i class="mdi mdi-pencil"></i>
                 </a>';
-        })
-        ->rawColumns(['acciones', 'photo', 'roles'])
-        ->make(true);
-}
+            })
+            ->addColumn('estatus', function ($user) {
+                $checked = $user->estatus === 'activo' ? 'checked' : '';
+                $label = $user->estatus === 'activo' ? 'Activo' : 'Inactivo';
+                return '<input type="checkbox" class="switch-status" data-id="' . $user->id . '" ' . $checked . ' /> <span class="estatus-label">' . $label . '</span>';
+            })
 
+            ->rawColumns(['acciones', 'photo', 'roles', 'estatus'])
+
+            ->make(true);
+    }
+
+    public function cambiarEstatus(Request $request, User $user)
+    {
+        $user->estatus = $request->estatus;
+        $user->save();
+        return response()->json(['success' => true]);
+    }
 }

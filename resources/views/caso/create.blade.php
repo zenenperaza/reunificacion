@@ -1389,32 +1389,26 @@
                                     </div>
 
                                 </div>
-
                                 <div class="row mt-3">
                                     <div class="mb-3">
                                         <label class="form-label d-block">Estatus de la atención <span
                                                 class="text-danger">*</span></label>
                                         <small class="text-muted d-block mb-2">Elegir estatus del caso/expediente</small>
 
-                                        <div class="form-check ">
-                                            <input class="form-check-input" type="radio" name="estatus" id="estatus1"
-                                                value="En proceso">
-                                            <label class="form-check-label" for="estatus1">En proceso</label>
-                                        </div>
-
-                                        <div class="form-check ">
-                                            <input class="form-check-input" type="radio" name="estatus" id="estatus2"
-                                                value="En seguimiento">
-                                            <label class="form-check-label" for="estatus2">En seguimiento</label>
-                                        </div>
-
-                                        <div class="form-check ">
-                                            <input class="form-check-input" type="radio" name="estatus" id="estatus3"
-                                                value="Cierre de atención">
-                                            <label class="form-check-label" for="estatus3">Cierre de atención</label>
-                                        </div>
+                                        @foreach (['En proceso', 'En seguimiento', 'Cierre de atención'] as $i => $estatus)
+                                            @if ($estatus == 'Cierre de atención' && !auth()->user()->can('cierre atencion'))
+                                                @continue
+                                            @endif
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="estatus"
+                                                    id="estatus{{ $i + 1 }}" value="{{ $estatus }}">
+                                                <label class="form-check-label"
+                                                    for="estatus{{ $i + 1 }}">{{ $estatus }}</label>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
+
 
                                 <div class="row mt-3">
                                     <label class="form-label">Indicadores</label>

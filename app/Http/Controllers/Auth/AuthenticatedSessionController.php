@@ -15,8 +15,11 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
+
+     
     public function create(): View
     {
+        
         return view('auth.login');
     }
 
@@ -32,11 +35,18 @@ public function store(Request $request): RedirectResponse
         'password' => ['required', 'string'],
     ]);
 
-    // ⚠️ ESTA línea es importante
     $remember = $request->has('remember');
 
     if (Auth::attempt($request->only('email', 'password'), $remember)) {
         $request->session()->regenerate();
+
+        // Verificar estatus
+        if (Auth::user()->estatus !== 'activo') {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Tu cuenta está inactiva.',
+            ]);
+        }
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -45,6 +55,7 @@ public function store(Request $request): RedirectResponse
         'email' => trans('auth.failed'),
     ]);
 }
+
 
 
     /**

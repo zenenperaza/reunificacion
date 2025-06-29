@@ -90,6 +90,8 @@ return new class extends Migration
         $table->integer('verificador')->nullable();
         $table->string('condicion')->nullable();
 
+        $table->softDeletes();
+
         $table->timestamps();
     });
 
