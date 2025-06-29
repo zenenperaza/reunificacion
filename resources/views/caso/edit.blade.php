@@ -1780,7 +1780,6 @@
         });
 
 
-
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
@@ -1788,18 +1787,47 @@
             estadoSelect.addEventListener('change', function() {
                 const estadoId = this.value;
 
+                if (!estadoId) {
+                    numeroCasoInput.value = '';
+                    return;
+                }
+
                 fetch(`/casos/contador-estado/${estadoId}`)
                     .then(response => response.json())
                     .then(data => {
-                        if (data.estado_nombre === 'Táchira') {
-                            const nuevoNumero = String(data.conteo + 1).padStart(3, '0');
-                            numeroCasoInput.value = `TCT-25-${nuevoNumero}`;
-                        } else {
-                            numeroCasoInput.value = '';
-                        }
+                        let nombre = data.estado_nombre.trim().normalize("NFD").replace(
+                            /[\u0300-\u036f]/g, ""); // Quitar acentos
+                        let siglas = nombre.substring(0, 3).toUpperCase();
+
+                        const numero = String(data.conteo + 1).padStart(3, '0');
+                        numeroCasoInput.value = `RLF-${siglas}-${numero}`;
+                    })
+                    .catch(err => {
+                        console.error('Error al obtener datos del estado:', err);
+                        numeroCasoInput.value = '';
                     });
             });
         });
+
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const estadoSelect = document.getElementById('estadoSelect');
+        //     const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
+
+        //     estadoSelect.addEventListener('change', function() {
+        //         const estadoId = this.value;
+
+        //         fetch(`/casos/contador-estado/${estadoId}`)
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 if (data.estado_nombre === 'Táchira') {
+        //                     const nuevoNumero = String(data.conteo + 1).padStart(3, '0');
+        //                     numeroCasoInput.value = `TCT-25-${nuevoNumero}`;
+        //                 } else {
+        //                     numeroCasoInput.value = '';
+        //                 }
+        //             });
+        //     });
+        // });
 
 
 

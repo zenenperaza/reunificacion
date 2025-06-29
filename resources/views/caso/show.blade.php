@@ -101,30 +101,37 @@
         </div>
 
         <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
-            <a href="{{ route('casos.pdf', $caso->id) }}" class="btn btn-outline-danger">
-                <i class="mdi mdi-file-pdf"></i> Descargar PDF
-            </a>
-
-            <button onclick="printCasoCompleto()" class="btn btn-outline-dark">
-                <i class="mdi mdi-printer"></i> Imprimir
-            </button>
-
-            <a href="#" class="btn btn-outline-success">
-                <i class="mdi mdi-clone"></i> Clona caso actual
-            </a>
-
-            <a href="{{ route('casos.descargarArchivos', $caso->id) }}" class="btn btn-outline-primary">
-                <i class="mdi mdi-folder-download"></i> Descargar Fotos y Archivos
-            </a>
-            
-            @can('cierre atencion')
-                <a href="#" class="btn btn-outline-warning btn-cerrar-atencion" data-id="{{ $caso->id }}">
-                    <i class="fas fa-door-closed"></i> Cerrar atención
+            @if (!$caso->trashed())
+                <a href="{{ route('casos.pdf', $caso->id) }}" class="btn btn-outline-danger">
+                    <i class="mdi mdi-file-pdf"></i> Descargar PDF
                 </a>
-            @endcan
 
+                <button onclick="printCasoCompleto()" class="btn btn-outline-dark">
+                    <i class="mdi mdi-printer"></i> Imprimir
+                </button>
 
+                <a href="#" class="btn btn-outline-success">
+                    <i class="mdi mdi-clone"></i> Clona caso actual
+                </a>
+
+                <a href="{{ route('casos.descargarArchivos', $caso->id) }}" class="btn btn-outline-primary">
+                    <i class="mdi mdi-folder-download"></i> Descargar Fotos y Archivos
+                </a>
+
+                @can('cierre atencion')
+                    <a href="#" class="btn btn-outline-warning btn-cerrar-atencion" data-id="{{ $caso->id }}">
+                        <i class="fas fa-door-closed"></i> Cerrar atención
+                    </a>
+                @endcan
+            @else
+                @can('restaurar casos eliminados')
+                    <button class="btn btn-success btn-restore" data-id="{{ $caso->id }}">
+                        <i class="fas fa-trash-restore"></i> Restaurar
+                    </button>
+                @endcan
+            @endif
         </div>
+
 
 
 
@@ -194,4 +201,32 @@
             });
         });
     </script>
+
+
+    <script>
+        $(document).on('click', '.btn-restore', function() {
+            let id = $(this).data('id');
+            $.ajax({
+                url: '/casos/' + id + '/restaurar',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Caso restaurado correctamente',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function() {
+                    Swal.fire('Error', 'No se pudo restaurar el caso.', 'error');
+                }
+            });
+        });
+    </script>
+
 @endsection

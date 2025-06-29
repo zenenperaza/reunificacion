@@ -125,15 +125,15 @@ class UserController extends Controller
                 return '<span class="text-muted">Sin foto</span>';
             })
             ->addColumn('acciones', function ($user) {
-                return '
-                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#deleteModal" data-user-id="' . $user->id . '"
-                    data-user-name="' . $user->name . '">
-                    <i class="mdi mdi-delete"></i>
+                return '           
                 </button>
                 <a href="' . route('users.edit', $user->id) . '" class="btn btn-sm btn-primary">
                     <i class="mdi mdi-pencil"></i>
-                </a>';
+                </a>
+                     <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal" data-user-id="' . $user->id . '"
+                    data-user-name="' . $user->name . '">
+                    <i class="mdi mdi-delete"></i>';
             })
             ->addColumn('estatus', function ($user) {
                 $checked = $user->estatus === 'activo' ? 'checked' : '';

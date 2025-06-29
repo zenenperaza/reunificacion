@@ -32,12 +32,10 @@ class CasoController extends Controller
     {
         $query = Caso::with(['estado', 'municipio']);
 
-        // Filtro por rango de fechas
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
         }
 
-        // ✅ Filtro por estatus
         if ($request->filled('estatus')) {
             $query->where('estatus', $request->estatus);
         }
@@ -48,30 +46,30 @@ class CasoController extends Controller
 
                 if (auth()->user()->can('ver casos')) {
                     $botones .= '
-            <a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-outline-primary" title="Ver">
-                <i class="mdi mdi-eye"></i>
+            <a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary" title="Ver">
+                <i class="mdi mdi-eye"></i> 
             </a>';
                 }
 
                 if (auth()->user()->can('editar casos')) {
                     $botones .= '
-            <a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-outline-warning" title="Editar">
-                <i class="mdi mdi-pencil"></i>
+            <a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-warning" title="Editar">
+                <i class="mdi mdi-pencil"></i> 
             </a>';
                 }
 
-                // Clonar no tiene permiso aún, opcional:
+
                 $botones .= '
-        <a href="#" class="btn btn-sm btn-outline-success" title="Clonar">
-            <i class="mdi mdi-account-multiple-plus-outline"></i>
+        <a href="#" class="btn btn-sm btn-success" title="Clonar">
+            <i class="mdi mdi-account-multiple-plus-outline"></i> 
         </a>';
 
                 if (auth()->user()->can('eliminar casos')) {
                     $botones .= '
-            <button class="btn btn-sm btn-outline-danger btn-delete"
+            <button class="btn btn-sm btn-danger btn-delete" title="Eliminar"
                 data-url="' . route('casos.destroy', $caso->id) . '"
                 data-nombre="' . e($caso->numero_caso) . '">
-                <i class="mdi mdi-trash-can-outline"></i>
+                <i class="mdi mdi-trash-can-outline"></i> 
             </button>';
                 }
 
@@ -397,7 +395,7 @@ class CasoController extends Controller
 
     public function show($id)
     {
-        $caso = Caso::with(['estado', 'municipio', 'parroquia', 'user'])->findOrFail($id);
+        $caso = Caso::withTrashed()->with(['estado', 'municipio', 'parroquia', 'user'])->findOrFail($id);
         return view('caso.show', compact('caso'));
     }
 
@@ -567,13 +565,24 @@ class CasoController extends Controller
         return datatables()->of($query)
             ->addColumn('acciones', function ($caso) {
                 if (auth()->user()->can('restaurar casos eliminados')) {
-                    return '<button class="btn btn-sm btn-success btn-restore" data-id="' . $caso->id . '">Restaurar</button>';
+                    return ' <a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary m-1" title="Ver">
+                <i class="mdi mdi-eye"></i> Ver
+            </a><button class="btn btn-sm btn-success btn-restore" data-id="' . $caso->id . '"><i class="fas fa-trash-restore"></i> Restaurar</button>';
                 }
                 return '';
             })
             ->rawColumns(['acciones'])
             ->make(true);
     }
+
+    public function restaurar($id)
+    {
+        $caso = Caso::withTrashed()->findOrFail($id);
+        $caso->restore();
+
+        return response()->json(['success' => true]);
+    }
+
 
     // public function upload(Request $request)
     // {

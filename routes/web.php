@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
     // Route::post('/casos/importar', [CasoController::class, 'importarExcel'])->name('casos.importar');
     Route::get('/casos/plantilla-ejemplo', [CasoController::class, 'descargarPlantilla'])->name('casos.plantilla');
     // Vista opcional para testeo
+    Route::post('/casos/{caso}/restaurar', [CasoController::class, 'restaurar'])->name('casos.restaurar');
     Route::get('/casos/importar', [CasoController::class, 'importarVista'])->name('casos.importar.vista');
     Route::get('/casos/eliminados/data', [CasoController::class, 'dataEliminados'])->name('casos.eliminados.data');
 

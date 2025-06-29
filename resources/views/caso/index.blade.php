@@ -32,7 +32,7 @@
             <div class="col-md-3 ms-auto text-end">
                 <div class="dropdown w-100">
                     <button
-                        class="btn btn-outline-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
+                        class="btn btn-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
                         type="button" id="dropdownImportarExcel" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ asset('assets/images/excel.jpg') }}" alt="Excel" width="20" height="20">
                         Importar Excel
@@ -94,7 +94,7 @@
             <div class="col-md-3 text-end">
                 <div class="dropdown w-100">
                     <button
-                        class="btn btn-outline-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
+                        class="btn btn-success dropdown-toggle w-100 d-flex align-items-center justify-content-center gap-2"
                         type="button" id="dropdownExportExcel" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ asset('assets/images/excel.jpg') }}" alt="Excel" width="20" height="20">
                         Exportar Excel

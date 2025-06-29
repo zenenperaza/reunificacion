@@ -66,23 +66,27 @@
             },
         });
 
-        $(document).on('click', '.btn-restore', function() {
-            let id = $(this).data('id');
-            $.ajax({
-                url: '/casos/' + id + '/restaurar',
-                type: 'POST',
-                data: { _token: '{{ csrf_token() }}' },
-                success: function() {
-                    tabla.ajax.reload(null, false);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Caso restaurado',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                }
-            });
+         $(document).on('click', '.btn-restore', function() {
+        let id = $(this).data('id');
+        $.ajax({
+            url: '/casos/' + id + '/restaurar',
+            type: 'POST',
+            data: { _token: '{{ csrf_token() }}' },
+            success: function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Caso restaurado correctamente',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr) {
+                Swal.fire('Error', xhr.responseJSON?.message || 'No se pudo restaurar el caso.', 'error');
+            }
         });
+    });
     });
 </script>
 @endsection

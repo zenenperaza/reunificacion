@@ -43,9 +43,9 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('role.edit', $rol) }}"
-                                                class="btn btn-sm btn-warning">Editar</a>
+                                                class="btn btn-sm btn-warning m-1">Editar</a>
                                             <form action="{{ route('role.destroy', $rol) }}" method="POST"
-                                                class="form-eliminar d-inline-block">
+                                                class="form-eliminar d-inline-block m-1">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="btn btn-sm btn-danger">Eliminar</button>
