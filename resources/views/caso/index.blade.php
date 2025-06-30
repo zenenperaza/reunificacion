@@ -12,6 +12,9 @@
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/daterangepicker/daterangepicker.css') }}" rel="stylesheet">
 
+    
+    <link href="{{ asset('assets/libs/mohithg-switchery/switchery.min.css') }}" rel="stylesheet" type="text/css" />
+
 @endsection
 
 @section('content')
@@ -57,36 +60,40 @@
         <div class="row mb-3  d-flex my-2 justify-content-between">
             {{-- Filtros: Fecha y Estatus --}}
             <div class="col-md-9 gap-2">
-      <div class="accordion" id="accordionFiltros">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingFiltros">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros" style="padding: 4px 20px">
-                Filtros
-            </button>
-        </h2>
-        <div id="collapseFiltros" class="accordion-collapse collapse" aria-labelledby="headingFiltros" data-bs-parent="#accordionFiltros">
-            <div class="accordion-body">
-                <div class="d-flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-outline-primary d-flex align-items-center" id="daterange-btn">
-                        <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
-                        <i class="fas fa-caret-down ms-1"></i>
-                    </button>
+                <div class="accordion" id="accordionFiltros">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFiltros">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros"
+                                style="padding: 4px 20px">
+                                Filtros
+                            </button>
+                        </h2>
+                        <div id="collapseFiltros" class="accordion-collapse collapse" aria-labelledby="headingFiltros"
+                            data-bs-parent="#accordionFiltros">
+                            <div class="accordion-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="button" class="btn btn-outline-primary d-flex align-items-center"
+                                        id="daterange-btn">
+                                        <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
+                                        <i class="fas fa-caret-down ms-1"></i>
+                                    </button>
 
-                    <select id="filtro_estatus" class="btn btn-outline-primary">
-                        <option value="">Todos los estatus</option>
-                        <option value="En proceso">En proceso</option>
-                        <option value="En seguimiento">En seguimiento</option>
-                        <option value="Cierre de atención">Cierre de atención</option>
-                    </select>
+                                    <select id="filtro_estatus" class="btn btn-outline-primary">
+                                        <option value="">Todos los estatus</option>
+                                        <option value="En proceso">En proceso</option>
+                                        <option value="En seguimiento">En seguimiento</option>
+                                        <option value="Cierre de atención">Cierre de atención</option>
+                                    </select>
 
-                    <button id="clear-daterange" class="btn btn-outline-secondary">
-                        <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
-                    </button>
+                                    <button id="clear-daterange" class="btn btn-outline-secondary">
+                                        <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
             </div>
 
@@ -142,6 +149,7 @@
                             <th>Tipo Atención</th>
                             <th>Fecha atencion</th>
                             <th>Fecha actual</th>
+                            <th>Condicion</th>
                             <th>Estatus</th>
                             <th>Estado</th>
                             <th>Municipio</th>
@@ -207,6 +215,8 @@
     <script src="{{ asset('assets/libs/moment/moment.js') }}"></script>
     <script src="{{ asset('assets/libs/daterangepicker/daterangepicker.js') }}"></script>
 
+    <script src="{{ asset('assets/libs/mohithg-switchery/switchery.min.js') }}"></script>
+
     <script>
         let startDate = null;
         let endDate = null;
@@ -264,14 +274,18 @@
                     name: 'fecha_actual'
                 },
                 {
+                    data: 'condicion',
+                    name: 'condicion',
+                },
+                {
                     data: 'estatus',
                     name: 'estatus'
-                }, // ✅ Aquí
+                },
                 {
                     data: 'estado.nombre',
                     name: 'estado.nombre',
                     className: 'none'
-                }, // ✅ Luego estado
+                },
                 {
                     data: 'municipio.nombre',
                     name: 'municipio.nombre',
@@ -285,6 +299,7 @@
                     className: 'all text-center'
                 }
             ],
+
             language: {
                 url: "{{ asset('assets/lang/datatables/es-ES.json') }}"
             },
@@ -310,6 +325,13 @@
                     className: 'btn btn-sm btn-outline-dark'
                 }
             ],
+                 drawCallback: function() {
+                    $('.switch-status').each(function() {
+                        new Switchery(this, {
+                            color: '#039cfd'
+                        });
+                    });
+                },
             createdRow: function(row, data, dataIndex) {
                 let badgeClass = '';
                 switch (data.estatus) {
@@ -326,7 +348,7 @@
 
                 if (badgeClass !== '') {
                     const badgeHTML = `<span class="badge ${badgeClass}">${data.estatus}</span>`;
-                    $('td', row).eq(6).html(badgeHTML); // reemplaza contenido de la celda de estatus
+                    $('td', row).eq(7).html(badgeHTML); // reemplaza contenido de la celda de estatus
                 }
             }
 
@@ -504,16 +526,15 @@
         });
     </script>
 
-<script>
-    $('#clear-daterange').on('click', function() {
-    startDate = null;
-    endDate = null;
-    $('#filtro_estatus').val('');
-    $('#daterange-btn span').text('Buscar por fecha actual');
-    dataTable.ajax.reload();
-});
-
-</script>
+    <script>
+        $('#clear-daterange').on('click', function() {
+            startDate = null;
+            endDate = null;
+            $('#filtro_estatus').val('');
+            $('#daterange-btn span').text('Buscar por fecha actual');
+            dataTable.ajax.reload();
+        });
+    </script>
 
 
 

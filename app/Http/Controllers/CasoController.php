@@ -29,66 +29,55 @@ class CasoController extends Controller
     }
 
     
+public function data(Request $request)
+{
+    $query = Caso::with(['estado', 'municipio']);
 
-    public function data(Request $request)
-    {
-        $query = Caso::with(['estado', 'municipio']);
-
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
-        }
-
-        if ($request->filled('estatus')) {
-            $query->where('estatus', $request->estatus);
-        }
-
-        return datatables()->of($query)
-            ->addColumn('acciones', function ($caso) {
-                $botones = '<div class="btn-group" role="group">';
-
-                if (auth()->user()->can('ver casos')) {
-                    $botones .= '
-            <a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary" title="Ver">
-                <i class="mdi mdi-eye"></i> 
-            </a>';
-                }
-
-                if (auth()->user()->can('editar casos')) {
-                    $botones .= '
-            <a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-warning" title="Editar">
-                <i class="mdi mdi-pencil"></i> 
-            </a>';
-                }
-
-
-                $botones .= '
-        <a href="#" class="btn btn-sm btn-success" title="Clonar">
-            <i class="mdi mdi-account-multiple-plus-outline"></i> 
-        </a>';
-
-                if (auth()->user()->can('eliminar casos')) {
-                    $botones .= '
-            <button class="btn btn-sm btn-danger btn-delete" title="Eliminar"
-                data-url="' . route('casos.destroy', $caso->id) . '"
-                data-nombre="' . e($caso->numero_caso) . '">
-                <i class="mdi mdi-trash-can-outline"></i> 
-            </button>';
-                }
-
-                $botones .= '</div>';
-
-                return $botones;
-            })
-
-            ->editColumn('fecha_atencion', function ($caso) {
-                return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
-            })
-            ->editColumn('fecha_actual', function ($caso) {
-                return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
-            })
-            ->rawColumns(['acciones'])
-            ->make(true);
+    if ($request->filled('start_date') && $request->filled('end_date')) {
+        $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
     }
+
+    if ($request->filled('estatus')) {
+        $query->where('estatus', $request->estatus);
+    }
+
+    return datatables()->of($query)
+     ->addColumn('condicion', function ($caso) {
+                $checked = $caso->condicion === 'Aprobado' ? 'checked' : '';
+                $label = $caso->condicion === 'Aprobado' ? 'Aprobado' : 'No aprobado';
+                return '<input type="checkbox" class="switch-status" data-id="' . $caso->id . '" ' . $checked . ' /> <span class="estatus-label">' . $label . '</span>';
+            })
+
+        ->addColumn('acciones', function ($caso) {
+            $botones = '<div class="btn-group" role="group">';
+
+            if (auth()->user()->can('ver casos')) {
+                $botones .= '<a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary" title="Ver"><i class="mdi mdi-eye"></i></a>';
+            }
+
+            if (auth()->user()->can('editar casos')) {
+                $botones .= '<a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-warning" title="Editar"><i class="mdi mdi-pencil"></i></a>';
+            }
+
+            $botones .= '<a href="#" class="btn btn-sm btn-success" title="Clonar"><i class="mdi mdi-account-multiple-plus-outline"></i></a>';
+
+            if (auth()->user()->can('eliminar casos')) {
+                $botones .= '<button class="btn btn-sm btn-danger btn-delete" title="Eliminar" data-url="' . route('casos.destroy', $caso->id) . '" data-nombre="' . e($caso->numero_caso) . '"><i class="mdi mdi-trash-can-outline"></i></button>';
+            }
+
+            $botones .= '</div>';
+
+            return $botones;
+        })
+        ->editColumn('fecha_atencion', function ($caso) {
+            return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
+        })
+        ->editColumn('fecha_actual', function ($caso) {
+            return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
+        })
+        ->rawColumns(['acciones', 'condicion'])
+        ->make(true);
+}
 
 
 
@@ -178,6 +167,7 @@ class CasoController extends Controller
             'estatus' => $request->estatus,
             'observaciones' => $request->observaciones,
             'verificador' => $request->verificador,
+            'condicion' => $request->condicion,
             'user_id' => auth()->id(),
             'fotos' => json_encode($fotos),
             'archivos' => json_encode($archivos),
@@ -318,6 +308,7 @@ class CasoController extends Controller
             'indicadores' => json_encode($request->indicadores ?? []),
             'observaciones' => $request->observaciones,
             'verificador' => $request->verificador,
+            'condicion' => $request->condicion,
         ]);
 
         $caso->save();

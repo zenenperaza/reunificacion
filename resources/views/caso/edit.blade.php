@@ -1443,6 +1443,8 @@
                                                 </div>
                                             @endforeach
                                         </div>
+
+
                                     </div>
 
                                     {{-- OBSERVACIONES --}}
@@ -1459,6 +1461,29 @@
                                                 value="{{ old('verificador', $caso->verificador) }}">
                                         </div>
                                     </div>
+                                    
+                                        <div class="row mt-3">
+                                            <div class="mb-3">
+                                                <label class="form-label d-block">Condición <span
+                                                        class="text-danger">*</span></label>
+                                                <small class="text-muted d-block mb-2">Seleccione el estado de la
+                                                    condición</small>
+
+                                                @foreach (['En espera', 'No aprobado', 'Aprobado'] as $i => $condicion)
+                                                    @if ($condicion == 'Aprobado' && !auth()->user()->can('aprobar casos'))
+                                                        @continue
+                                                    @endif
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="condicion"
+                                                            id="condicion{{ $i + 1 }}"
+                                                            value="{{ $condicion }}"
+                                                            {{ old('condicion', $caso->condicion) == $condicion ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="condicion{{ $i + 1 }}">{{ $condicion }}</label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
                                 </div>
 
 

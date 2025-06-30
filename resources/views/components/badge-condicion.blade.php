@@ -1,0 +1,1 @@
+<span class="badge">{{ $condicion }}</span>

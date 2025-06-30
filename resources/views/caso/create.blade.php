@@ -29,59 +29,66 @@
             <div class="card-body">
                 <h4 class="header-title">Registro de Caso</h4>
                 <div id="progressbarwizard">
-
-                    <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-3">
-                        <li class="nav-item">
-                            <a href="#tab1" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-account-circle me-1"></i>
-                                <span class="d-none d-sm-inline">Informacion general</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab2" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-face-profile me-1"></i>
-                                <span class="d-none d-sm-inline">Datos del beneficiaria/o</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab3" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                                <span class="d-none d-sm-inline">Descripcion del proceso</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab4" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-flag-checkered me-1"></i>
-                                <span class="d-none d-sm-inline">Vulnerabilidades</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab5" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-flag-checkered me-1"></i>
-                                <span class="d-none d-sm-inline">Derechos vulnerados</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab6" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-file-image-outline me-1"></i>
-                                <span class="d-none d-sm-inline">Identificación de violencia basada en género
-                                    VBG</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab7" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-file-image-outline me-1"></i>
-                                <span class="d-none d-sm-inline">Documentos Adjuntos</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#tab8" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
-                                <i class="mdi mdi-check-all me-1"></i>
-                                <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
-                            </a>
-                    </ul>
                     <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso">
                         @csrf
+                        <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-3">
+                            <li class="nav-item">
+                                <a href="#tab1" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-account-circle me-1"></i>
+                                    <span class="d-none d-sm-inline">Informacion general</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab2" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-face-profile me-1"></i>
+                                    <span class="d-none d-sm-inline">Datos del beneficiaria/o</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab3" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
+                                    <span class="d-none d-sm-inline">Descripcion del proceso</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab4" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-flag-checkered me-1"></i>
+                                    <span class="d-none d-sm-inline">Vulnerabilidades</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab5" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-flag-checkered me-1"></i>
+                                    <span class="d-none d-sm-inline">Derechos vulnerados</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab6" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-file-image-outline me-1"></i>
+                                    <span class="d-none d-sm-inline">Identificación de violencia basada en género
+                                        VBG</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab7" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-file-image-outline me-1"></i>
+                                    <span class="d-none d-sm-inline">Documentos Adjuntos</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#tab8" data-bs-toggle="tab" data-toggle="tab"
+                                    class="nav-link rounded-0 pt-2 pb-2">
+                                    <i class="mdi mdi-check-all me-1"></i>
+                                    <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
+                                </a>
+                        </ul>
                         <div class="tab-content b-0 mb-0 pt-0">
 
 
@@ -96,7 +103,7 @@
                                         <div class="mb-3">
                                             <label for="periodo" class="form-label mb-2">Periodo</label>
                                             <input type="text" class="form-control" name="periodo" id="periodo"
-                                                value="{{ date('Y-m') }}" readonly>
+                                                value="{{ date('Y-m') }}" readonly required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -140,7 +147,7 @@
                                     <div class="col-md-6">
                                         <label for="elaborado_por" class="form-label mb-2">Elaborado por</label>
                                         <input type="text" class="form-control" name="elaborado_por"
-                                            value="{{ auth()->user()->name }}">
+                                            value="{{ auth()->user()->name }}" readonly required>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -1453,6 +1460,31 @@
                                         <input type="number" class="form-control" name="verificador" value="">
                                     </div>
                                 </div>
+
+
+
+                                <div class="row mt-3">
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Condición <span
+                                                class="text-danger">*</span></label>
+                                        <small class="text-muted d-block mb-2">Seleccione el estado de la condición</small>
+
+                                        @foreach (['En espera', 'No aprobado', 'Aprobado'] as $i => $condicion)
+                                            @if ($condicion == 'Aprobado' && !auth()->user()->can('aprobar casos'))
+                                                @continue
+                                            @endif
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="condicion"
+                                                    id="condicion{{ $i + 1 }}" value="{{ $condicion }}"
+                                                    {{ $condicion == 'En espera' ? 'checked' : '' }}>
+                                                <label class="form-check-label"
+                                                    for="condicion{{ $i + 1 }}">{{ $condicion }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+
 
 
 

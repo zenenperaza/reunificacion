@@ -276,7 +276,7 @@ class CasoFactory extends Factory
             'indicadores' => 'PSEA.01',
             'observaciones' => 'Caso de prueba generado automáticamente.',
             'verificador' => 1,
-            'condicion' => 'Evaluación inicial',
+            'condicion' => $this->faker->randomElement(['Aprobado', 'En espera', 'No aprobado']),
         ];
     }
 }

@@ -19,6 +19,7 @@ class RoleSeeder extends Seeder
             'ver casos',
             'editar casos',
             'eliminar casos',
+            'aprobar casos',
             'Gestion roles',
             'ver roles',
             'editar roles',
