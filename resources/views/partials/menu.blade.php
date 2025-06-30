@@ -53,7 +53,7 @@
                                     </li>
                                 @endcan
 
-                                <li><a href="{{ route('profile.edit') }}">
+                                <li><a href="{{ route('casos.index') }}">
                                         <i class="fas fa-receipt"></i>
                                         <span>Informes</span></a>
                                 </li>

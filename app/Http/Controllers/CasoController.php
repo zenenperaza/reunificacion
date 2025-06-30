@@ -28,6 +28,8 @@ class CasoController extends Controller
         return view('caso.index');
     }
 
+    
+
     public function data(Request $request)
     {
         $query = Caso::with(['estado', 'municipio']);
