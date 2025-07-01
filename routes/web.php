@@ -11,9 +11,20 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\BitacoraController;
+use App\Http\Controllers\LockScreenController;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/lock', [LockScreenController::class, 'show']);
+    Route::post('/unlock', [LockScreenController::class, 'unlock']);
 });
 
 // Dashboard por roles

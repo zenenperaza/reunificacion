@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <?php $title = "Lock Screen";
-    include 'partials/title-meta.php'; ?>
-
-		<?php include 'partials/head-css.php'; ?>
 
     </head>
 
@@ -63,7 +59,6 @@
         </div>
         <!-- end page -->
       
-        <?php include 'partials/footer-scripts.php'; ?>
 
         <!-- App js -->
         <script src="assets/js/app.min.js"></script>

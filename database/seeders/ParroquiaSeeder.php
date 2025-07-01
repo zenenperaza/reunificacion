@@ -829,6 +829,50 @@ class ParroquiaSeeder extends Seeder
 
             // Municipio Uracoa (212)
             ['nombre' => 'Uracoa', 'municipio_id' => 212],
+            // Municipio Antolín del Campo (213)
+            ['nombre' => 'Antolín del Campo', 'municipio_id' => 213],
+
+            // Municipio Arismendi (214)
+            ['nombre' => 'Arismendi', 'municipio_id' => 214],
+
+            // Municipio Díaz (215)
+            ['nombre' => 'San Juan Bautista', 'municipio_id' => 215],
+            ['nombre' => 'Zabala', 'municipio_id' => 215],
+
+            // Municipio García (216)
+            ['nombre' => 'García', 'municipio_id' => 216],
+            ['nombre' => 'Francisco Fajardo', 'municipio_id' => 216],
+
+            // Municipio Gómez (217)
+            ['nombre' => 'Bolívar', 'municipio_id' => 217],
+            ['nombre' => 'Guevara', 'municipio_id' => 217],
+            ['nombre' => 'Matasiete', 'municipio_id' => 217],
+            ['nombre' => 'Santa Ana', 'municipio_id' => 217],
+            ['nombre' => 'Sucre', 'municipio_id' => 217],
+
+            // Municipio Maneiro (218)
+            ['nombre' => 'Aguirre', 'municipio_id' => 218],
+            ['nombre' => 'Maneiro', 'municipio_id' => 218],
+
+            // Municipio Marcano (219)
+            ['nombre' => 'Adrián', 'municipio_id' => 219],
+            ['nombre' => 'Juan Griego', 'municipio_id' => 219],
+
+            // Municipio Mariño (220)
+            ['nombre' => 'Mariño', 'municipio_id' => 220],
+
+            // Municipio Península de Macanao (221)
+            ['nombre' => 'San Francisco de Macanao', 'municipio_id' => 221],
+            ['nombre' => 'Boca de Río', 'municipio_id' => 221],
+
+            // Municipio Tubores (222)
+            ['nombre' => 'Tubores', 'municipio_id' => 222],
+            ['nombre' => 'Los Barales', 'municipio_id' => 222],
+
+            // Municipio Villalba (223)
+            ['nombre' => 'Vicente Fuentes', 'municipio_id' => 223],
+            ['nombre' => 'Villalba', 'municipio_id' => 223],
+
 
             // Municipio Agua Blanca (224)
             ['nombre' => 'Agua Blanca', 'municipio_id' => 224],

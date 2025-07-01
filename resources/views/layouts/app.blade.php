@@ -13,34 +13,31 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}">
 
-
-
     <!-- App CSS -->
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet" type="text/css" id="app-style" />
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+    
+    <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
 
+    @yield('styles')
 
-
-        @yield('styles')
-
+    @if (session('locked'))
+        <script>
+            window.location.href = "{{ url('/lock') }}";
+        </script>
+    @endif
 </head>
 
-<body class="loading"
-      data-layout-color="light"
-      data-layout-mode="horizontal"
-      data-layout-size="fluid"
-      data-topbar-color="light"
-      data-leftbar-position="fixed"
-      data-leftbar-color="light"
-      data-leftbar-size="default"
-      data-sidebar-user="true">
+<body class="loading" data-layout-color="light" data-layout-mode="horizontal" data-layout-size="fluid"
+    data-topbar-color="light" data-leftbar-position="fixed" data-leftbar-color="light" data-leftbar-size="default"
+    data-sidebar-user="true">
 
     <!-- Begin page -->
     <div id="wrapper">
-
-        @include('partials.header')
-
-        @include('partials.menu')
+        @if(!session('locked'))
+            @include('partials.header')
+            @include('partials.menu')
+        @endif
 
         <!-- ============================================================== -->
         <!-- Start Page Content here -->
@@ -68,9 +65,47 @@
 
     @yield('scripts')
 
+    
+    <!-- Sweet Alerts js -->
+    <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
+    {{-- ✅ Bloqueo automático por inactividad (5 min) --}}
+   @if (!session('locked') && !request()->is('lock'))
+    <script>
+        (function () {
+            let warningTimer, lockTimer;
+            const warningDelay = 1 * 60 * 1000; // 4 minutos
+            const lockDelay = 2 * 60 * 1000;     // 5 minutos
 
+            function showWarning() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Inactividad detectada',
+                    text: 'Tu sesión se bloqueará en 1 minuto si no realizas ninguna acción.',
+                    timer: 59000,
+                    showConfirmButton: false,
+                });
+            }
+
+            function startTimers() {
+                clearTimeout(warningTimer);
+                clearTimeout(lockTimer);
+
+                warningTimer = setTimeout(showWarning, warningDelay);
+                lockTimer = setTimeout(() => {
+                    window.location.href = "{{ url('/lock') }}";
+                }, lockDelay);
+            }
+
+            // Escuchar actividad del usuario
+            window.onload = startTimers;
+            document.onmousemove = startTimers;
+            document.onkeydown = startTimers;
+            document.onclick = startTimers;
+            document.onscroll = startTimers;
+        })();
+    </script>
+@endif
 
 </body>
-
 </html>

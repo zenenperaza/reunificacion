@@ -90,10 +90,10 @@
                     <span>Mi cuenta</span>
                 </a>
 
-                <a href="#" class="dropdown-item notify-item">
-                    <i class="fe-lock"></i>
-                    <span>Bloquear pantalla</span>
+                <a href="{{  url('/lock') }}"  class="dropdown-item notify-item" title="Bloquear pantalla">
+                    <i class="mdi mdi-lock-outline"></i> Bloquear
                 </a>
+
 
                 <div class="dropdown-divider"></div>
 
