@@ -20,11 +20,14 @@
     <div class="account-pages mt-5 mb-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6 col-xl-4">
+                <div class="col-md-6">
                     <div class="text-center">
                         <img src="{{ asset('assets/images/logo-dark.png') }}" height="95" alt="Logo">
                         <p class="text-muted mt-2 mb-4">Sistema de Reunificación</p>
                     </div>
+                </div>
+                <div class="col-md-6">
+
 
                     <div class="card">
                         <div class="card-body p-4 text-center">
