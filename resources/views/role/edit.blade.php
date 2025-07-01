@@ -21,7 +21,7 @@
                             <label class="form-label">Permisos</label>
                             <div class="row">
                                 @foreach($permissions as $permiso)
-                                    <div class="col-md-4">
+                                    <div class="col-md-6 mt-1">
                                         <div class="form-check">
                                             <input type="checkbox" name="permissions[]" value="{{ $permiso->name }}"
                                                 class="form-check-input" id="permiso_{{ $permiso->id }}"

@@ -1454,14 +1454,15 @@
                                     </div>
 
                                     {{-- VERIFICADOR --}}
-                                    <div class="row mt-3">
+                                    {{-- <div class="row mt-3">
                                         <div class="col-md-6">
                                             <label for="verificador" class="form-label mb-2">Verificador</label>
                                             <input type="number" class="form-control" name="verificador"
                                                 value="{{ old('verificador', $caso->verificador) }}">
                                         </div>
-                                    </div>
-                                    
+                                    </div> --}}
+
+                                    @can('aprobar casos')
                                         <div class="row mt-3">
                                             <div class="mb-3">
                                                 <label class="form-label d-block">Condición <span
@@ -1470,13 +1471,9 @@
                                                     condición</small>
 
                                                 @foreach (['En espera', 'No aprobado', 'Aprobado'] as $i => $condicion)
-                                                    @if ($condicion == 'Aprobado' && !auth()->user()->can('aprobar casos'))
-                                                        @continue
-                                                    @endif
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="radio" name="condicion"
-                                                            id="condicion{{ $i + 1 }}"
-                                                            value="{{ $condicion }}"
+                                                            id="condicion{{ $i + 1 }}" value="{{ $condicion }}"
                                                             {{ old('condicion', $caso->condicion) == $condicion ? 'checked' : '' }}>
                                                         <label class="form-check-label"
                                                             for="condicion{{ $i + 1 }}">{{ $condicion }}</label>
@@ -1484,6 +1481,8 @@
                                                 @endforeach
                                             </div>
                                         </div>
+                                    @endcan
+
                                 </div>
 
 

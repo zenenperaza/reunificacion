@@ -60,6 +60,8 @@
                     <x-readonly-input label="Estatus" value="{{ $caso->estatus }}" />
                     <x-readonly-input label="Obsrvaciones" value="{{ $caso->observaciones }}" />
                     <x-readonly-input label="Verificador" value="{{ $caso->verificador }}" />
+                        
+                    <x-readonly-input label="Condicion" value="{{ $caso->condicion }}" />
                 </div>
 
                 <!-- UBICACIÓN -->
@@ -102,24 +104,33 @@
 
         <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
             @if (!$caso->trashed())
-                <a href="{{ route('casos.pdf', $caso->id) }}" class="btn btn-outline-danger">
+                @can('aprobar casos')
+                    <a href="#" class="btn btn-success btn-aprobar-caso" data-id="{{ $caso->id }}">
+                        <i class="fas fa-hand-holding-heart"></i> Aprobar caso
+                    </a>
+                @endcan
+
+                <a href="{{ route('casos.pdf', $caso->id) }}" class="btn btn-danger">
                     <i class="mdi mdi-file-pdf"></i> Descargar PDF
                 </a>
 
-                <button onclick="printCasoCompleto()" class="btn btn-outline-dark">
+                <button onclick="printCasoCompleto()" class="btn btn-dark">
                     <i class="mdi mdi-printer"></i> Imprimir
                 </button>
 
-                <a href="#" class="btn btn-outline-success">
-                    <i class="mdi mdi-clone"></i> Clona caso actual
-                </a>
+                @can('clonar casos')
+                    <a href="#" class="btn btn-success">
+                        <i class="mdi mdi-clone"></i> Clonar caso actual
+                    </a>
+                @endcan
 
-                <a href="{{ route('casos.descargarArchivos', $caso->id) }}" class="btn btn-outline-primary">
+
+                <a href="{{ route('casos.descargarArchivos', $caso->id) }}" class="btn btn-primary">
                     <i class="mdi mdi-folder-download"></i> Descargar Fotos y Archivos
                 </a>
 
                 @can('cierre atencion')
-                    <a href="#" class="btn btn-outline-warning btn-cerrar-atencion" data-id="{{ $caso->id }}">
+                    <a href="#" class="btn btn-warning btn-cerrar-atencion" data-id="{{ $caso->id }}">
                         <i class="fas fa-door-closed"></i> Cerrar atención
                     </a>
                 @endcan
@@ -148,6 +159,9 @@
 @section('scripts')
     <!-- Sweet Alerts js -->
     <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
+
+
+
     <script>
         function printCasoCompleto() {
             const contenido = document.getElementById('caso-completo').innerHTML;
@@ -228,5 +242,45 @@
             });
         });
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $(document).on('click', '.btn-aprobar-caso', function (e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Deseas aprobar este caso?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, aprobar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/casos/' + id + '/aprobar',
+                        method: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            aprobado: 'Aprobado'
+                        },
+                        success: function (response) {
+                            Swal.fire('¡Aprobado!', response.message, 'success').then(() => {
+                                location.reload(); // Recargar para reflejar cambios
+                            });
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'No se pudo aprobar el caso.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 
 @endsection

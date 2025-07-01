@@ -276,19 +276,23 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4" id="integrantesFields" style="display: none;">
-                                        <div class="mb-2">
-                                            <label for="numero_integrantes" class="form-label">N° de integrantes</label>
-                                            <input type="number" name="numero_integrantes" id="numero_integrantes"
-                                                class="form-control" min="1">
+                                    @can('clonar casos')
+                                        <div class="col-md-4" id="integrantesFields" style="display: none;">
+                                            <div class="mb-2">
+                                                <label for="numero_integrantes" class="form-label">N° de integrantes</label>
+                                                <input type="number" name="numero_integrantes" id="numero_integrantes"
+                                                    class="form-control" min="1">
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="clonar_integrantes"
+                                                    id="clonar_integrantes" value="1">
+                                                <label class="form-check-label" for="clonar_integrantes">
+                                                    Clonar este registro para cada integrante
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="clonar_integrantes"
-                                                id="clonar_integrantes" value="1">
-                                            <label class="form-check-label" for="clonar_integrantes">Clonar este registro
-                                                para cada integrante</label>
-                                        </div>
-                                    </div>
+                                    @endcan
+
                                 </div>
 
 
@@ -1454,39 +1458,37 @@
                                 </div>
 
 
-                                <div class="row mt-3">
+                                {{-- <div class="row mt-3">
                                     <div class="col-md-6">
                                         <label for="verificador" class="form-label mb-2">Verificador </label>
                                         <input type="number" class="form-control" name="verificador" value="">
                                     </div>
-                                </div>
+                                </div> --}}
 
+                                @can('aprobar casos')
+                                    <div class="row mt-3">
+                                        <div class="mb-3">
+                                            <label class="form-label d-block">Condición <span
+                                                    class="text-danger">*</span></label>
+                                            <small class="text-muted d-block mb-2">Seleccione el estado de la condición</small>
 
+                                            @php
+                                                $condiciones = ['En espera', 'No aprobado', 'Aprobado'];
+                                                $valorActual = old('condicion', 'En espera');
+                                            @endphp
 
-                                <div class="row mt-3">
-                                    <div class="mb-3">
-                                        <label class="form-label d-block">Condición <span
-                                                class="text-danger">*</span></label>
-                                        <small class="text-muted d-block mb-2">Seleccione el estado de la condición</small>
-
-                                        @foreach (['En espera', 'No aprobado', 'Aprobado'] as $i => $condicion)
-                                            @if ($condicion == 'Aprobado' && !auth()->user()->can('aprobar casos'))
-                                                @continue
-                                            @endif
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="condicion"
-                                                    id="condicion{{ $i + 1 }}" value="{{ $condicion }}"
-                                                    {{ $condicion == 'En espera' ? 'checked' : '' }}>
-                                                <label class="form-check-label"
-                                                    for="condicion{{ $i + 1 }}">{{ $condicion }}</label>
-                                            </div>
-                                        @endforeach
+                                            @foreach ($condiciones as $i => $condicion)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="condicion"
+                                                        id="condicion{{ $i + 1 }}" value="{{ $condicion }}"
+                                                        {{ $valorActual == $condicion ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="condicion{{ $i + 1 }}">{{ $condicion }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-
-
-
-
+                                @endcan
 
 
                             </div>
@@ -2484,24 +2486,26 @@
 
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
-            const integrantesFields = document.getElementById('integrantesFields');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
+        const integrantesFields = document.getElementById('integrantesFields');
 
-            tipoAtencionRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    integrantesFields.style.display = this.value === 'Grupo familiar' ? 'block' :
-                        'none';
-                });
+        if (!integrantesFields) return; // salir si el bloque no existe
+
+        tipoAtencionRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                integrantesFields.style.display = this.value === 'Grupo familiar' ? 'block' : 'none';
             });
-
-            // Mostrar al recargar si está preseleccionado
-            const selected = document.querySelector('input[name="tipo_atencion"]:checked');
-            if (selected && selected.value === 'Grupo familiar') {
-                integrantesFields.style.display = 'block';
-            }
         });
-    </script>
+
+        // Mostrar al recargar si está preseleccionado
+        const selected = document.querySelector('input[name="tipo_atencion"]:checked');
+        if (selected && selected.value === 'Grupo familiar') {
+            integrantesFields.style.display = 'block';
+        }
+    });
+</script>
+
 
 @endsection

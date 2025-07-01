@@ -68,6 +68,13 @@ Route::middleware(['auth'])->group(function () {
 
 
     // ✅ Primero rutas específicas
+Route::post('/casos/{id}/aprobar', [CasoController::class, 'aprobar'])
+    ->name('casos.aprobar')
+    ->middleware('can:aprobar casos');
+
+    
+
+
     Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');
     Route::get('/casos/exportar-por-estatus', [CasoController::class, 'exportarPorEstatus'])->name('casos.exportarPorEstatus');
     Route::get('/casos/exportar-por-estado', [CasoController::class, 'exportarPorEstado'])->name('casos.exportarPorEstado');

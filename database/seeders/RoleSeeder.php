@@ -19,7 +19,9 @@ class RoleSeeder extends Seeder
             'ver casos',
             'editar casos',
             'eliminar casos',
-            'aprobar casos',
+            'aprobar casos',            
+            'clonar casos',
+            'cierre atencion',
             'Gestion roles',
             'ver roles',
             'editar roles',
@@ -33,7 +35,6 @@ class RoleSeeder extends Seeder
             'Gestion permisos',
             'Gestion configuracion',
             'ver bitacora',
-            'cierre atencion',
             'ver casos eliminados',
             'restaurar casos eliminados',
         ];

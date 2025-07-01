@@ -12,7 +12,7 @@
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/daterangepicker/daterangepicker.css') }}" rel="stylesheet">
 
-    
+
     <link href="{{ asset('assets/libs/mohithg-switchery/switchery.min.css') }}" rel="stylesheet" type="text/css" />
 
 @endsection
@@ -325,13 +325,13 @@
                     className: 'btn btn-sm btn-outline-dark'
                 }
             ],
-                 drawCallback: function() {
-                    $('.switch-status').each(function() {
-                        new Switchery(this, {
-                            color: '#039cfd'
-                        });
+            drawCallback: function() {
+                $('.switch-status').each(function() {
+                    new Switchery(this, {
+                        color: '#039cfd'
                     });
-                },
+                });
+            },
             createdRow: function(row, data, dataIndex) {
                 let badgeClass = '';
                 switch (data.estatus) {
@@ -536,7 +536,57 @@
         });
     </script>
 
+    <script>
+  // Función para bindear el evento correctamente
+function bindSwitchStatusEvent() {
+    $('.switch-status').off('change').on('change', function () {
+        const id = $(this).data('id');
+        const aprobado = $(this).is(':checked') ? 'Aprobado' : 'En espera';
 
+        $.ajax({
+            url: '/casos/' + id + '/aprobar',
+            method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                aprobado: aprobado
+            },
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: response.message,
+                    toast: true,
+                    position: 'top-center',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No se pudo cambiar la condición.',
+                    toast: true,
+                    position: 'top-center',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
+               dataTable.ajax.reload();
+    });
+}
+
+// Al cargar el DOM
+$(document).ready(function () {
+    // Llamar inmediatamente si ya están cargados los switches
+    bindSwitchStatusEvent();
+
+    // Si usas DataTables, vuelve a enlazar después de cada redibujado
+    $('#casos-table').on('draw.dt', function () {
+        bindSwitchStatusEvent();
+    });
+});
+
+    </script>
 
     @if (session('success'))
         <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">

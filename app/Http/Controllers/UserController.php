@@ -101,14 +101,18 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
+        if ($user->casos()->count() > 0) {
+            return redirect()->route('users.index')
+                ->with('error', '❌ No puedes eliminar este usuario porque tiene casos asociados. Lo que si puedes hacer es Desactivarlo');
         }
 
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente.');
+        return redirect()->route('users.index')
+            ->with('success', '✅ Usuario eliminado correctamente.');
     }
+
+
 
 
     public function data()

@@ -16,7 +16,7 @@ class RoleController extends Controller
 
     public function create()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('name')->get();
         return view('role.create', compact('permissions'));
     }
 
@@ -38,7 +38,7 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('name')->get();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         return view('role.edit', compact('role', 'permissions', 'rolePermissions'));
     }
