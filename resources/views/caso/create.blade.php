@@ -31,6 +31,12 @@
                 <div id="progressbarwizard">
                     <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso">
                         @csrf
+
+
+                        <input type="hidden" name="caso_id" id="caso_id" value="">
+                        <input type="hidden" name="paso_final" id="paso_final" value="0">
+
+
                         <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-3">
                             <li class="nav-item">
                                 <a href="#tab1" data-bs-toggle="tab" data-toggle="tab"
@@ -1490,10 +1496,29 @@
                                     </div>
                                 @endcan
 
+                                <!-- Botón para finalizar y redirigir -->
+                                {{-- <button type="button" class="btn btn-success btn-guardar" data-final="true">Enviar y
+                                        finalizar</button> --}}
+                                <div class="row mt-3 finalizar">
+                                    <ul class="list-inline mt-4 wizard d-flex justify-content-center">
+
+                                        <li class="previous list-inline-item">
+
+                                            <button type="button"
+                                                class="btn btn-success waves-effect waves-light  btn-guardar  float-end"
+                                                data-final="true">
+                                                <span class="btn-label"><i class="mdi mdi-check-all"></i></span>Guardar y
+                                                finalizar
+                                            </button>
+
+                                        </li>
+                                    </ul>
+                                </div>
 
                             </div>
 
                             <ul class="list-inline mt-4 wizard">
+
                                 <li class="previous list-inline-item">
                                     <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
                                 </li>
@@ -1502,10 +1527,24 @@
                                     <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
                                 </li>
 
-                                <li class="next list-inline-item  center">
-                                    <button type="submit" class="btn btn-primary">Enviar y finalizar</button>
+
+                                <li class="next list-inline-item float-end">
+
+                                    {{-- <button type="button" id="btn-guardar-y-continuar" class="btn btn-primary">Enviar y
+                                        continuar</button> --}}
+
+                                    <!-- Botón para avanzar entre tabs -->
+                                    <button type="button" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
+                                        data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
+                                        continuar</button>
+
+                                    {{-- <button type="button" class="btn btn-primary btn-guardar" data-final="false">Enviar y continuar</button> --}}
+
                                 </li>
+
+
                             </ul>
+
 
 
 
@@ -1596,7 +1635,6 @@
                 }
             });
         });
-
     </script>
 
     <script>
@@ -1604,21 +1642,20 @@
 
         // Dropzone para imágenes
         const imagenesDropzone = new Dropzone("#myAwesomeDropzone", {
-            url: "#", // será ignorado si usas formData
+            url: "#",
             autoProcessQueue: false,
             uploadMultiple: true,
             parallelUploads: 10,
-            maxFilesize: 5, // MB
+            maxFilesize: 5,
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
             previewsContainer: "#file-previews",
             previewTemplate: document.querySelector("#uploadPreviewTemplate").innerHTML
         });
 
-        Dropzone.autoDiscover = false;
-
+        // Dropzone para documentos
         const documentosDropzone = new Dropzone("#docuemntosDropzone", {
-            url: "#", // será reemplazado al enviar el formulario
+            url: "#",
             autoProcessQueue: false,
             uploadMultiple: true,
             parallelUploads: 10,
@@ -1630,77 +1667,86 @@
             init: function() {
                 this.on("addedfile", function(file) {
                     const ext = file.name.split('.').pop().toLowerCase();
-                    let iconPath = "/assets/icons/file.png"; // por defecto
+                    let iconPath = "/assets/icons/file.png";
+                    if (['doc', 'docx'].includes(ext)) iconPath = "/assets/icons/word.png";
+                    else if (ext === 'pdf') iconPath = "/assets/icons/pdf.png";
+                    else if (['xls', 'xlsx'].includes(ext)) iconPath = "/assets/icons/excel.png";
 
-                    if (['doc', 'docx'].includes(ext)) {
-                        iconPath = "/assets/icons/word.png";
-                    } else if (['pdf'].includes(ext)) {
-                        iconPath = "/assets/icons/pdf.png";
-                    } else if (['xls', 'xlsx'].includes(ext)) {
-                        iconPath = "/assets/icons/excel.png";
-                    }
-
-                    // Cambiar la miniatura manualmente
                     const thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]");
-                    thumbnail.src = iconPath;
+                    if (thumbnail) thumbnail.src = iconPath;
                 });
             }
         });
+    </script>
 
-        // Enviar todos los archivos al enviar el formulario
-        document.querySelector("form#formCaso").addEventListener("submit", function(e) {
+    <script>
+        $('.btn-guardar').on('click', function(e) {
             e.preventDefault();
 
-            let formData = new FormData(this);
+            const esPasoFinal = $(this).data('final') === true || $(this).data('final') === 'true';
+            $('#paso_final').val(esPasoFinal ? '1' : '0');
 
-            // Agregar imágenes
-            imagenesDropzone.files.forEach((file, i) => {
-                formData.append('fotos[]', file);
-            });
+            const form = $('#formCaso')[0];
+            const formData = new FormData(form);
 
-            // Agregar documentos
-            documentosDropzone.files.forEach((file, i) => {
-                formData.append('archivos[]', file);
-            });
+            if (typeof imagenesDropzone !== 'undefined') {
+                imagenesDropzone.files.forEach(file => formData.append('fotos[]', file));
+            }
 
-            // Enviar formulario completo por AJAX
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            }).then(response => {
-                if (response.ok) {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: 'success',
-                        title: '¡Caso guardado!',
-                        text: 'El registro se completó correctamente.',
-                        showConfirmButton: !1,
-                        timer: 1500,
-                    }).then(() => {
-                        window.location.href = "{{ route('casos.index') }}";
-                    });
-                    imagenesDropzone.removeAllFiles();
-                    documentosDropzone.removeAllFiles();
-                    this.reset();
-                } else {
+            if (typeof documentosDropzone !== 'undefined') {
+                documentosDropzone.files.forEach(file => formData.append('archivos[]', file));
+            }
+
+            const originalText = $(this).html();
+            $(this).prop('disabled', true).text('Guardando...');
+
+            fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        $('#caso_id').val(data.id);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Guardado',
+                            text: 'Los datos han sido guardados correctamente.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+
+                        if (esPasoFinal) {
+                            window.location.href = "{{ route('casos.index') }}";
+                        } else {
+                            const activeTab = $('.nav-tabs .nav-link.active');
+                            const nextTab = activeTab.closest('li').next().find('.nav-link');
+                            if (nextTab.length) nextTab.tab('show');
+                        }
+                    } else {
+                        throw new Error('Error en la respuesta');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error al guardar',
-                        text: 'No se pudo registrar el caso. Por favor, intente nuevamente.',
-                        footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el Desarrollador</a>'
+                        title: 'Error',
+                        text: 'Hubo un problema al guardar el caso. Recuerda llenar los Campos obligatorios: Estado, Municipio, Parroquia...',
+                        footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el desarrollador</a>'
                     });
-
-                }
-            }).catch(error => {
-                console.error(error);
-                alert("Error inesperado.");
-            });
+                })
+                .finally(() => {
+                    $(this).prop('disabled', false).html(originalText);
+                });
         });
     </script>
-    
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
@@ -2490,6 +2536,21 @@
             }
         });
     </script>
+
+    <script>
+        //     document.getElementById('btn-guardar-y-continuar').addEventListener('click', function () {
+
+        //         this.disabled = true;
+        // this.innerHTML = 'Guardando...';
+
+        //         // Establecer que es el paso final
+        //         document.getElementById('paso_final').value = '1';
+
+        //         // Disparar el submit programáticamente
+        //         document.getElementById('formCaso').dispatchEvent(new Event('submit'));
+        //     });
+    </script>
+
 
 
 @endsection
