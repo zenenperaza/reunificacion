@@ -373,16 +373,17 @@ class CasoController extends Controller
 
 
 
-    public function exportarExcel(Request $request)
-    {
-        $start = $request->input('start_date');
-        $end = $request->input('end_date');
-        $estatus = $request->input('estatus');
+public function exportarExcel(Request $request)
+{
+    $start = $request->input('start_date');
+    $end = $request->input('end_date');
+    $estatus = $request->input('estatus');
+    $search = $request->input('search'); // <- NUEVO
 
-        $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
+    $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
 
-        return Excel::download(new CasosExport($start, $end, null, $estatus), $filename);
-    }
+    return Excel::download(new CasosExport($start, $end, null, $estatus, $search), $filename);
+}
 
 
 

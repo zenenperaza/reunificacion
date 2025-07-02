@@ -13,61 +13,121 @@
     <!-- Estilos -->
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f4f9;
+        }
+
+        .lockscreen-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lockscreen-box {
+            display: flex;
+            flex-direction: row;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .lockscreen-left {
+            background: #f0f2f5;
+            padding: 40px 30px;
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .lockscreen-right {
+            padding: 40px 30px;
+            flex: 1;
+        }
+
+        .lockscreen-left img {
+            max-height: 350px;
+            margin-bottom: 20px;
+        }
+
+        .lockscreen-left p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .img-thumbnail {
+            border: 3px solid #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .lockscreen-box {
+                flex-direction: column;
+            }
+
+            .lockscreen-left, .lockscreen-right {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 
-<body class=" authentication-bg-pattern">
+<body>
+    <div class="lockscreen-container">
+        <div class="lockscreen-box">
 
-    <div class="account-pages mt-5 mb-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="text-center">
-                        <img src="{{ asset('assets/images/logo-dark.png') }}" height="95" alt="Logo">
-                        <p class="text-muted mt-2 mb-4">Sistema de Reunificación</p>
-                    </div>
+            <!-- Lado izquierdo -->
+            <div class="lockscreen-left">
+                <img src="{{ asset('assets/images/rlf-landing-hero.png') }}" alt="Logo">
+                <p>Sistema de Reunificación Familiar</p>
+            </div>
+
+            <!-- Lado derecho -->
+            <div class="lockscreen-right">
+                @php $user = Auth::user(); @endphp
+
+                <div class="text-center mb-4">
+                    <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/small/default.png') }}"
+                        class="rounded-circle img-thumbnail" width="88">
+                    <h4 class="mt-3">Hola, {{ $user->name }}</h4>
+                    <p class="text-muted">Ingresa tu contraseña para continuar</p>
                 </div>
-                <div class="col-md-6">
 
-
-                    <div class="card">
-                        <div class="card-body p-4 text-center">
-                            @php $user = Auth::user(); @endphp
-                            <h4 class="text-uppercase mb-4">Bienvenido de nuevo</h4>
-                            <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('assets/images/small/default.png') }}"
-                                class="rounded-circle img-thumbnail mb-3" width="88">
-                            <p class="text-muted">Hola, {{ $user->name }}<br>Ingresa tu contraseña para continuar</p>
-
-                            <form method="POST" action="{{ url('/unlock') }}">
-                                @csrf
-                                <div class="mb-3 text-start">
-                                    <label for="password" class="form-label">Contraseña</label>
-                                    <input type="password" name="password" id="password"
-                                        class="form-control @error('password') is-invalid @enderror" required>
-                                    @error('password')
-                                        <div class="text-danger small">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <button type="submit" class="btn btn-primary d-block w-100">Desbloquear</button>
-                            </form>
-
-                            <div class="mt-3">
-                                <a href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    class="text-muted">
-                                    ¿No eres tú? <strong>Cerrar sesión</strong>
-                                </a>
-                                <form id="logout-form" method="POST" action="{{ route('logout') }}" class="d-none">
-                                    @csrf
-                                </form>
-                          
-
-                            </div>
-                        </div>
+                <form method="POST" action="{{ url('/unlock') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" name="password" id="password"
+                            class="form-control @error('password') is-invalid @enderror" required>
+                        @error('password')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    <button type="submit" class="btn btn-primary w-100">Desbloquear</button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <a href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="text-muted">
+                        ¿No eres tú? <strong>Cerrar sesión</strong>
+                    </a>
+                    <form id="logout-form" method="POST" action="{{ route('logout') }}" class="d-none">
+                        @csrf
+                    </form>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -75,20 +135,18 @@
     <script src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script>
-        // Si el usuario usa el botón atrás, forzamos recarga del servidor
+        // Forzar recarga si vuelve con el botón atrás
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 window.location.reload();
             }
         });
-    </script>
-    {{-- Logout automático después de 10 minutos en bloqueo --}}
-    <script>
+
+        // Logout automático después de 3 minutos
         setTimeout(function() {
             document.getElementById('logout-form').submit();
-        }, 3 * 60 * 1000); // 10 minutos en milisegundos
+        }, 10 * 60 * 1000);
     </script>
-
 </body>
 
 </html>

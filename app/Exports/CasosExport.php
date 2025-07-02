@@ -32,33 +32,56 @@ class CasosExport implements
     protected $end;
     protected $estadoId;
     protected $estatus;
+    protected $search;
 
-    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null)
+    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null)
     {
-        $this->start = $start;
-        $this->end = $end;
-        $this->estadoId = $estadoId;
-        $this->estatus = $estatus;
+      $this->start = $start;
+    $this->end = $end;
+    $this->estadoId = $estadoId;
+    $this->estatus = $estatus;
+     $this->search = $search; // <-- ahora sí está definido
     }
 
-    public function collection()
-    {
-        $query = Caso::with(['estado', 'municipio', 'parroquia', 'estadoDestino', 'municipioDestino', 'parroquiaDestino', 'user']);
+public function collection()
+{
+    $query = Caso::with([
+        'estado',
+        'municipio',
+        'parroquia',
+        'estadoDestino',
+        'municipioDestino',
+        'parroquiaDestino',
+        'user'
+    ]);
 
-        if ($this->start && $this->end) {
-            $query->whereBetween('fecha_actual', [$this->start, $this->end]);
-        }
-        if ($this->estadoId) {
-            $query->where('estado_id', $this->estadoId);
-        }
-
-        if ($this->estatus) {
-            $query->where('estatus', $this->estatus);
-        }
-
-
-        return $query->get();
+    if ($this->start && $this->end) {
+        $query->whereBetween('fecha_actual', [$this->start, $this->end]);
     }
+
+    if ($this->estadoId) {
+        $query->where('estado_id', $this->estadoId);
+    }
+
+    if ($this->estatus) {
+        $query->where('estatus', $this->estatus);
+    }
+
+    if ($this->search) {
+        $searchTerm = '%' . $this->search . '%';
+        $query->where(function ($q) use ($searchTerm) {
+            $q->where('numero_caso', 'like', $searchTerm)
+              ->orWhere('beneficiario', 'like', $searchTerm)
+              ->orWhere('tipo_atencion', 'like', $searchTerm)
+              ->orWhere('elaborado_por', 'like', $searchTerm)
+              ->orWhere('direccion_domicilio', 'like', $searchTerm);
+              // Puedes agregar más columnas aquí según tu lógica de búsqueda
+        });
+    }
+
+    return $query->get();
+}
+
 
     public function headings(): array
     {

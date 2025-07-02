@@ -74,8 +74,8 @@
     <script>
         (function () {
             let warningTimer, lockTimer;
-            const warningDelay = 1 * 60 * 1000; // 4 minutos
-            const lockDelay = 2 * 60 * 1000;     // 5 minutos
+            const warningDelay = 4 * 60 * 1000; // 4 minutos
+            const lockDelay = 5 * 60 * 1000;     // 5 minutos
 
             function showWarning() {
                 Swal.fire({

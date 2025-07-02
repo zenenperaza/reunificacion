@@ -426,25 +426,36 @@
 
 
 
-    <script>
-        $('#exportExcel').on('click', function(e) {
-            e.preventDefault();
+<script>
+    $('#exportExcel').on('click', function(e) {
+    e.preventDefault();
 
-            const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
+    const dt = $('#casos-table').DataTable();
 
-            if (startDate && endDate) {
-                url.searchParams.append('start_date', startDate);
-                url.searchParams.append('end_date', endDate);
-            }
+    // Capturamos el search más reciente usando el input directamente
+    const searchInput = $('input[type=search]').val();
 
-            const estatus = $('#filtro_estatus').val();
-            if (estatus) {
-                url.searchParams.append('estatus', estatus);
-            }
+    const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
 
-            window.location.href = url.toString();
-        });
-    </script>
+    if (startDate && endDate) {
+        url.searchParams.append('start_date', startDate);
+        url.searchParams.append('end_date', endDate);
+    }
+
+    const estatus = $('#filtro_estatus').val();
+    if (estatus) {
+        url.searchParams.append('estatus', estatus);
+    }
+
+    if (searchInput) {
+        url.searchParams.append('search', searchInput);
+    }
+
+    window.location.href = url.toString();
+});
+
+</script>
+
 
 
 
