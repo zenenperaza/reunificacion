@@ -62,10 +62,10 @@
             <div class="col-md-9 gap-2">
                 <div class="accordion" id="accordionFiltros">
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingFiltros">
+                        <h2 class="accordion-header" id="headingFiltros" style="margin-bottom: 10px;">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros"
-                                style="padding: 4px 20px">
+                                style="padding: 4px 20px; color: red; font-size: medium; padding: 10px 15px;">
                                 Filtros
                             </button>
                         </h2>
@@ -151,6 +151,7 @@
                             <th>Fecha actual</th>
                             <th>Condicion</th>
                             <th>Estatus</th>
+                            <th>Estado</th>
                             <th>Estado</th>
                             <th>Municipio</th>
                             <th>Acciones</th>
@@ -281,6 +282,14 @@
                     data: 'estatus',
                     name: 'estatus'
                 },
+                 {
+                    data: 'estado_completado',
+                    name: 'estado_completado',
+                    className: 'text-center',
+                    orderable: true,
+                    searchable: true
+                },
+
                 {
                     data: 'estado.nombre',
                     name: 'estado.nombre',
@@ -426,35 +435,34 @@
 
 
 
-<script>
-    $('#exportExcel').on('click', function(e) {
-    e.preventDefault();
+    <script>
+        $('#exportExcel').on('click', function(e) {
+            e.preventDefault();
 
-    const dt = $('#casos-table').DataTable();
+            const dt = $('#casos-table').DataTable();
 
-    // Capturamos el search más reciente usando el input directamente
-    const searchInput = $('input[type=search]').val();
+            // Capturamos el search más reciente usando el input directamente
+            const searchInput = $('input[type=search]').val();
 
-    const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
+            const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
 
-    if (startDate && endDate) {
-        url.searchParams.append('start_date', startDate);
-        url.searchParams.append('end_date', endDate);
-    }
+            if (startDate && endDate) {
+                url.searchParams.append('start_date', startDate);
+                url.searchParams.append('end_date', endDate);
+            }
 
-    const estatus = $('#filtro_estatus').val();
-    if (estatus) {
-        url.searchParams.append('estatus', estatus);
-    }
+            const estatus = $('#filtro_estatus').val();
+            if (estatus) {
+                url.searchParams.append('estatus', estatus);
+            }
 
-    if (searchInput) {
-        url.searchParams.append('search', searchInput);
-    }
+            if (searchInput) {
+                url.searchParams.append('search', searchInput);
+            }
 
-    window.location.href = url.toString();
-});
-
-</script>
+            window.location.href = url.toString();
+        });
+    </script>
 
 
 
@@ -548,52 +556,61 @@
     </script>
 
     <script>
-  // Función para bindear el evento correctamente
-function bindSwitchStatusEvent() {
-    $('.switch-status').off('change').on('change', function () {
-        const id = $(this).data('id');
-        const aprobado = $(this).is(':checked') ? 'Aprobado' : 'En espera';
+        // Función para bindear el evento correctamente
+        function bindSwitchStatusEvent() {
+            $('.switch-status').off('change').on('change', function() {
+                const id = $(this).data('id');
+                const aprobado = $(this).is(':checked') ? 'Aprobado' : 'En espera';
 
-        $.ajax({
-            url: '/casos/' + id + '/aprobar',
-            method: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                aprobado: aprobado
-            },
-            success: function (response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: response.message,
-                    toast: true,
-                    position: 'top-center',
-                    timer: 2000,
-                    showConfirmButton: false
+                $.ajax({
+                    url: '/casos/' + id + '/aprobar',
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        aprobado: aprobado
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message,
+                            toast: true,
+                            position: 'top-center',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No se pudo cambiar la condición.',
+                            toast: true,
+                            position: 'top-center',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
                 });
-            },
-            error: function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'No se pudo cambiar la condición.',
-                    toast: true,
-                    position: 'top-center',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }
+                dataTable.ajax.reload();
+            });
+        }
+
+        // Al cargar el DOM
+        $(document).ready(function() {
+            // Llamar inmediatamente si ya están cargados los switches
+            bindSwitchStatusEvent();
+
+            // Si usas DataTables, vuelve a enlazar después de cada redibujado
+            $('#casos-table').on('draw.dt', function() {
+                bindSwitchStatusEvent();
+            });
         });
-               dataTable.ajax.reload();
-    });
-}
+    </script>
 
-// Al cargar el DOM
-$(document).ready(function () {
-    // Llamar inmediatamente si ya están cargados los switches
-    bindSwitchStatusEvent();
-
-    // Si usas DataTables, vuelve a enlazar después de cada redibujado
+    <script>
+        $(document).ready(function () {
+    // Re-inicializar tooltips cada vez que se dibuje la tabla
     $('#casos-table').on('draw.dt', function () {
-        bindSwitchStatusEvent();
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 });
 

@@ -66,6 +66,40 @@ class CasoController extends Controller
                 }
             })
 
+->addColumn('estado_completado', function ($caso) {
+    $campos = [
+        'numero_caso' => 'Número de Caso',
+        'fecha_atencion' => 'Fecha de Atención',
+        'fecha_actual' => 'Fecha Actual',
+        'tipo_atencion' => 'Tipo de Atención',
+        'beneficiario' => 'Beneficiario',
+        'direccion_domicilio' => 'Dirección',
+        'estatus' => 'Estatus',
+        'user_id' => 'Usuario Responsable',
+    ];
+
+    $faltantes = [];
+
+    foreach ($campos as $campo => $nombre) {
+        if (empty($caso->$campo)) {
+            $faltantes[] = $nombre;
+        }
+    }
+
+    if (count($faltantes) === 0) {
+        return '<span class="d-flex align-items-center gap-1">
+                    <span class="rounded-circle bg-success d-inline-block" style="width:30px; height:30px;"></span>
+                    Completado
+                </span>';
+    } else {
+        $tooltip = implode(', ', $faltantes);
+        return '<span class="d-flex align-items-center gap-1" title="Faltan: ' . e($tooltip) . '" data-bs-toggle="tooltip">
+                    <span class="rounded-circle bg-danger d-inline-block" style="width:30px; height:30px;"></span>
+                    Incompleto
+                </span>';
+    }
+})
+
 
             ->addColumn('acciones', function ($caso) {
                 $botones = '<div class="btn-group" role="group">';
@@ -96,7 +130,7 @@ class CasoController extends Controller
             ->editColumn('fecha_actual', function ($caso) {
                 return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
             })
-            ->rawColumns(['acciones', 'condicion'])
+            ->rawColumns(['acciones', 'condicion','estado_completado'])
             ->make(true);
     }
 
