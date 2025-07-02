@@ -86,6 +86,13 @@
                                         <option value="Cierre de atención">Cierre de atención</option>
                                     </select>
 
+                                    <select id="filtro_estado_completado" class="btn btn-outline-primary">
+                                        <option value="">Todos los estados</option>
+                                        <option value="completo">Completado</option>
+                                        <option value="incompleto">Incompleto</option>
+                                    </select>
+
+
                                     <button id="clear-daterange" class="btn btn-outline-secondary">
                                         <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
                                     </button>
@@ -237,10 +244,11 @@
                 data: function(d) {
                     d.start_date = startDate ?? '';
                     d.end_date = endDate ?? '';
-                    d.estatus = $('#filtro_estatus').val(); // <-- Agregar esta línea
+                    d.estatus = $('#filtro_estatus').val();
+                    d.estado_completado = $('#filtro_estado_completado').val();
                 }
-
             },
+
             order: [
                 [0, 'desc']
             ],
@@ -282,7 +290,7 @@
                     data: 'estatus',
                     name: 'estatus'
                 },
-                 {
+                {
                     data: 'estado_completado',
                     name: 'estado_completado',
                     className: 'text-center',
@@ -368,6 +376,9 @@
         $('#filtro_estatus').on('change', function() {
             dataTable.ajax.reload();
         });
+        $('#filtro_estado_completado').on('change', function() {
+            dataTable.ajax.reload();
+        });
     </script>
 
 
@@ -434,16 +445,12 @@
     </script>
 
 
-
     <script>
         $('#exportExcel').on('click', function(e) {
             e.preventDefault();
 
             const dt = $('#casos-table').DataTable();
-
-            // Capturamos el search más reciente usando el input directamente
             const searchInput = $('input[type=search]').val();
-
             const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
 
             if (startDate && endDate) {
@@ -456,6 +463,11 @@
                 url.searchParams.append('estatus', estatus);
             }
 
+            const estadoCompletado = $('#filtro_estado_completado').val(); // 👈 agregado
+            if (estadoCompletado) {
+                url.searchParams.append('estado_completado', estadoCompletado);
+            }
+
             if (searchInput) {
                 url.searchParams.append('search', searchInput);
             }
@@ -463,6 +475,7 @@
             window.location.href = url.toString();
         });
     </script>
+
 
 
 
@@ -544,16 +557,28 @@
             window.location.href = "{{ route('casos.plantilla') }}";
         });
     </script>
-
     <script>
         $('#clear-daterange').on('click', function() {
+            // Limpiar variables de fecha
             startDate = null;
             endDate = null;
+
+            // Limpiar selects
             $('#filtro_estatus').val('');
+            $('#filtro_estado_completado').val('');
+
+            // Restaurar texto del botón de fechas
             $('#daterange-btn span').text('Buscar por fecha actual');
+
+            // Limpiar campo de búsqueda manualmente
+            const dataTable = $('#casos-table').DataTable();
+            dataTable.search('').draw(); // limpia búsqueda y redibuja
+
+            // Recargar AJAX
             dataTable.ajax.reload();
         });
     </script>
+
 
     <script>
         // Función para bindear el evento correctamente
@@ -607,13 +632,12 @@
     </script>
 
     <script>
-        $(document).ready(function () {
-    // Re-inicializar tooltips cada vez que se dibuje la tabla
-    $('#casos-table').on('draw.dt', function () {
-        $('[data-bs-toggle="tooltip"]').tooltip();
-    });
-});
-
+        $(document).ready(function() {
+            // Re-inicializar tooltips cada vez que se dibuje la tabla
+            $('#casos-table').on('draw.dt', function() {
+                $('[data-bs-toggle="tooltip"]').tooltip();
+            });
+        });
     </script>
 
     @if (session('success'))

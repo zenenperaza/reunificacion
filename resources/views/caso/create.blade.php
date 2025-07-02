@@ -1597,7 +1597,9 @@
             });
         });
 
+    </script>
 
+    <script>
         Dropzone.autoDiscover = false;
 
         // Dropzone para imágenes
@@ -1698,6 +1700,7 @@
             });
         });
     </script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const noAplica = document.getElementById('indicador3'); // "No aplica Indicadores"
@@ -1748,26 +1751,6 @@
 
 
 
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const estadoSelect = document.getElementById('estadoSelect');
-        //     const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
-
-        //     estadoSelect.addEventListener('change', function() {
-        //         const estadoId = this.value;
-
-        //         fetch(`/casos/contador-estado/${estadoId}`)
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 if (data.estado_nombre === 'Táchira') {
-        //                     const nuevoNumero = String(data.conteo + 1).padStart(3, '0');
-        //                     numeroCasoInput.value = `TCT-25-${nuevoNumero}`;
-        //                 } else {
-        //                     numeroCasoInput.value = '';
-        //                 }
-        //             });
-        //     });
-        // });
-        // <script>
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
@@ -2486,26 +2469,27 @@
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
-        const integrantesFields = document.getElementById('integrantesFields');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
+            const integrantesFields = document.getElementById('integrantesFields');
 
-        if (!integrantesFields) return; // salir si el bloque no existe
+            if (!integrantesFields) return; // salir si el bloque no existe
 
-        tipoAtencionRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                integrantesFields.style.display = this.value === 'Grupo familiar' ? 'block' : 'none';
+            tipoAtencionRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    integrantesFields.style.display = this.value === 'Grupo familiar' ? 'block' :
+                        'none';
+                });
             });
-        });
 
-        // Mostrar al recargar si está preseleccionado
-        const selected = document.querySelector('input[name="tipo_atencion"]:checked');
-        if (selected && selected.value === 'Grupo familiar') {
-            integrantesFields.style.display = 'block';
-        }
-    });
-</script>
+            // Mostrar al recargar si está preseleccionado
+            const selected = document.querySelector('input[name="tipo_atencion"]:checked');
+            if (selected && selected.value === 'Grupo familiar') {
+                integrantesFields.style.display = 'block';
+            }
+        });
+    </script>
 
 
 @endsection

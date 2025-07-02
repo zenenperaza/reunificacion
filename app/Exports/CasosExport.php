@@ -33,54 +33,81 @@ class CasosExport implements
     protected $estadoId;
     protected $estatus;
     protected $search;
+    protected $estadoCompletado;
 
-    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null)
+
+    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null)
     {
-      $this->start = $start;
-    $this->end = $end;
-    $this->estadoId = $estadoId;
-    $this->estatus = $estatus;
-     $this->search = $search; // <-- ahora sí está definido
+        $this->start = $start;
+        $this->end = $end;
+        $this->estadoId = $estadoId;
+        $this->estatus = $estatus;
+        $this->search = $search;
+        $this->estadoCompletado = $estadoCompletado;
     }
 
-public function collection()
-{
-    $query = Caso::with([
-        'estado',
-        'municipio',
-        'parroquia',
-        'estadoDestino',
-        'municipioDestino',
-        'parroquiaDestino',
-        'user'
-    ]);
+    public function collection()
+    {
+        $query = Caso::with([
+            'estado',
+            'municipio',
+            'parroquia',
+            'estadoDestino',
+            'municipioDestino',
+            'parroquiaDestino',
+            'user'
+        ]);
 
-    if ($this->start && $this->end) {
-        $query->whereBetween('fecha_actual', [$this->start, $this->end]);
+        if ($this->start && $this->end) {
+            $query->whereBetween('fecha_actual', [$this->start, $this->end]);
+        }
+
+        if ($this->estadoId) {
+            $query->where('estado_id', $this->estadoId);
+        }
+
+        if ($this->estatus) {
+            $query->where('estatus', $this->estatus);
+        }
+
+        if ($this->search) {
+            $searchTerm = '%' . $this->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('numero_caso', 'like', $searchTerm)
+                    ->orWhere('beneficiario', 'like', $searchTerm)
+                    ->orWhere('tipo_atencion', 'like', $searchTerm)
+                    ->orWhere('elaborado_por', 'like', $searchTerm)
+                    ->orWhere('direccion_domicilio', 'like', $searchTerm);
+            });
+        }
+
+        // Ejecutar consulta
+        $casos = $query->get();
+
+        // Aplicar filtro por estado_completado (opcional)
+        if ($this->estadoCompletado) {
+            $casos = $casos->filter(function ($caso) {
+                $campos = [
+                    'numero_caso',
+                    'fecha_atencion',
+                    'fecha_actual',
+                    'tipo_atencion',
+                    'beneficiario',
+                    'direccion_domicilio',
+                    'estatus',
+                    'user_id',
+                ];
+
+                $faltantes = collect($campos)->filter(fn($campo) => empty($caso->$campo));
+
+                return $this->estadoCompletado === 'completo'
+                    ? $faltantes->isEmpty()
+                    : $faltantes->isNotEmpty();
+            });
+        }
+
+        return $casos;
     }
-
-    if ($this->estadoId) {
-        $query->where('estado_id', $this->estadoId);
-    }
-
-    if ($this->estatus) {
-        $query->where('estatus', $this->estatus);
-    }
-
-    if ($this->search) {
-        $searchTerm = '%' . $this->search . '%';
-        $query->where(function ($q) use ($searchTerm) {
-            $q->where('numero_caso', 'like', $searchTerm)
-              ->orWhere('beneficiario', 'like', $searchTerm)
-              ->orWhere('tipo_atencion', 'like', $searchTerm)
-              ->orWhere('elaborado_por', 'like', $searchTerm)
-              ->orWhere('direccion_domicilio', 'like', $searchTerm);
-              // Puedes agregar más columnas aquí según tu lógica de búsqueda
-        });
-    }
-
-    return $query->get();
-}
 
 
     public function headings(): array
@@ -249,6 +276,4 @@ public function collection()
             }
         ];
     }
-
-
 }
