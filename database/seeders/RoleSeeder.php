@@ -37,6 +37,9 @@ class RoleSeeder extends Seeder
             'ver bitacora',
             'ver casos eliminados',
             'restaurar casos eliminados',
+            'backups',
+            'guardar continuar',
+            'cambiar fecha actual',
         ];
 
         foreach ($permisos as $permiso) {

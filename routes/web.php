@@ -12,14 +12,55 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\LockScreenController;
+use App\Http\Controllers\BackupController;
+
+Route::get('/limpiar-config', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    return 'Configuración y caché limpiadas.';
+});
+
+Route::get('/backup/descargar/{archivo}', function ($archivo) {
+    $disk = Storage::disk('backup');
+    if ($disk->exists($archivo)) {
+        return $disk->download($archivo);
+    }
+    return back()->with('error', 'Archivo no encontrado.');
+})->name('backup.descargar');
+
+
+Route::get('/forzar-restore', function () {
+    $path = storage_path('app/tmp_restore/restore.sql');
+    if (!file_exists($path)) return 'No existe .sql';
+
+    DB::unprepared(File::get($path));
+    return 'Restauración completada.';
+});
+
+
+Route::get('/zip-test', function () {
+    $zip = new ZipArchive;
+    $path = storage_path('app/backup/ATENCION-PROGRAMA-RLF/backup-2025-07-04-01-36-12.zip');
+
+    if (!file_exists($path)) {
+        return 'Archivo no existe en: ' . $path;
+    }
+
+    $res = $zip->open($path);
+    return $res === true ? 'ZIP OK' : 'Error: ' . $res;
+});
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
-
-
+Route::prefix('admin/backup')->middleware(['auth'])->group(function () {
+    Route::get('/', [BackupController::class, 'index'])->name('backup.index');
+    Route::post('/crear', [BackupController::class, 'create'])->name('backup.create');
+    Route::get('/descargar/{file}', [BackupController::class, 'download'])->name('backup.download');
+    Route::delete('/eliminar/{file}', [BackupController::class, 'delete'])->name('backup.delete');
+    Route::post('/restaurar', [BackupController::class, 'restore'])->name('backup.restore');
+});
 
 
 Route::middleware('auth')->group(function () {
@@ -57,7 +98,7 @@ Route::middleware(['auth', 'permission:ver bitacora'])->group(function () {
 });
 
 
-// Gestión de roles y permisos (solo Admin)
+// Gestin de roles y permisos (solo Admin)
 Route::middleware(['auth', 'role:Administrador'])->group(function () {
     Route::resource('role', RoleController::class)->except(['show']);
     Route::resource('permission', PermissionController::class)->except(['show', 'create', 'edit']);
@@ -78,7 +119,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/users/{user}/estatus', [UserController::class, 'cambiarEstatus']);
 
 
-    // ✅ Primero rutas específicas
+    //  Primero rutas específicas
 Route::post('/casos/{id}/aprobar', [CasoController::class, 'aprobar'])
     ->name('casos.aprobar')
     ->middleware('can:aprobar casos');

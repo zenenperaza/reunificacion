@@ -42,7 +42,7 @@
                                 @can('ver casos')
                                     <li><a href="{{ route('casos.index') }}">
                                             <i class="fas fa-tachometer-alt"></i>
-                                            <span>Ver Casos</span></a></li>
+                                            <span>Gestionar Casos</span></a></li>
                                 @endcan
                                 @can('ver casos eliminados')
                                     <li>
@@ -125,6 +125,16 @@
                                         </a>
                                     </li>
                                 @endcan
+                       @can('backups')
+<li>
+    <a href="{{ route('backup.index') }}">
+        <i class="mdi mdi-database"></i>
+        <span> Respaldos </span>
+    </a>
+</li>
+@endcan
+
+
 
 
                             </ul>

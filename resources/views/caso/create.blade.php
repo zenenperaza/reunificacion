@@ -124,14 +124,22 @@
                                 <!-- Estado -> Municipio -> Parroquia -->
                                 <div class="row mt-3">
                                     <div class="col-lg-4">
-                                        <label for="estadoSelect" class="form-label mb-2">Estado</label>
-                                        <select id="estadoSelect" class="form-select" name="estado_id">
+                                        <label for="estadoSelect" class="form-label mb-2">
+                                            Estado <span class="text-danger">*</span>
+                                        </label>
+
+                                        <select id="estadoSelect" class="form-select" name="estado_id" required>
                                             <option value="">Seleccione</option>
                                             @foreach ($estados as $estado)
                                                 <option value="{{ $estado->id }}">{{ $estado->nombre }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('estado_id')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-lg-4">
@@ -1398,12 +1406,19 @@
                                 <div class="row mt-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="fecha_atencion" class="form-label mb-2">Fecha
-                                                actual</label>
-                                            <input type="date" class="form-control" name="fecha_actual"
-                                                value="{{ date('Y-m-d') }}">
+                                            <label for="fecha_actual" class="form-label mb-2">Fecha actual</label>
+
+                                            @can('cambiar fecha actual')
+                                                <input type="date" class="form-control" name="fecha_actual"
+                                                    value="{{ date('Y-m-d') }}">
+                                            @else
+                                                <input type="date" class="form-control" name="fecha_actual"
+                                                    value="{{ date('Y-m-d') }}" readonly>
+                                            @endcan
+
                                         </div>
                                     </div>
+
 
                                 </div>
                                 <div class="row mt-3">
@@ -1534,9 +1549,11 @@
                                         continuar</button> --}}
 
                                     <!-- Botón para avanzar entre tabs -->
-                                    <button type="button" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
-                                        data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
-                                        continuar</button>
+                                    @can('guardar continuar')
+                                        <button type="button" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
+                                            data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
+                                            continuar</button>
+                                    @endcan
 
                                     {{-- <button type="button" class="btn btn-primary btn-guardar" data-final="false">Enviar y continuar</button> --}}
 
@@ -1713,12 +1730,18 @@
                         $('#caso_id').val(data.id);
 
                         Swal.fire({
+                            toast: true,
+                            position: 'center',
                             icon: 'success',
-                            title: 'Guardado',
-                            text: 'Los datos han sido guardados correctamente.',
-                            timer: 1500,
-                            showConfirmButton: false
+                            title: 'Datos guardados correctamente. ',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'swal2-toast-center'
+                            }
                         });
+
 
                         if (esPasoFinal) {
                             window.location.href = "{{ route('casos.index') }}";
@@ -2535,20 +2558,6 @@
                 integrantesFields.style.display = 'block';
             }
         });
-    </script>
-
-    <script>
-        //     document.getElementById('btn-guardar-y-continuar').addEventListener('click', function () {
-
-        //         this.disabled = true;
-        // this.innerHTML = 'Guardando...';
-
-        //         // Establecer que es el paso final
-        //         document.getElementById('paso_final').value = '1';
-
-        //         // Disparar el submit programáticamente
-        //         document.getElementById('formCaso').dispatchEvent(new Event('submit'));
-        //     });
     </script>
 
 
