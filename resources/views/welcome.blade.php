@@ -49,7 +49,7 @@
                     Programa de Reunificación y Localización Familiar
                 </h1>
                 <p class="text-lg text-gray-700">
-                    Un esfuerzo conjunto de <strong>ASONACOP</strong> y <strong>UNICEF</strong> para reencontrar a niños, niñas y adolescentes con sus familiares.
+                    Un esfuerzo de <strong>ASONACOP</strong> para reencontrar a niños, niñas y adolescentes con sus familiares.
                     Ofrecemos apoyo humanitario, acompañamiento legal y soluciones seguras para proteger el derecho a vivir en familia.
                 </p>
                 <a href="{{ route('login') }}"
@@ -75,7 +75,7 @@
                     <footer class="mt-2 text-sm text-gray-600">– Familia González</footer>
                 </blockquote>
                 <blockquote class="bg-gray-100 rounded-md shadow p-6 text-left">
-                    <p>"Me ayudaron a encontrar a mi hermana después de 2 años. Es lo más hermoso que me ha pasado."</p>
+                    <p>"Me ayudaron a encontrar a regresar a mi pueblo. Es lo más hermoso que me ha pasado."</p>
                     <footer class="mt-2 text-sm text-gray-600">– Camila (14 años)</footer>
                 </blockquote>
             </div>
@@ -85,7 +85,6 @@
         <section class="mt-20 text-center">
             <h2 class="text-2xl font-semibold mb-6">Con el apoyo de:</h2>
             <div class="flex flex-wrap justify-center items-center gap-10">
-                <img src="{{ asset('assets/images/logos/unicef.png') }}" alt="UNICEF" class="h-14 object-contain">
                 <img src="{{ asset('assets/images/logos/asonacop.png') }}" alt="ASONACOP" class="h-14 object-contain">
             </div>
         </section>

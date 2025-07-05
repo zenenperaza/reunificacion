@@ -54,6 +54,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/configuraciones', [ConfiguracionController::class, 'index'])->name('configuraciones.index');
+    Route::post('/admin/configuraciones/{configuracion}', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
+});
+
+
 Route::prefix('admin/backup')->middleware(['auth'])->group(function () {
     Route::get('/', [BackupController::class, 'index'])->name('backup.index');
     Route::post('/crear', [BackupController::class, 'create'])->name('backup.create');

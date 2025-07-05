@@ -14,6 +14,7 @@
 
 
     <link href="{{ asset('assets/libs/mohithg-switchery/switchery.min.css') }}" rel="stylesheet" type="text/css" />
+      <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
 
 @endsection
 
@@ -154,12 +155,12 @@
                             <th>N° Caso</th>
                             <th>Beneficiario</th>
                             <th>Tipo Atención</th>
-                            <th>Fecha atencion</th>
                             <th>Fecha actual</th>
+                            <th>Estado</th>
                             <th>Condicion</th>
                             <th>Estatus</th>
-                            <th>Estado</th>
-                            <th>Estado</th>
+                            <th>Fecha atencion</th>
+                            <th>Estado registrado</th>
                             <th>Municipio</th>
                             <th>Acciones</th>
                         </tr>
@@ -275,12 +276,15 @@
                     name: 'tipo_atencion'
                 },
                 {
-                    data: 'fecha_atencion',
-                    name: 'fecha_atencion'
-                },
-                {
                     data: 'fecha_actual',
                     name: 'fecha_actual'
+                },
+                {
+                    data: 'estado_completado',
+                    name: 'estado_completado',
+                    className: 'text-center',
+                    orderable: true,
+                    searchable: true
                 },
                 {
                     data: 'condicion',
@@ -291,11 +295,8 @@
                     name: 'estatus'
                 },
                 {
-                    data: 'estado_completado',
-                    name: 'estado_completado',
-                    className: 'text-center',
-                    orderable: true,
-                    searchable: true
+                    data: 'fecha_atencion',
+                    name: 'fecha_atencion'
                 },
 
                 {
@@ -557,6 +558,7 @@
             window.location.href = "{{ route('casos.plantilla') }}";
         });
     </script>
+    
     <script>
         $('#clear-daterange').on('click', function() {
             // Limpiar variables de fecha

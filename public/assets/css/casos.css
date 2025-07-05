@@ -372,3 +372,23 @@ body[data-layout-color="dark"] .dropzone .dz-preview {
 .dropzone-previews .card .btn {
     padding: 0.2rem 0.4rem;
 }
+
+/* .incompleto {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #ff5c5c;
+  box-shadow: 0 0 8px rgba(255, 92, 92, 0.8),
+              0 0 12px rgba(255, 92, 92, 0.5);
+} */
+.completo {
+  border-radius: 50%;
+  background-color: #28a745; /* verde */
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.8),
+              0 0 12px rgba(40, 167, 69, 0.6);
+}
+.incompleto {
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ff9a9a, #ff5c5c);
+  box-shadow: 0 0 10px rgba(255, 92, 92, 0.9);
+}

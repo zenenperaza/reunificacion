@@ -32,7 +32,6 @@
                     <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso">
                         @csrf
 
-
                         <input type="hidden" name="caso_id" id="caso_id" value="">
                         <input type="hidden" name="paso_final" id="paso_final" value="0">
 
@@ -405,8 +404,8 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mt-3">
-                                            <div class="col-md-8" id="estado-mujer-block" style="display: none;">
+                                        <div class="row mt-3"  id="estado-mujer-block" style="display: none;">
+                                            <div class="col-md-8">
                                                 <div class="mt-3">
                                                     <label class="form-label mb-2 ">Estado beneficiario (Si es
                                                         mujer)</label>
@@ -590,8 +589,7 @@
 
                                         <div class="row mt-3">
                                             <div class="col-md-6">
-                                                <label for="" class="form-label mb-2"> Nacionalidad del
-                                                    solicitante</label>
+                                                <label for="" class="form-label mb-2"> Nacionalidad del solicitante</label>
                                                 <br>
                                                 <div class="form-check ">
                                                     <input class="form-check-input" type="radio"
@@ -611,8 +609,8 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6 mt-3">
-                                                <label class="form-label mb-2">Tipo de documento</label>
+                                            <div class="col-md-6 ">
+                                                <label class="form-label mb-4">Tipo de documento</label>
                                                 <select class="form-select" name="tipo_documento" id="tipo_documento">
                                                     <option value="">Seleccione</option>
                                                     @php

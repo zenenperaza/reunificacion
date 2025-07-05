@@ -109,14 +109,15 @@
                                     </li>
                                 @endcan
 
-                                @can('Gestion configuracion')
-                                    <li>
-                                        <a href="{{ route('configuracion.index') }}">
-                                            <i class="mdi mdi-cog-outline"></i>
-                                            <span> Configuración </span>
+                                @can('configuracion')
+                                    <li class="nav-item">
+                                        <a href="{{ route('configuraciones.index') }}" class="nav-link">
+                                            <i class="fe-settings noti-icon" style="font-size: medium;"></i>
+                                            <span> Configuraciones </span>
                                         </a>
                                     </li>
                                 @endcan
+
                                 @can('ver bitacora')
                                     <li>
                                         <a href="{{ route('bitacora.index') }}">
@@ -125,14 +126,14 @@
                                         </a>
                                     </li>
                                 @endcan
-                       @can('backups')
-<li>
-    <a href="{{ route('backup.index') }}">
-        <i class="mdi mdi-database"></i>
-        <span> Respaldos </span>
-    </a>
-</li>
-@endcan
+                                @can('backups')
+                                    <li>
+                                        <a href="{{ route('backup.index') }}">
+                                            <i class="mdi mdi-database"></i>
+                                            <span> Respaldos </span>
+                                        </a>
+                                    </li>
+                                @endcan
 
 
 

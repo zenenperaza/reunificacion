@@ -113,13 +113,13 @@ class CasoController extends Controller
 
                 if (count($faltantes) === 0) {
                     return '<span class="d-flex align-items-center gap-1">
-                    <span class="rounded-circle bg-success d-inline-block" style="width: 10px; height: 10px;"></span>
+                    <span class="rounded-circle bg-success d-inline-block completo" style="width: 20px; height: 20px;"></span>
                     Completado
                 </span>';
                 } else {
                     $tooltip = implode(', ', $faltantes);
-                    return '<span class="d-flex align-items-center gap-1" title="Faltan: ' . e($tooltip) . '" data-bs-toggle="tooltip">
-                    <span class="rounded-circle bg-danger d-inline-block" style="width: 10px; height: 10px;"></span>
+                    return '<span class="d-flex align-items-center gap-1 " title="Faltan: ' . e($tooltip) . '" data-bs-toggle="tooltip">
+                    <span class="rounded-circle bg-danger d-inline-block incompleto" style="width: 20px; height: 20px;"></span>
                     Incompleto
                 </span>';
                 }
