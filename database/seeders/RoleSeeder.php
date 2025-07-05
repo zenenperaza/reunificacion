@@ -40,7 +40,8 @@ class RoleSeeder extends Seeder
             'backups',
             'guardar continuar',
             'cambiar fecha actual',
-            'configuracion'
+            'configuracion',
+            'sistema deshabilitado'
         ];
 
         foreach ($permisos as $permiso) {

@@ -12,9 +12,12 @@ class CreateConfiguracionesTable extends Migration
     {
         Schema::create('configuraciones', function (Blueprint $table) {
             $table->id();
-            $table->string('clave')->unique(); // Ej: 'nombre_sistema'
-            $table->text('valor')->nullable(); // Puede ser texto, JSON, etc.
-            $table->string('descripcion')->nullable(); // Explicación del uso
+            $table->string('conf_fecha_actual')->nullable(); // puede ser 'si' o 'no'
+            $table->string('sistema_deshabilitado')->nullable()->default('no');
+            $table->string('periodo')->nullable()->default(null);
+            $table->string('nombre_sistema')->nullable(); // Nombre del sistema
+            $table->string('logo_sistema')->nullable();   // Ruta al logo en storage o public
+
             $table->timestamps();
         });
     }
@@ -24,4 +27,3 @@ class CreateConfiguracionesTable extends Migration
         Schema::dropIfExists('configuraciones');
     }
 }
-

@@ -15,15 +15,18 @@ class ConfiguracionController extends Controller
         return view('admin.configuraciones.index', compact('configuraciones'));
     }
 
-    public function update(Request $request, Configuracion $configuracion)
-    {
-        $request->validate([
-            'valor' => 'required',
-        ]);
+public function update(Request $request)
+{
+    $request->validate([
+        'conf_fecha_actual' => 'required|in:si,no',
+    ]);
 
-        $configuracion->valor = $request->input('valor');
-        $configuracion->save();
+    Configuracion::updateOrCreate(
+        ['clave' => 'conf_fecha_actual'],
+        ['valor' => $request->conf_fecha_actual]
+    );
 
-        return redirect()->back()->with('success', 'Configuración actualizada.');
-    }
+    return redirect()->back()->with('success', 'Configuración actualizada correctamente.');
+}
+
 }

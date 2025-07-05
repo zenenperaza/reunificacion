@@ -30,6 +30,7 @@ Route::get('/limpiar-config', function () {
 //     }
 // });
 
+
 Route::get('/crear-storage-link', function () {
     abort_unless(auth()->check() && auth()->user()->isAdmin(), 403); // ejemplo
     Artisan::call('storage:link');
@@ -37,6 +38,11 @@ Route::get('/crear-storage-link', function () {
 });
 
 // http://tusitio.com/crear-storage-link
+
+// web.php
+
+Route::post('/configuraciones', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
+
 
 Route::get('/backup/descargar/{archivo}', function ($archivo) {
     $disk = Storage::disk('backup');

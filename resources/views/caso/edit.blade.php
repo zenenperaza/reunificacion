@@ -1496,9 +1496,13 @@
                                 <li class="next list-inline-item float-end">
                                     <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
                                 </li>
+                               
 
-                                <li class="next list-inline-item  center">
-                                    <button type="submit" class="btn btn-primary">Enviar y finalizar</button>
+                                <li class="next list-inline-item  float-end">
+                                     <button type="submit" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
+                                            data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
+                                            finalizar</button>
+
                                 </li>
                             </ul>
 
@@ -1666,7 +1670,7 @@
             }).then(response => {
                 if (response.ok) {
                     Swal.fire({
-                        position: "top-end",
+                        position: "top-center",
                         icon: 'success',
                         title: '¡Caso actualizado!',
                         text: 'Los cambios se guardaron correctamente.',
