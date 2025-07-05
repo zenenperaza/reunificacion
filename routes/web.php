@@ -20,6 +20,24 @@ Route::get('/limpiar-config', function () {
     return 'Configuración y caché limpiadas.';
 });
 
+
+// Route::get('/crear-storage-link', function () {
+//     try {
+//         Artisan::call('storage:link');
+//         return '✔️ Enlace simbólico creado con éxito.';
+//     } catch (\Exception $e) {
+//         return '❌ Error al crear el enlace: ' . $e->getMessage();
+//     }
+// });
+
+Route::get('/crear-storage-link', function () {
+    abort_unless(auth()->check() && auth()->user()->isAdmin(), 403); // ejemplo
+    Artisan::call('storage:link');
+    return '✔️ Enlace simbólico creado.';
+});
+
+// http://tusitio.com/crear-storage-link
+
 Route::get('/backup/descargar/{archivo}', function ($archivo) {
     $disk = Storage::disk('backup');
     if ($disk->exists($archivo)) {
