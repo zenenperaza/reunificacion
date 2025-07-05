@@ -16,7 +16,8 @@
 
 @section('content')
 <div class="container mt-4">
-    <h4>Casos Eliminados</h4>
+          <x-breadcrumb title="Casos Eliminados" icono="<i class='mdi mdi-trash-can-outline'></i>"/>
+   
     <table id="eliminados-table" class="table table-bordered table-striped w-100"></table>
 </div>
 @endsection

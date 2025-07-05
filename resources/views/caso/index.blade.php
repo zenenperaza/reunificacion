@@ -23,7 +23,7 @@
 
 
     <div class="container-fluid">
-        <x-breadcrumb title="Gestión de Casos" />
+        <x-breadcrumb title="Gestión de Casos" icono="<i class='fas fa-tachometer-alt'></i>"/>
 
         <div class="row mb-3  d-flex my-2 justify-content-between">
             <div class="col-sm-3">

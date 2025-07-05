@@ -7,7 +7,7 @@
 
 @section('content')
 <div class="container">
-    <h3 class="mb-4"><i class="uil uil-database"></i> Gestión de Backups</h3>
+        <x-breadcrumb title="Backups" icono="<i class='mdi mdi-database'></i>"/>
 
     {{-- Mensajes --}}
     @if (session('success'))

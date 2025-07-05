@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">Bitácora del Sistema</h2>
+            <x-breadcrumb title="Bitácora del Sistema" icono="<i class='mdi mdi-history'></i>"/>
 
     <div class="table-responsive">
         <table id="tabla-bitacora" class="table table-bordered table-hover align-middle">

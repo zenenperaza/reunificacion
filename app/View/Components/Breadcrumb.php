@@ -7,11 +7,13 @@ use Illuminate\View\Component;
 class Breadcrumb extends Component
 {
     public $title;
+    public $icono;
     public $segments;
 
-    public function __construct($title = 'Sin título')
+    public function __construct($title = 'Sin título', $icono = null)
     {
         $this->title = $title;
+        $this->icono = $icono;
         $this->segments = $this->buildSegments();
     }
 
@@ -22,15 +24,26 @@ class Breadcrumb extends Component
         $url = '';
 
         foreach ($segments as $index => $segment) {
-            if (is_numeric($segment)) continue; // Evita mostrar IDs numéricos
+    if (is_numeric($segment)) continue;
 
-            $url .= '/' . $segment;
-            $breadcrumbs[] = [
-                'name' => $this->prettyName($segment),
-                'url' => url($url),
-                'active' => $index === array_key_last($segments)
-            ];
-        }
+    // No poner enlace para "admin"
+    if ($segment === 'admin') {
+        $breadcrumbs[] = [
+            'name' => ucfirst($segment),
+            'url' => null,
+            'active' => false
+        ];
+        continue;
+    }
+
+    $url .= '/' . $segment;
+    $breadcrumbs[] = [
+        'name' => $this->prettyName($segment),
+        'url' => url($url),
+        'active' => $index === array_key_last($segments)
+    ];
+}
+
 
         return $breadcrumbs;
     }
@@ -49,4 +62,3 @@ class Breadcrumb extends Component
         return view('components.breadcrumb');
     }
 }
-

@@ -3,9 +3,10 @@
 @section('title', 'Dashboard RLF')
 
 @section('content')
-    <div class="content mt-4">
-        <div class="container-fluid">
-
+    <div class="content mt-4 mx-2">
+          <div class="container-fluid">
+       <x-breadcrumb title="Dashboard" icono="<i class='mdi mdi-view-dashboard-outline'></i>"/>
+     
             <div class="row">
                 {{-- Total de Casos --}}
                 <div class="col-xl-3 col-md-6">

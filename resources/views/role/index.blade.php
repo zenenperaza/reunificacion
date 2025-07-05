@@ -16,7 +16,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <x-breadcrumb title="Roles y Permisos" />
+        <x-breadcrumb title="Roles y Permisos"  icono="<i class='fab fa-critical-role'></i>" />
         <div class="row">
             <div class="col-12">
                 <a href="{{ route('role.create') }}" class="btn btn-primary mb-3">

@@ -8,8 +8,8 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
-        <x-breadcrumb title="Gestión de Permisos" />
+    <div class="container-fluid mx-4">
+        <x-breadcrumb title="Gestión de Permisos"  icono="<i class='fas fa-list-ul'></i>"/>
 
         <div class="row">
             <div class="col-lg-6">

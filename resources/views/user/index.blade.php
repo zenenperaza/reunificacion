@@ -16,8 +16,8 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid">
-        <x-breadcrumb title="Gestión de usuarios" />
+    <div class="container-fluid mx-2">
+        <x-breadcrumb title="Gestión de usuarios"  icono="<i class='mdi mdi-account-outline'></i>"/>
         <div class="row mb-3">
             <div class="col-sm-12">
                 <a href="{{ route('users.create') }}" class="btn btn-success">
