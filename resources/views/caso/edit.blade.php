@@ -1389,11 +1389,20 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="fecha_actual" class="form-label mb-2">Fecha actual</label>
-                                                <input type="date" class="form-control" name="fecha_actual"
-                                                    value="{{ old('fecha_actual', $caso->fecha_actual ?? date('Y-m-d')) }}">
+
+                                                @if (configuracion('conf_fecha_actual') === 'si' && auth()->user()->can('cambiar fecha actual'))
+                                                    <input type="date" class="form-control" name="fecha_actual"
+                                                        value="{{ old('fecha_actual', $caso->fecha_actual ?? date('Y-m-d')) }}">
+                                                @else
+                                                    <input type="date" class="form-control" name="fecha_actual"
+                                                        value="{{ old('fecha_actual', $caso->fecha_actual ?? date('Y-m-d')) }}"
+                                                        readonly>
+                                                @endif
+
                                             </div>
                                         </div>
                                     </div>
+
 
                                     {{-- ESTATUS DE LA ATENCIÓN --}}
                                     <div class="row mt-3">
@@ -1496,12 +1505,12 @@
                                 <li class="next list-inline-item float-end">
                                     <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
                                 </li>
-                               
+
 
                                 <li class="next list-inline-item  float-end">
-                                     <button type="submit" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
-                                            data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
-                                            finalizar</button>
+                                    <button type="submit" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
+                                        data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
+                                        finalizar</button>
 
                                 </li>
                             </ul>

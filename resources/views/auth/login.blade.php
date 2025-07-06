@@ -1,7 +1,16 @@
 <x-guest-layout>
-    <div class="text-center mb-4">   
-        <img src="assets/images/imagen_rlf.png" alt="" class="mx-auto" style="width: 150px">
-    </div>
+   
+
+    <div class="text-center mb-4">
+    <img 
+        src="{{ configuracion('logo_sistema') 
+            ? Storage::url(configuracion('logo_sistema')) 
+            : asset('assets/images/imagen_rlf.png') }}" 
+        alt="Logo del sistema" 
+        class="mx-auto" 
+        style="width: 150px">
+</div>
+
 
     <!-- Estado de la sesión -->
     <x-auth-session-status class="mb-4" :status="session('status')" />

@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>@yield('title', config('app.name', 'Laravel'))</title>
+    <title>@yield('title', config('app.name', ''))</title>
+    <title>{{ configuracion('nombre_sistema') ?? 'Sistema RLF' }}</title>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Panel administrativo" name="description" />
@@ -36,6 +38,7 @@
     <div id="wrapper">
         @if(!session('locked'))
             @include('partials.header')
+            
             @include('partials.menu')
         @endif
 
@@ -45,7 +48,16 @@
 
         <div class="content-page">
             <div class="content">
+                @if(auth()->check() && auth()->user()->can('sistema deshabilitado') && configuracion('sistema_deshabilitado') === 'si')
+    <div class="alert alert-warning text-center mb-0 rounded-0" role="alert" style="z-index: 9999;">
+        <strong><i class="mdi mdi-alert-outline"></i> Atención:</strong>
+        El sistema está actualmente <strong>DESHABILITADO</strong>.
+        Solo los usuarios autorizados pueden continuar trabajando.
+    </div>
+@endif
+
                 @yield('content')
+                
             </div>
 
             @include('partials.footer')

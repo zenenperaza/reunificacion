@@ -5,13 +5,14 @@
                         <div class="col-md-6">
                             <script>
                                 document.write(new Date().getFullYear())
-                            </script> &copy; SERVICIO <a href="">PROYECTO RLF</a>
+                            </script>
+                             &copy;  <a href="">{{ configuracion('nombre_sistema') ?? 'Sistema RLF' }}</a>
                         </div>
                         <div class="col-md-6">
                             <div class="text-md-end footer-links d-none d-sm-block">
-                                <a href="javascript:void(0);">About Us</a>
-                                <a href="javascript:void(0);">Help</a>
-                                <a href="javascript:void(0);">Contact Us</a>
+                                <a href="javascript:void(0);">Acerca de</a>
+                                <a href="javascript:void(0);">Ayuda</a>
+                                <a href="javascript:void(0);">Contactanos</a>
                             </div>
                         </div>
                     </div>

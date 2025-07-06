@@ -114,24 +114,38 @@
 
     </ul>
 
-    <div class="logo-box">
-        <a href="" class="logo logo-light text-center">
-            <span class="logo-sm">
-                <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="30">
-            </span>
-            <span class="logo-lg">
-                <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="75">
-            </span>
-        </a>
-        <a href="" class="logo logo-dark text-center">
-            <span class="logo-sm">
-                <img src="{{ asset('assets/images/logo-sm.png') }}" alt="" height="22">
-            </span>
-            <span class="logo-lg mt-2">
-                <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" width="80">
-            </span>
-        </a>
-    </div>
+<div class="logo-box">
+    <a href="{{ url('/') }}" class="logo logo-light text-center">
+        <span class="logo-sm">
+            <img src="{{ configuracion('logo_sistema') 
+                ? Storage::url(configuracion('logo_sistema')) 
+                : asset('assets/images/logo-sm.png') }}" 
+                alt="Logo" height="30">
+        </span>
+        <span class="logo-lg">
+            <img src="{{ configuracion('logo_sistema') 
+                ? Storage::url(configuracion('logo_sistema')) 
+                : asset('assets/images/logo-light.png') }}" 
+                alt="Logo" height="75">
+        </span>
+    </a>
+
+    <a href="{{ url('/') }}" class="logo logo-dark text-center">
+        <span class="logo-sm">
+            <img src="{{ configuracion('logo_sistema') 
+                ? Storage::url(configuracion('logo_sistema')) 
+                : asset('assets/images/logo-sm.png') }}" 
+                alt="Logo" height="22">
+        </span>
+        <span class="logo-lg mt-2">
+            <img src="{{ configuracion('logo_sistema') 
+                ? Storage::url(configuracion('logo_sistema')) 
+                : asset('assets/images/logo-dark.png') }}" 
+                alt="Logo" width="80">
+        </span>
+    </a>
+</div>
+
 
     <ul class="list-unstyled topnav-menu topnav-menu-left mb-0">
         <li>

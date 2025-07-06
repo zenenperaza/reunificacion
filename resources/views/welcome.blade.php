@@ -102,7 +102,7 @@
 
     <!-- Footer -->
     <footer class="text-center text-sm text-gray-500 py-8">
-        © {{ date('Y') }} Programa RLF - ASONACOP & UNICEF
+        © {{ date('Y') }} Programa RLF - ASONACOP 
     </footer>
 
 </body>

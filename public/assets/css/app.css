@@ -7,6 +7,7 @@ Website: https://coderthemes.com/
 Contact: support@coderthemes.com
 File: Main Css File
 */
+
 @font-face {
   font-family: 'Roboto';
   src: url('/assets/fonts/roboto/roboto-v48-latin-regular.woff2') format('woff2');
@@ -249,7 +250,7 @@ body {
   --ct-kbd-color: #fff;
   --ct-kbd-bg: #323a46;
   --ct-pre-color: ;
-  --ct-bg-leftbar: #fff;
+  --ct-bg-leftbar: #f3f1fc;
   --ct-bg-leftbar-dark: #343a40;
   --ct-bg-leftbar-brand: #4a81d4;
   --ct-bg-leftbar-gradient: #5b69bc;
@@ -273,7 +274,7 @@ body {
   --ct-footer-bg: #e3e9ed;
   --ct-footer-color: #6c757d;
   --ct-footer-link-hover-color: #636b72;
-  --ct-logo-box-background: #fff;
+  --ct-logo-box-background: #f3f1fc;
   --ct-auth-bg: #fff;
   --ct-auth-bg-alt: #6658dd;
   --ct-chat-primary-user-bg: #fef5e4;
@@ -463,7 +464,7 @@ body[data-layout-color=dark] {
   --ct-kbd-color: #fff;
   --ct-kbd-bg: #f1f5f7;
   --ct-pre-color: ;
-  --ct-bg-leftbar: #fff;
+  --ct-bg-leftbar: #f3f1fc;
   --ct-bg-leftbar-dark: #313844;
   --ct-bg-leftbar-brand: #4a81d4;
   --ct-bg-leftbar-gradient: #5b69bc;
@@ -487,7 +488,7 @@ body[data-layout-color=dark] {
   --ct-footer-bg: #2c333e;
   --ct-footer-color: #adb5bd;
   --ct-footer-link-hover-color: #a2abb4;
-  --ct-logo-box-background: #fff;
+  --ct-logo-box-background: #f3f1fc;
   --ct-auth-bg: #3e4852;
   --ct-auth-bg-alt: #3e4852;
   --ct-chat-primary-user-bg: #404c58;
@@ -552,7 +553,7 @@ body[data-layout-color=dark] {
   --ct-body-font-weight: 400;
   --ct-body-line-height: 1.5;
   --ct-body-color: #6c757d;
-  --ct-body-bg: #ebeff2;
+  --ct-body-bg: #f3f1fc;
 }
 
 *,
@@ -11592,7 +11593,7 @@ body {
   position: fixed;
   transition: all 0.1s ease-out;
   top: 70px;
-  box-shadow: var(--ct-box-shadow);
+  /* box-shadow: var(--ct-box-shadow); */
 }
 .left-side-menu .user-box {
   display: none;

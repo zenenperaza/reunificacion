@@ -1,19 +1,19 @@
 <?php
 
-// database/seeders/ConfiguracionSeeder.php
+namespace Database\Seeders;
 
-use App\Models\Configuracion;
 use Illuminate\Database\Seeder;
+use App\Models\Configuracion;
 
 class ConfiguracionSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        Configuracion::updateOrCreate([
-            'clave' => 'nombre_sistema',
-        ], [
-            'valor' => 'Sistema de Reunificación ASONACOP',
-            'descripcion' => 'Nombre que se muestra en el header y título del sistema.',
+        Configuracion::firstOrCreate([], [
+            'conf_fecha_actual' => 'no',
+            'sistema_deshabilitado' => 'no',
+            'periodo' => now()->format('Y-m'),
+            'nombre_sistema' => 'Sistema RLF',
         ]);
     }
 }

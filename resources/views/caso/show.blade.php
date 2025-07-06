@@ -118,11 +118,11 @@
                     <i class="mdi mdi-printer"></i> Imprimir
                 </button>
 
-                @can('clonar casos')
+                {{-- @can('clonar casos')
                     <a href="#" class="btn btn-success">
                         <i class="mdi mdi-clone"></i> Clonar caso actual
                     </a>
-                @endcan
+                @endcan --}}
 
 
                 <a href="{{ route('casos.descargarArchivos', $caso->id) }}" class="btn btn-primary">

@@ -7,6 +7,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use App\Http\Middleware\LockScreenMiddleware;
+use App\Http\Middleware\SistemaHabilitado;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,19 +16,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // ✅ Middleware de bloqueo agregado al grupo 'web'
-     $middleware->prependToGroup('web', [
-    \App\Http\Middleware\LockScreenMiddleware::class,
-]);
+        // ✅ Middleware de bloqueo de pantalla (global para grupo 'web')
+        $middleware->prependToGroup('web', [
+            LockScreenMiddleware::class,
+        ]);
 
-
-        // ✅ Alias para middleware de roles y permisos (Spatie)
+        // ✅ Alias para middleware de roles y permisos (Spatie) y personalizados
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'sistema-habilitado' => SistemaHabilitado::class, // ✅ Aquí lo registras
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

@@ -88,7 +88,7 @@
             <!-- Lado izquierdo -->
             <div class="lockscreen-left">
                 <img src="{{ asset('assets/images/rlf-landing-hero.png') }}" alt="Logo">
-                <p>Sistema de Reunificación Familiar</p>
+                <p>{{ configuracion('nombre_sistema') ?? 'Sistema RLF' }}</p>
             </div>
 
             <!-- Lado derecho -->

@@ -135,9 +135,9 @@ class CasoController extends Controller
                     $botones .= '<a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-warning" title="Editar"><i class="mdi mdi-pencil"></i></a>';
                 }
 
-                if (auth()->user()->can('clonar casos')) {
-                    $botones .= '<a href="#" class="btn btn-sm btn-success" title="Clonar"><i class="mdi mdi-account-multiple-plus-outline"></i></a>';
-                }
+                // if (auth()->user()->can('clonar casos')) {
+                //     $botones .= '<a href="#" class="btn btn-sm btn-success" title="Clonar"><i class="mdi mdi-account-multiple-plus-outline"></i></a>';
+                // }
 
                 if (auth()->user()->can('eliminar casos')) {
                     $botones .= '<button class="btn btn-sm btn-danger btn-delete" title="Eliminar" data-url="' . route('casos.destroy', $caso->id) . '" data-nombre="' . e($caso->numero_caso) . '"><i class="mdi mdi-trash-can-outline"></i></button>';

@@ -108,9 +108,10 @@
                                         <div class="mb-3">
                                             <label for="periodo" class="form-label mb-2">Periodo</label>
                                             <input type="text" class="form-control" name="periodo" id="periodo"
-                                                value="{{ date('Y-m') }}" readonly required>
+                                                value="{{ configuracion('periodo') ?? date('Y-m') }}" readonly required>
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="fecha_atencion" class="form-label mb-2">Fecha de
@@ -404,7 +405,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mt-3"  id="estado-mujer-block" style="display: none;">
+                                        <div class="row mt-3" id="estado-mujer-block" style="display: none;">
                                             <div class="col-md-8">
                                                 <div class="mt-3">
                                                     <label class="form-label mb-2 ">Estado beneficiario (Si es
@@ -589,7 +590,8 @@
 
                                         <div class="row mt-3">
                                             <div class="col-md-6">
-                                                <label for="" class="form-label mb-2"> Nacionalidad del solicitante</label>
+                                                <label for="" class="form-label mb-2"> Nacionalidad del
+                                                    solicitante</label>
                                                 <br>
                                                 <div class="form-check ">
                                                     <input class="form-check-input" type="radio"
@@ -1406,15 +1408,16 @@
                                         <div class="mb-3">
                                             <label for="fecha_actual" class="form-label mb-2">Fecha actual</label>
 
-                                            @can('cambiar fecha actual')
+                                            @if (configuracion('conf_fecha_actual') === 'si' && auth()->user()->can('cambiar fecha actual'))
                                                 <input type="date" class="form-control" name="fecha_actual"
                                                     value="{{ date('Y-m-d') }}">
                                             @else
                                                 <input type="date" class="form-control" name="fecha_actual"
                                                     value="{{ date('Y-m-d') }}" readonly>
-                                            @endcan
+                                            @endif
 
                                         </div>
+
                                     </div>
 
 
