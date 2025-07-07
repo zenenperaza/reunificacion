@@ -22,17 +22,26 @@ Route::get('/limpiar-config', function () {
     return 'Configuración y caché limpiadas.';
 });
 
+Route::get('/fix-permisos', function () {
+    $paths = [
+        storage_path(),
+        storage_path('framework'),
+        storage_path('framework/views'),
+        base_path('bootstrap/cache')
+    ];
 
-// Route::get('/crear-storage-link', function () {
-//     try {
-//         Artisan::call('storage:link');
-//         return '✔️ Enlace simbólico creado con éxito.';
-//     } catch (\Exception $e) {
-//         return '❌ Error al crear el enlace: ' . $e->getMessage();
-//     }
-// });
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            chmod($path, 0775);
+        }
+    }
 
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
 
+    return '✔️ Permisos y cachés corregidos.';
+});
 
 Route::get('/crear-storage-link', function () {
     abort_unless(auth()->check() && auth()->user()->hasRole('Administrador'), 403);
@@ -79,7 +88,7 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
 
     Route::get('/zip-test', function () {
         $zip = new ZipArchive;
-        $path = storage_path('app/backup/ATENCION-PROGRAMA-RLF/backup-2025-07-04-01-36-12.zip');
+        $path = storage_path('app/backup/ATENCION-PROGRAMA-RLF/backup.zip');
 
         if (!file_exists($path)) {
             return 'Archivo no existe en: ' . $path;
