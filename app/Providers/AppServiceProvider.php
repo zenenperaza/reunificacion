@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View; // ✅ Importar View
+use Carbon\Carbon;
 use App\Models\Configuracion;
+use App\Models\Caso;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,5 +33,11 @@ class AppServiceProvider extends ServiceProvider
             $nombreSistema = Configuracion::first()?->nombre_sistema ?? 'Sistema RLF';
             config(['app.name' => $nombreSistema]);
         }
+
+        // ✅ Notificaciones de casos en espera
+        View::composer('partials.header', function ($view) {
+            $view->with('notificaciones', Caso::enEspera());
+            $view->with('cantidadNotificaciones', Caso::cantidadEnEspera());
+        });
     }
 }

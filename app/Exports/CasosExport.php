@@ -73,13 +73,17 @@ class CasosExport implements
             $query->where('estatus', $this->estatus);
         }
 
-        if ($this->condicion === 'aprobado') {
-            $query->where('condicion', 'aprobado');
-        } elseif ($this->condicion === 'no_aprobado') {
+        if ($this->condicion === 'Aprobado') {
+            $query->where('condicion', 'Aprobado');
+        } elseif ($this->condicion === 'No aprobado') {
             $query->where(function ($q) {
-                $q->whereNull('condicion')->orWhere('condicion', '!=', 'aprobado');
+                $q->whereNull('condicion')->orWhere('condicion', '!=', 'Aprobado');
             });
+        } elseif ($this->condicion) {
+            // Aplica condición exacta (por ejemplo: "En espera")
+            $query->where('condicion', $this->condicion);
         }
+
 
 
         if ($this->search) {

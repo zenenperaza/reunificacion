@@ -26,9 +26,17 @@ use Illuminate\Support\Facades\Http;
 
 class CasoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('caso.index');
+        $query = Caso::query();
+
+        if ($request->filled('condicion')) {
+            $query->where('condicion', $request->condicion);
+        }
+
+        $casos = $query->paginate(20);
+
+        return view('caso.index', compact('casos'));
     }
 
 
@@ -44,122 +52,121 @@ class CasoController extends Controller
             $query->where('estatus', $request->estatus);
         }
 
-        // Ejecutar consulta antes de aplicar filtro por completado
-        $casos = $query->get();
-
-        if ($request->filled('estado_completado')) {
-            $valor = $request->estado_completado;
-
-            $casos = $casos->filter(function ($caso) use ($valor) {
-                $campos = [
-                    'numero_caso',
-                    'fecha_atencion',
-                    'fecha_actual',
-                    'tipo_atencion',
-                    'beneficiario',
-                    'direccion_domicilio',
-                    'estatus',
-                    'user_id',
-                ];
-
-                $faltantes = collect($campos)->filter(fn($campo) => empty($caso->$campo));
-
-                return $valor === 'completo'
-                    ? $faltantes->isEmpty()
-                    : $faltantes->isNotEmpty();
-            });
+        if ($request->filled('condicion')) {
+            $query->where('condicion', $request->condicion);
         }
 
-        return datatables()->of($casos)
-            ->addColumn('condicion', function ($caso) {
-                $checked = $caso->condicion === 'Aprobado' ? 'checked' : '';
-                $label = $caso->condicion ?? 'En espera';
-                $colorClass = $caso->condicion === 'Aprobado' ? 'text-primary' : 'text-default';
+        // Si no hay filtro de completado, usamos el query directo
+        if (!$request->filled('estado_completado')) {
+            return datatables()->eloquent($query)
+                ->addColumn('condicion', function ($caso) {
+                    $checked = $caso->condicion === 'Aprobado' ? 'checked' : '';
+                    $label = $caso->condicion ?? 'En espera';
+                    $colorClass = $caso->condicion === 'Aprobado' ? 'text-primary' : 'text-default';
 
-                if (auth()->user()->can('aprobar casos')) {
-                    return '<div class="d-flex align-items-center">
-                    <label class="switch me-2 mb-0">
-                        <input type="checkbox" class="switch-status" data-id="' . $caso->id . '" ' . $checked . '>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="estatus-label ' . $colorClass . '">' . $label . '</span>
-                </div>';
-                } else {
-                    return '<div class="d-flex align-items-center">
-                    <label class="switch me-2 mb-0">
-                        <input type="checkbox" disabled ' . $checked . '>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="estatus-label ' . $colorClass . '">' . $label . '</span>
-                </div>';
-                }
-            })
-            ->addColumn('estado_completado', function ($caso) {
-                $campos = [
-                    'numero_caso' => 'Número de Caso',
-                    'fecha_atencion' => 'Fecha de Atención',
-                    'fecha_actual' => 'Fecha Actual',
-                    'tipo_atencion' => 'Tipo de Atención',
-                    'beneficiario' => 'Beneficiario',
-                    'direccion_domicilio' => 'Dirección',
-                    'estatus' => 'Estatus',
-                    'user_id' => 'Usuario Responsable',
-                ];
-
-                $faltantes = [];
-
-                foreach ($campos as $campo => $nombre) {
-                    if (empty($caso->$campo)) {
-                        $faltantes[] = $nombre;
+                    if (auth()->user()->can('aprobar casos')) {
+                        return '<div class="d-flex align-items-center">
+                        <label class="switch me-2 mb-0">
+                            <input type="checkbox" class="switch-status" data-id="' . $caso->id . '" ' . $checked . '>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="estatus-label ' . $colorClass . '">' . $label . '</span>
+                    </div>';
+                    } else {
+                        return '<div class="d-flex align-items-center">
+                        <label class="switch me-2 mb-0">
+                            <input type="checkbox" disabled ' . $checked . '>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="estatus-label ' . $colorClass . '">' . $label . '</span>
+                    </div>';
                     }
-                }
+                })
+                ->addColumn('estado_completado', function ($caso) {
+                    $campos = [
+                        'numero_caso' => 'Número de Caso',
+                        'fecha_atencion' => 'Fecha de Atención',
+                        'fecha_actual' => 'Fecha Actual',
+                        'tipo_atencion' => 'Tipo de Atención',
+                        'beneficiario' => 'Beneficiario',
+                        'direccion_domicilio' => 'Dirección',
+                        'estatus' => 'Estatus',
+                        'user_id' => 'Usuario Responsable',
+                    ];
 
-                if (count($faltantes) === 0) {
-                    return '<span class="d-flex align-items-center gap-1">
-                    <span class="rounded-circle bg-success d-inline-block completo" style="width: 20px; height: 20px;"></span>
-                    Completado
-                </span>';
-                } else {
-                    $tooltip = implode(', ', $faltantes);
-                    return '<span class="d-flex align-items-center gap-1 " title="Faltan: ' . e($tooltip) . '" data-bs-toggle="tooltip">
-                    <span class="rounded-circle bg-danger d-inline-block incompleto" style="width: 20px; height: 20px;"></span>
-                    Incompleto
-                </span>';
-                }
-            })
-            ->addColumn('acciones', function ($caso) {
-                $botones = '<div class="btn-group" role="group">';
+                    $faltantes = collect($campos)->filter(fn($campo) => empty($caso->$campo));
 
-                if (auth()->user()->can('ver casos')) {
-                    $botones .= '<a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary" title="Ver"><i class="mdi mdi-eye"></i></a>';
-                }
+                    if ($faltantes->isEmpty()) {
+                        return '<span class="d-flex align-items-center gap-1">
+                        <span class="rounded-circle bg-success d-inline-block completo" style="width: 20px; height: 20px;"></span>
+                        Completado
+                    </span>';
+                    } else {
+                        $tooltip = $faltantes->implode(', ');
+                        return '<span class="d-flex align-items-center gap-1" title="Faltan: ' . e($tooltip) . '" data-bs-toggle="tooltip">
+                        <span class="rounded-circle bg-danger d-inline-block incompleto" style="width: 20px; height: 20px;"></span>
+                        Incompleto
+                    </span>';
+                    }
+                })
+                ->addColumn('acciones', function ($caso) {
+                    $botones = '<div class="btn-group" role="group">';
 
-                if (auth()->user()->can('editar casos')) {
-                    $botones .= '<a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-warning" title="Editar"><i class="mdi mdi-pencil"></i></a>';
-                }
+                    if (auth()->user()->can('ver casos')) {
+                        $botones .= '<a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary" title="Ver"><i class="mdi mdi-eye"></i></a>';
+                    }
 
-                // if (auth()->user()->can('clonar casos')) {
-                //     $botones .= '<a href="#" class="btn btn-sm btn-success" title="Clonar"><i class="mdi mdi-account-multiple-plus-outline"></i></a>';
-                // }
+                    if (auth()->user()->can('editar casos')) {
+                        $botones .= '<a href="' . route('casos.edit', $caso->id) . '" class="btn btn-sm btn-warning" title="Editar"><i class="mdi mdi-pencil"></i></a>';
+                    }
 
-                if (auth()->user()->can('eliminar casos')) {
-                    $botones .= '<button class="btn btn-sm btn-danger btn-delete" title="Eliminar" data-url="' . route('casos.destroy', $caso->id) . '" data-nombre="' . e($caso->numero_caso) . '"><i class="mdi mdi-trash-can-outline"></i></button>';
-                }
+                    if (auth()->user()->can('eliminar casos')) {
+                        $botones .= '<button class="btn btn-sm btn-danger btn-delete" title="Eliminar" data-url="' . route('casos.destroy', $caso->id) . '" data-nombre="' . e($caso->numero_caso) . '"><i class="mdi mdi-trash-can-outline"></i></button>';
+                    }
 
-                $botones .= '</div>';
+                    $botones .= '</div>';
+                    return $botones;
+                })
+                ->editColumn('fecha_atencion', fn($caso) => $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '')
+                ->editColumn('fecha_actual', fn($caso) => $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '')
+                ->rawColumns(['acciones', 'condicion', 'estado_completado'])
+                ->make(true);
+        }
 
-                return $botones;
-            })
-            ->editColumn('fecha_atencion', function ($caso) {
-                return $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '';
-            })
-            ->editColumn('fecha_actual', function ($caso) {
-                return $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '';
-            })
+        // ✅ Si hay filtro de completado, hacemos la lógica con colección
+        $casos = $query->get();
+
+        $valor = $request->estado_completado;
+
+        $casos = $casos->filter(function ($caso) use ($valor) {
+            $campos = [
+                'numero_caso',
+                'fecha_atencion',
+                'fecha_actual',
+                'tipo_atencion',
+                'beneficiario',
+                'direccion_domicilio',
+                'estatus',
+                'user_id',
+            ];
+
+            $faltantes = collect($campos)->filter(fn($campo) => empty($caso->$campo));
+
+            return $valor === 'completo'
+                ? $faltantes->isEmpty()
+                : $faltantes->isNotEmpty();
+        });
+
+        // Retornar datatables desde colección
+        return datatables()->of($casos)
+            ->addColumn('condicion', /* igual que arriba */)
+            ->addColumn('estado_completado', /* igual que arriba */)
+            ->addColumn('acciones', /* igual que arriba */)
+            ->editColumn('fecha_atencion', fn($caso) => $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '')
+            ->editColumn('fecha_actual', fn($caso) => $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '')
             ->rawColumns(['acciones', 'condicion', 'estado_completado'])
             ->make(true);
     }
-
 
 
     public function create()
@@ -474,15 +481,17 @@ class CasoController extends Controller
         $end = $request->input('end_date');
         $estatus = $request->input('estatus');
         $search = $request->input('search');
-        $estadoCompletado = $request->input('estado_completado'); // <- NUEVO
+        $estadoCompletado = $request->input('estado_completado');
+        $condicion = $request->input('condicion'); // ✅ incluir condición
 
         $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
 
         return Excel::download(
-            new CasosExport($start, $end, null, $estatus, $search, $estadoCompletado),
+            new CasosExport($start, $end, null, $estatus, $search, $estadoCompletado, $condicion),
             $filename
         );
     }
+
 
 
 
@@ -701,7 +710,7 @@ class CasoController extends Controller
     public function aprobar(Request $request, $id)
     {
         $caso = Caso::findOrFail($id);
-        $caso->condicion = $request->input('aprobado');
+        $caso->condicion = $request->input('Aprobado');
         $caso->save();
 
         return response()->json(['message' => 'Condición actualizada correctamente.']);
@@ -728,16 +737,20 @@ class CasoController extends Controller
         if ($request->filled('estatus')) {
             $query->where('estatus', $request->estatus);
         }
-
         if ($request->filled('condicion')) {
-            if ($request->condicion === 'aprobado') {
-                $query->where('condicion', 'aprobado');
-            } elseif ($request->condicion === 'no_aprobado') {
-                $query->where(function ($q) {
-                    $q->whereNull('condicion')->orWhere('condicion', '!=', 'aprobado');
-                });
+            switch ($request->condicion) {
+                case 'aprobado':
+                    $query->where('condicion', 'Aprobado');
+                    break;
+                case 'no_aprobado':
+                    $query->where('condicion', 'No aprobado');
+                    break;
+                case 'en_espera':
+                    $query->where('condicion', 'En espera');
+                    break;
             }
         }
+
 
         if ($request->filled('search')) {
             $search = '%' . $request->search . '%';
@@ -772,7 +785,7 @@ class CasoController extends Controller
         $tipoMasFrecuente = $porTipoAtencion->sortDesc()->keys()->first() ?? 'N/D';
         $porcentajeTipo = $totalCasos > 0 ? round(($porTipoAtencion[$tipoMasFrecuente] / $totalCasos) * 100, 1) : 0;
 
-        $casosAprobados = $query->filter(fn($c) => $c->condicion === 'aprobado')->count();
+        $casosAprobados = $query->filter(fn($c) => $c->condicion === 'Aprobado')->count();
         $porcentajeAprobados = $totalCasos > 0 ? round(($casosAprobados / $totalCasos) * 100, 1) : 0;
 
         $beneficiarios = $query->pluck('beneficiario')->filter()->countBy();
@@ -854,16 +867,16 @@ class CasoController extends Controller
 
 
 
-public function exportarInformePDF(Request $request)
-{
-    // Puedes replicar parte de la lógica de resumenLocal e informeIA
-    $resumenLocal = $request->input('resumen');
-    $informeIA = $request->input('informe');
+    public function exportarInformePDF(Request $request)
+    {
+        // Puedes replicar parte de la lógica de resumenLocal e informeIA
+        $resumenLocal = $request->input('resumen');
+        $informeIA = $request->input('informe');
 
-    $pdf = Pdf::loadView('caso.informe_pdf', compact('resumenLocal', 'informeIA'));
+        $pdf = Pdf::loadView('caso.informe_pdf', compact('resumenLocal', 'informeIA'));
 
-    return $pdf->download('informe-casos-' . now()->format('Ymd_His') . '.pdf');
-}
+        return $pdf->download('informe-casos-' . now()->format('Ymd_His') . '.pdf');
+    }
 
 
     // public function upload(Request $request)

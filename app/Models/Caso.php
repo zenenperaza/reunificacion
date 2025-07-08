@@ -144,4 +144,17 @@ class Caso extends Model
 
         return "El caso {$numero} fue {$accion}";
     }
+
+
+    // App\Models\Caso.php
+
+    public static function enEspera()
+    {
+        return self::where('condicion', 'En espera')->latest()->take(10)->get();
+    }
+
+    public static function cantidadEnEspera()
+    {
+        return self::where('condicion', 'En espera')->count();
+    }
 }

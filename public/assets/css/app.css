@@ -250,7 +250,7 @@ body {
   --ct-kbd-color: #fff;
   --ct-kbd-bg: #323a46;
   --ct-pre-color: ;
-  --ct-bg-leftbar: #f3f1fc;
+  --ct-bg-leftbar: #f2f0fb;
   --ct-bg-leftbar-dark: #343a40;
   --ct-bg-leftbar-brand: #4a81d4;
   --ct-bg-leftbar-gradient: #5b69bc;
@@ -271,7 +271,7 @@ body {
   --ct-page-title-color: #f8f9fa;
   --ct-topbar-search-bg: #e2e6ea;
   --ct-topbar-search-bg-dark: #414b56;
-  --ct-footer-bg: #e3e9ed;
+  --ct-footer-bg: #f2f0fb;
   --ct-footer-color: #6c757d;
   --ct-footer-link-hover-color: #636b72;
   --ct-logo-box-background: #f3f1fc;
@@ -464,7 +464,7 @@ body[data-layout-color=dark] {
   --ct-kbd-color: #fff;
   --ct-kbd-bg: #f1f5f7;
   --ct-pre-color: ;
-  --ct-bg-leftbar: #f3f1fc;
+  --ct-bg-leftbar: #f2f0fb;
   --ct-bg-leftbar-dark: #313844;
   --ct-bg-leftbar-brand: #4a81d4;
   --ct-bg-leftbar-gradient: #5b69bc;
@@ -485,7 +485,7 @@ body[data-layout-color=dark] {
   --ct-page-title-color: #f8f9fa;
   --ct-topbar-search-bg: #323a46;
   --ct-topbar-search-bg-dark: #323a46;
-  --ct-footer-bg: #2c333e;
+  --ct-footer-bg: #f2f0fb;
   --ct-footer-color: #adb5bd;
   --ct-footer-link-hover-color: #a2abb4;
   --ct-logo-box-background: #f3f1fc;

@@ -80,8 +80,11 @@
                                         Aprobado</option>
                                     <option value="no_aprobado"
                                         {{ request('condicion') == 'no_aprobado' ? 'selected' : '' }}>No aprobado</option>
+                                    <option value="en_espera" {{ request('condicion') == 'en_espera' ? 'selected' : '' }}>
+                                        En espera</option>
                                 </select>
                             </div>
+
 
                             <div class="col-md-12 mb-2 mt-3">
                                 <div class="form-check form-switch">

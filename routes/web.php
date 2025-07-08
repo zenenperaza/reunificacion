@@ -13,6 +13,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\LockScreenController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BusquedaController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,6 +59,9 @@ Route::get('/crear-storage-link', function () {
         return '❌ Error al crear el enlace simbólico: ' . $e->getMessage();
     }
 });
+
+Route::get('/busqueda', [BusquedaController::class, 'resultados'])->name('busqueda.resultados');
+Route::get('/busqueda/ajax', [App\Http\Controllers\BusquedaController::class, 'ajax'])->name('busqueda.ajax');
 
 
 // http://tusitio.com/crear-storage-link

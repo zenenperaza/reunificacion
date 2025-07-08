@@ -14,7 +14,7 @@
 
 
     <link href="{{ asset('assets/libs/mohithg-switchery/switchery.min.css') }}" rel="stylesheet" type="text/css" />
-      <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
 
 @endsection
 
@@ -23,7 +23,7 @@
 
 
     <div class="container-fluid">
-        <x-breadcrumb title="Gestión de Casos" icono="<i class='fas fa-tachometer-alt'></i>"/>
+        <x-breadcrumb title="Gestión de Casos" icono="<i class='fas fa-tachometer-alt'></i>" />
 
         <div class="row mb-3  d-flex my-2 justify-content-between">
             <div class="col-sm-3">
@@ -33,6 +33,7 @@
                 <x-boton.crear ruta="casos.create" permiso="crear casos" texto="Nuevo Caso" />
 
             </div>
+
             <div class="col-md-3 ms-auto text-end">
                 <div class="dropdown w-100">
                     <button
@@ -60,55 +61,51 @@
         {{-- Bloque de filtros y exportación --}}
         <div class="row mb-3  d-flex my-2 justify-content-between">
             {{-- Filtros: Fecha y Estatus --}}
-        <div class="col-md-9">
-    <div class="accordion custom-accordion" id="accordionFiltros">
-        <div class="card mb-0">
-            <div class="card-header" id="headingFiltros">
-                <h5 class="m-0 position-relative">
-                    <a class="custom-accordion-title text-reset collapsed d-block"
-                       data-bs-toggle="collapse"
-                       href="#collapseFiltros"
-                       aria-expanded="false"
-                       aria-controls="collapseFiltros">
-                        <i class="mdi mdi-filter me-1"></i> Filtros
-                        <i class="mdi mdi-chevron-down accordion-arrow"></i>
-                    </a>
-                </h5>
-            </div>
+            <div class="col-md-9">
+                <div class="accordion custom-accordion" id="accordionFiltros">
+                    <div class="card mb-0">
+                        <div class="card-header" id="headingFiltros">
+                            <h5 class="m-0 position-relative">
+                                <a class="custom-accordion-title text-reset collapsed d-block" data-bs-toggle="collapse"
+                                    href="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros">
+                                    <i class="mdi mdi-filter me-1"></i> Filtros
+                                    <i class="mdi mdi-chevron-down accordion-arrow"></i>
+                                </a>
+                            </h5>
+                        </div>
 
-            <div id="collapseFiltros" class="collapse"
-                 aria-labelledby="headingFiltros"
-                 data-bs-parent="#accordionFiltros">
-                <div class="card-body">
-                    <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-outline-primary d-flex align-items-center"
-                                id="daterange-btn">
-                            <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
-                            <i class="fas fa-caret-down ms-1"></i>
-                        </button>
+                        <div id="collapseFiltros" class="collapse" aria-labelledby="headingFiltros"
+                            data-bs-parent="#accordionFiltros">
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="button" class="btn btn-outline-primary d-flex align-items-center"
+                                        id="daterange-btn">
+                                        <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
+                                        <i class="fas fa-caret-down ms-1"></i>
+                                    </button>
 
-                        <select id="filtro_estatus" class="btn btn-outline-primary">
-                            <option value="">Todos los estatus</option>
-                            <option value="En proceso">En proceso</option>
-                            <option value="En seguimiento">En seguimiento</option>
-                            <option value="Cierre de atención">Cierre de atención</option>
-                        </select>
+                                    <select id="filtro_estatus" class="btn btn-outline-primary">
+                                        <option value="">Todos los estatus</option>
+                                        <option value="En proceso">En proceso</option>
+                                        <option value="En seguimiento">En seguimiento</option>
+                                        <option value="Cierre de atención">Cierre de atención</option>
+                                    </select>
 
-                        <select id="filtro_estado_completado" class="btn btn-outline-primary">
-                            <option value="">Todos los estados</option>
-                            <option value="completo">Completado</option>
-                            <option value="incompleto">Incompleto</option>
-                        </select>
+                                    <select id="filtro_estado_completado" class="btn btn-outline-primary">
+                                        <option value="">Todos los estados</option>
+                                        <option value="completo">Completado</option>
+                                        <option value="incompleto">Incompleto</option>
+                                    </select>
 
-                        <button id="clear-daterange" class="btn btn-outline-secondary">
-                            <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
-                        </button>
+                                    <button id="clear-daterange" class="btn btn-outline-secondary">
+                                        <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
             {{-- Botón de Exportación --}}
             <div class="col-md-3 text-end">
@@ -148,6 +145,11 @@
             </div>
         @endif
 
+        @if (request('condicion'))
+            <div class="alert alert-info">
+                Mostrando casos con condición: <strong>{{ request('condicion') }}</strong>
+            </div>
+        @endif
 
         <div class="card">
             <div class="card-body">
@@ -252,6 +254,11 @@
                     d.end_date = endDate ?? '';
                     d.estatus = $('#filtro_estatus').val();
                     d.estado_completado = $('#filtro_estado_completado').val();
+                    // ✅ Capturar ?condicion= desde la URL si existe
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('condicion')) {
+                        d.condicion = urlParams.get('condicion');
+                    }
                 }
             },
 
@@ -469,9 +476,14 @@
                 url.searchParams.append('estatus', estatus);
             }
 
-            const estadoCompletado = $('#filtro_estado_completado').val(); // 👈 agregado
+            const estadoCompletado = $('#filtro_estado_completado').val();
             if (estadoCompletado) {
                 url.searchParams.append('estado_completado', estadoCompletado);
+            }
+
+            const condicion = (new URLSearchParams(window.location.search)).get('condicion');
+            if (condicion) {
+                url.searchParams.append('condicion', condicion);
             }
 
             if (searchInput) {
@@ -563,7 +575,7 @@
             window.location.href = "{{ route('casos.plantilla') }}";
         });
     </script>
-    
+
     <script>
         $('#clear-daterange').on('click', function() {
             // Limpiar variables de fecha
