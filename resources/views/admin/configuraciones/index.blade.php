@@ -20,7 +20,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">¿Usar Fecha actual en Casos?</label>
+                            <label class="form-label">Cambiar Fecha actual en Casos?</label>
                             <select name="conf_fecha_actual" class="form-control" required>
                                 <option value="si" {{ $config->conf_fecha_actual === 'si' ? 'selected' : '' }}>Sí
                                 </option>

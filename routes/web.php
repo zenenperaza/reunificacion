@@ -44,21 +44,70 @@ Route::get('/fix-permisos', function () {
     return '✔️ Permisos y cachés corregidos.';
 });
 
-Route::get('/crear-storage-link', function () {
-    abort_unless(auth()->check() && auth()->user()->hasRole('Administrador'), 403);
+// Route::get('/crear-storage-link', function () {
+//     abort_unless(auth()->check() && auth()->user()->hasRole('Administrador'), 403);
 
-    // Ejecuta el comando de forma segura
+//     // Ejecuta el comando de forma segura
+//     try {
+//         if (!file_exists(public_path('storage'))) {
+//             Artisan::call('storage:link');
+//             return '✔️ Enlace simbólico creado.';
+//         } else {
+//             return 'ℹ️ El enlace simbólico ya existe.';
+//         }
+//     } catch (\Exception $e) {
+//         return '❌ Error al crear el enlace simbólico: ' . $e->getMessage();
+//     }
+// });
+Route::get('/fix-storage-permisos', function () {
     try {
-        if (!file_exists(public_path('storage'))) {
-            Artisan::call('storage:link');
-            return '✔️ Enlace simbólico creado.';
-        } else {
-            return 'ℹ️ El enlace simbólico ya existe.';
+        $path = storage_path('app/public');
+        chmod($path, 0775); // Carpeta base
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)) as $file) {
+            chmod($file, 0644); // Archivos
         }
+        return '✅ Permisos corregidos.';
     } catch (\Exception $e) {
-        return '❌ Error al crear el enlace simbólico: ' . $e->getMessage();
+        return '❌ Error: ' . $e->getMessage();
     }
 });
+
+
+Route::get('/fix-storage-link', function () {
+    try {
+        // Elimina el enlace si existe
+        $publicStorage = public_path('storage');
+        if (file_exists($publicStorage)) {
+            unlink($publicStorage); // elimina el symlink
+        }
+
+        // Crea el nuevo enlace simbólico correctamente
+        Artisan::call('storage:link');
+
+        return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
+    } catch (\Exception $e) {
+        return " Error al recrear el enlace: " . $e->getMessage();
+    }
+});
+
+Route::get('/run-migrate-fresh', function () {
+    // SOLO USAR EN LOCAL O ENTORNOS CONTROLADOS
+    #if (app()->environment('local', 'staging') && Auth::check() && Auth::user()->email === 'zenenperaza@gmail.com') {
+       try {
+            Artisan::call('migrate:fresh', [
+                '--seed' => true,
+                '--force' => true,
+            ]);
+
+            return '✅ Migraciones reiniciadas y seeders ejecutados.';
+        } catch (\Exception $e) {
+            return '❌ Error: ' . $e->getMessage();
+        }
+   # }
+
+  #  abort(403, 'No autorizado');
+});
+
 
 Route::get('/busqueda', [BusquedaController::class, 'resultados'])->name('busqueda.resultados');
 Route::get('/busqueda/ajax', [App\Http\Controllers\BusquedaController::class, 'ajax'])->name('busqueda.ajax');
