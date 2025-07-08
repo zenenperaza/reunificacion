@@ -34,9 +34,11 @@ class CasosExport implements
     protected $estatus;
     protected $search;
     protected $estadoCompletado;
+    protected $condicion;
 
 
-    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null)
+
+    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null, $condicion = null)
     {
         $this->start = $start;
         $this->end = $end;
@@ -44,6 +46,7 @@ class CasosExport implements
         $this->estatus = $estatus;
         $this->search = $search;
         $this->estadoCompletado = $estadoCompletado;
+        $this->condicion = $condicion;
     }
 
     public function collection()
@@ -69,6 +72,15 @@ class CasosExport implements
         if ($this->estatus) {
             $query->where('estatus', $this->estatus);
         }
+
+        if ($this->condicion === 'aprobado') {
+            $query->where('condicion', 'aprobado');
+        } elseif ($this->condicion === 'no_aprobado') {
+            $query->where(function ($q) {
+                $q->whereNull('condicion')->orWhere('condicion', '!=', 'aprobado');
+            });
+        }
+
 
         if ($this->search) {
             $searchTerm = '%' . $this->search . '%';
@@ -163,7 +175,9 @@ class CasosExport implements
             'Remisiones',
             'Otras Remisiones',
             'Indicadores',
-            'Usuario Responsable'
+            'Usuario Responsable',
+            'Condición',
+
         ];
     }
 
@@ -221,6 +235,8 @@ class CasosExport implements
             $caso->otras_remisiones,
             $this->formatJson($caso->indicadores),
             $caso->user->name ?? '',
+            $caso->condicion ?? 'Sin especificar',
+
         ];
     }
 

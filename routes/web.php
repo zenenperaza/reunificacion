@@ -168,7 +168,10 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
             ->name('casos.aprobar')
             ->middleware('can:aprobar casos');
 
+        Route::get('/casos/informes', [CasoController::class, 'informes'])->name('casos.informes')->middleware('can:ver informes');
+        Route::get('/casos/informes/export', [CasoController::class, 'exportInformes'])->name('casos.informes.export')->middleware('can:ver informes');
 
+        Route::get('/casos/informes/pdf', [CasoController::class, 'exportarInformePDF'])->name('casos.informes.pdf');
 
 
         Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');

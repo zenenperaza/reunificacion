@@ -53,10 +53,13 @@
                                     </li>
                                 @endcan
 
-                                <li><a href="{{ route('casos.index') }}">
-                                        <i class="fas fa-receipt"></i>
-                                        <span>Informes</span></a>
-                                </li>
+                                @can('ver informes')
+                                    <li>
+                                        <a href="{{ route('casos.informes') }}">
+                                            <i class="mdi mdi-clipboard-text-outline me-1"></i> Informes
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </div>
                     </li>

@@ -60,50 +60,55 @@
         {{-- Bloque de filtros y exportación --}}
         <div class="row mb-3  d-flex my-2 justify-content-between">
             {{-- Filtros: Fecha y Estatus --}}
-            <div class="col-md-9 gap-2">
-                <div class="accordion" id="accordionFiltros">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingFiltros" style="margin-bottom: 10px;">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros"
-                                style="padding: 4px 20px; color: red; font-size: medium; padding: 10px 15px;">
-                                Filtros
-                            </button>
-                        </h2>
-                        <div id="collapseFiltros" class="accordion-collapse collapse" aria-labelledby="headingFiltros"
-                            data-bs-parent="#accordionFiltros">
-                            <div class="accordion-body">
-                                <div class="d-flex flex-wrap gap-2">
-                                    <button type="button" class="btn btn-outline-primary d-flex align-items-center"
-                                        id="daterange-btn">
-                                        <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
-                                        <i class="fas fa-caret-down ms-1"></i>
-                                    </button>
+        <div class="col-md-9">
+    <div class="accordion custom-accordion" id="accordionFiltros">
+        <div class="card mb-0">
+            <div class="card-header" id="headingFiltros">
+                <h5 class="m-0 position-relative">
+                    <a class="custom-accordion-title text-reset collapsed d-block"
+                       data-bs-toggle="collapse"
+                       href="#collapseFiltros"
+                       aria-expanded="false"
+                       aria-controls="collapseFiltros">
+                        <i class="mdi mdi-filter me-1"></i> Filtros
+                        <i class="mdi mdi-chevron-down accordion-arrow"></i>
+                    </a>
+                </h5>
+            </div>
 
-                                    <select id="filtro_estatus" class="btn btn-outline-primary">
-                                        <option value="">Todos los estatus</option>
-                                        <option value="En proceso">En proceso</option>
-                                        <option value="En seguimiento">En seguimiento</option>
-                                        <option value="Cierre de atención">Cierre de atención</option>
-                                    </select>
+            <div id="collapseFiltros" class="collapse"
+                 aria-labelledby="headingFiltros"
+                 data-bs-parent="#accordionFiltros">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-outline-primary d-flex align-items-center"
+                                id="daterange-btn">
+                            <i class="far fa-calendar-alt me-1"></i> Buscar por fecha actual
+                            <i class="fas fa-caret-down ms-1"></i>
+                        </button>
 
-                                    <select id="filtro_estado_completado" class="btn btn-outline-primary">
-                                        <option value="">Todos los estados</option>
-                                        <option value="completo">Completado</option>
-                                        <option value="incompleto">Incompleto</option>
-                                    </select>
+                        <select id="filtro_estatus" class="btn btn-outline-primary">
+                            <option value="">Todos los estatus</option>
+                            <option value="En proceso">En proceso</option>
+                            <option value="En seguimiento">En seguimiento</option>
+                            <option value="Cierre de atención">Cierre de atención</option>
+                        </select>
 
+                        <select id="filtro_estado_completado" class="btn btn-outline-primary">
+                            <option value="">Todos los estados</option>
+                            <option value="completo">Completado</option>
+                            <option value="incompleto">Incompleto</option>
+                        </select>
 
-                                    <button id="clear-daterange" class="btn btn-outline-secondary">
-                                        <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <button id="clear-daterange" class="btn btn-outline-secondary">
+                            <i class="mdi mdi-filter-remove me-1"></i> Limpiar filtro
+                        </button>
                     </div>
                 </div>
-
             </div>
+        </div>
+    </div>
+</div>
 
             {{-- Botón de Exportación --}}
             <div class="col-md-3 text-end">

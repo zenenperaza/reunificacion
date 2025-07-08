@@ -18,6 +18,9 @@ use App\Exports\CasosPlantillaExport;
 use App\Imports\CasosImport;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
+
+
 
 
 
@@ -704,6 +707,163 @@ class CasoController extends Controller
         return response()->json(['message' => 'Condición actualizada correctamente.']);
     }
 
+
+
+    public function informes(Request $request)
+    {
+        $estados = Estado::all();
+        $estadoNombres = Estado::pluck('nombre', 'id'); // [id => nombre]
+
+        $query = Caso::query();
+
+        // Filtros
+        if ($request->filled('start') && $request->filled('end')) {
+            $query->whereBetween('fecha_actual', [$request->start, $request->end]);
+        }
+
+        if ($request->filled('estado_id')) {
+            $query->where('estado_id', $request->estado_id);
+        }
+
+        if ($request->filled('estatus')) {
+            $query->where('estatus', $request->estatus);
+        }
+
+        if ($request->filled('condicion')) {
+            if ($request->condicion === 'aprobado') {
+                $query->where('condicion', 'aprobado');
+            } elseif ($request->condicion === 'no_aprobado') {
+                $query->where(function ($q) {
+                    $q->whereNull('condicion')->orWhere('condicion', '!=', 'aprobado');
+                });
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->search . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('numero_caso', 'like', $search)
+                    ->orWhere('beneficiario', 'like', $search);
+            });
+        }
+
+        if ($request->filled('estadoCompletado')) {
+            $query = $query->get()->filter(function ($caso) use ($request) {
+                $campos = ['numero_caso', 'fecha_atencion', 'fecha_actual', 'tipo_atencion', 'beneficiario', 'direccion_domicilio', 'estatus', 'user_id'];
+                $faltan = collect($campos)->filter(fn($c) => empty($caso->$c));
+                return $request->estadoCompletado === 'completo' ? $faltan->isEmpty() : $faltan->isNotEmpty();
+            });
+        } else {
+            $query = $query->get();
+        }
+
+        // Agrupaciones
+        $porEstatus = $query->groupBy('estatus')->map->count();
+        $porTipoAtencion = $query->groupBy('tipo_atencion')->map->count();
+        $porEstado = $query->groupBy('estado_id')->mapWithKeys(function ($items, $id) use ($estadoNombres) {
+            return [$estadoNombres[$id] ?? 'Sin estado' => count($items)];
+        });
+
+        // Datos resumidos
+        $totalCasos = $query->count();
+        $estadoMasFrecuente = $porEstado->sortDesc()->keys()->first() ?? 'Sin estado';
+        $porcentajeEstado = $totalCasos > 0 ? round(($porEstado[$estadoMasFrecuente] / $totalCasos) * 100, 1) : 0;
+
+        $tipoMasFrecuente = $porTipoAtencion->sortDesc()->keys()->first() ?? 'N/D';
+        $porcentajeTipo = $totalCasos > 0 ? round(($porTipoAtencion[$tipoMasFrecuente] / $totalCasos) * 100, 1) : 0;
+
+        $casosAprobados = $query->filter(fn($c) => $c->condicion === 'aprobado')->count();
+        $porcentajeAprobados = $totalCasos > 0 ? round(($casosAprobados / $totalCasos) * 100, 1) : 0;
+
+        $beneficiarios = $query->pluck('beneficiario')->filter()->countBy();
+        $beneficiarioPrincipal = $beneficiarios->sortDesc()->keys()->first() ?? 'N/D';
+
+        $resumenLocal = "Se encontraron {$totalCasos} casos. {$porcentajeEstado}% en estado {$estadoMasFrecuente}. El tipo de atención predominante es '{$tipoMasFrecuente}'. El {$porcentajeAprobados}% están aprobados. El grupo beneficiario más frecuente es '{$beneficiarioPrincipal}'.";
+
+        // IA: solo si el checkbox está activado
+        $usarIA = $request->boolean('usarIA');
+        $informeIA = null;
+
+        if ($usarIA && $query->count() > 0) {
+            $resumen = "Resumen de contexto para análisis:\n";
+            $resumen .= "Total de casos: {$totalCasos}\n";
+            $resumen .= "Estado con más casos: {$estadoMasFrecuente} ({$porcentajeEstado}%)\n";
+            $resumen .= "Tipo de atención más común: {$tipoMasFrecuente} ({$porcentajeTipo}%)\n";
+            $resumen .= "Casos aprobados: {$porcentajeAprobados}%\n";
+            $resumen .= "Beneficiario más frecuente: {$beneficiarioPrincipal}\n\n";
+            $resumen .= "Muestra de casos:\n";
+
+            foreach ($query->take(30) as $caso) {
+                $resumen .= "- Estado: " . ($estadoNombres[$caso->estado_id] ?? 'Sin estado') .
+                    ", Tipo atención: " . ($caso->tipo_atencion ?? 'N/A') .
+                    ", Estatus: " . ($caso->estatus ?? 'N/A') .
+                    ", Condición: " . ($caso->condicion ?? 'N/A') . "\n";
+            }
+
+            try {
+                $response = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-3.5-turbo',
+                    'messages' => [
+                        [
+                            'role' => 'system',
+                            'content' => "Eres una trabajadora social especializada en análisis de casos sociales. Redacta un informe breve, claro y empático en español. Enfócate en la distribución territorial, situación de los beneficiarios, tipo de atención predominante y nivel de aprobación. Puedes agregar recomendaciones sociales si lo crees necesario."
+                        ],
+                        [
+                            'role' => 'user',
+                            'content' => $resumen
+                        ],
+                    ],
+                    'max_tokens' => 500,
+                ]);
+
+                if ($response->successful()) {
+                    $body = $response->json();
+                    $informeIA = $body['choices'][0]['message']['content'] ?? 'La respuesta no tiene contenido.';
+                } else {
+                    $informeIA = 'Error ' . $response->status() . ': ' . $response->body();
+                }
+            } catch (\Exception $e) {
+                $informeIA = 'Excepción: ' . $e->getMessage();
+            }
+        }
+
+        return view('caso.informes', compact(
+            'estados',
+            'porEstatus',
+            'porEstado',
+            'porTipoAtencion',
+            'resumenLocal',
+            'informeIA'
+        ));
+    }
+
+    public function exportInformes(Request $request)
+    {
+        $start = $request->input('start');
+        $end = $request->input('end');
+        $estadoId = $request->input('estado_id');
+        $estatus = $request->input('estatus');
+        $search = $request->input('search');
+        $estadoCompletado = $request->input('estadoCompletado');
+        $condicion = $request->input('condicion'); // ✅ Nuevo parámetro
+
+        $export = new CasosExport($start, $end, $estadoId, $estatus, $search, $estadoCompletado, $condicion);
+
+        return Excel::download($export, 'informe_casos.xlsx');
+    }
+
+
+
+public function exportarInformePDF(Request $request)
+{
+    // Puedes replicar parte de la lógica de resumenLocal e informeIA
+    $resumenLocal = $request->input('resumen');
+    $informeIA = $request->input('informe');
+
+    $pdf = Pdf::loadView('caso.informe_pdf', compact('resumenLocal', 'informeIA'));
+
+    return $pdf->download('informe-casos-' . now()->format('Ymd_His') . '.pdf');
+}
 
 
     // public function upload(Request $request)
