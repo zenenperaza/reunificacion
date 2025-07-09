@@ -22,7 +22,6 @@ Route::get('/limpiar-config', function () {
     Artisan::call('cache:clear');
     return 'Configuración y caché limpiadas.';
 });
-
 Route::get('/fix-permisos', function () {
     $paths = [
         storage_path(),
@@ -33,7 +32,7 @@ Route::get('/fix-permisos', function () {
 
     foreach ($paths as $path) {
         if (file_exists($path)) {
-            chmod($path, 0775);
+            chmod($path, 0775); // permisos rwxrwxr-x
         }
     }
 
@@ -72,23 +71,50 @@ Route::get('/fix-storage-permisos', function () {
     }
 });
 
+Route::get('/fix-excel', function () {
+    $path = storage_path('framework/cache/laravel-excel');
 
-Route::get('/fix-storage-link', function () {
-    try {
-        // Elimina el enlace si existe
-        $publicStorage = public_path('storage');
-        if (file_exists($publicStorage)) {
-            unlink($publicStorage); // elimina el symlink
-        }
-
-        // Crea el nuevo enlace simbólico correctamente
-        Artisan::call('storage:link');
-
-        return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
-    } catch (\Exception $e) {
-        return " Error al recrear el enlace: " . $e->getMessage();
+    if (!file_exists($path)) {
+        mkdir($path, 0775, true);
     }
+
+    chmod($path, 0775);
+
+    return '✔️ Carpeta de Laravel Excel creada y con permisos.';
 });
+
+
+
+// Route::get('/fix-storage-link', function () {
+//     try {
+//         // Elimina el enlace si existe
+//         $publicStorage = public_path('storage');
+//         if (file_exists($publicStorage)) {
+//             unlink($publicStorage); // elimina el symlink
+//         }
+
+//         // Crea el nuevo enlace simbólico correctamente
+//         Artisan::call('storage:link');
+
+//         return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
+//     } catch (\Exception $e) {
+//         return " Error al recrear el enlace: " . $e->getMessage();
+//     }
+// });
+// Route::get('/fix-storage-link', function () {
+//     try {
+//         $publicStorage = public_path('storage');
+
+//         if (!file_exists($publicStorage)) {
+//             Artisan::call('storage:link');
+//             return "✅ Enlace simbólico 'public/storage' creado.";
+//         }
+
+//         return "⚠️ El enlace simbólico 'public/storage' ya existe.";
+//     } catch (\Exception $e) {
+//         return "❌ Error al crear el enlace: " . $e->getMessage();
+//     }
+// });
 
 Route::get('/run-migrate-fresh', function () {
     // SOLO USAR EN LOCAL O ENTORNOS CONTROLADOS
@@ -166,20 +192,14 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
         Route::post('/unlock', [LockScreenController::class, 'unlock']);
     });
 
-    // Dashboard por roles
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('dashboard')->middleware('role:Administrador');
+            ->name('dashboard'); // sin middleware de role aquí
 
         Route::get('/dashboard-user', [DashboardController::class, 'usuario'])
-            ->name('dashboard.user')->middleware('role:Usuario');
-
-        Route::get('/dashboard-coordinador', [DashboardController::class, 'coordinador'])
-            ->name('dashboard.coordinador')->middleware('role:Coordinador');
-
-        Route::get('/dashboard-trabajador', [DashboardController::class, 'trabajador'])
-            ->name('dashboard.trabajador')->middleware('role:Trabajador Social');
+            ->name('dashboard.user'); // también sin middleware de role
     });
+
 
     Route::middleware(['auth', 'permission:Gestion configuracion'])->group(function () {
         Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');

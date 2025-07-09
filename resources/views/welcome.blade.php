@@ -24,6 +24,14 @@
                 <nav>
                     @auth
                         <a href="{{ url('/dashboard') }}" class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">Dashboard</a>
+                        
+                         <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition dropdown-item notify-item">
+                        <i class="fe-log-out"></i>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
                     @else
                         <a href="{{ route('login') }}"
                     class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">

@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Notifications\NuevoUsuarioRegistrado;
+use Illuminate\Support\Facades\Notification;
+
 
 class RegisteredUserController extends Controller
 {
@@ -44,6 +47,11 @@ class RegisteredUserController extends Controller
 
         // ✅ Asignar automáticamente el rol "Usuario"
         $user->assignRole('Usuario');
+
+        // Enviar correo a destinatario fijo
+        Notification::route('mail', 'mmelendezasonacop@gmail.com') // ← Cambia por el correo deseado
+            ->notify(new NuevoUsuarioRegistrado($user));
+
 
         event(new Registered($user));
 

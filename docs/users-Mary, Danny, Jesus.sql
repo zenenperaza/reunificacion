@@ -46,10 +46,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `remember_token`, `phone`, `address`, `photo`, `estatus`, `created_at`, `updated_at`) VALUES
-(1, 'Zenen Peraza', 'peraza@outlook.com', '$2y$12$KcXdyg/Y/IKDEKxzAeUEjO8nkMN1kTEyvDQndKOajybv53ZbMRWmK', NULL, '0000000000', 'Dirección Central', NULL, 'activo', '2025-07-03 03:39:42', '2025-07-03 03:39:42'),
-(3, 'monitoreonacional', 'mmelendez@asonacop.org', '$2y$12$h7UDxzcvtGtDfRiotJsYQulO90dkZ2K3e5oufh5ti2k6msB63NBoi', NULL, NULL, NULL, NULL, 'activo', '2025-06-30 22:22:02', '2025-06-30 22:22:02'),
-(4, 'Danny', 'dannyprimera@gmail.com', '$2y$12$BF30tYqbYstWE2fD6sBRQemIED.GN9o9VcGys8YscDHfZXqMeBnhO', NULL, NULL, NULL, NULL, 'activo', '2025-06-30 22:46:07', '2025-06-30 22:46:07'),
-(5, 'Jesus Villarroel', 'soporteit@asonacop.org', '$2y$12$iclkAkV9w24GkbsEUJVIp.MDvbrj00SrJroKErmDwQ1x435QH9Ksq', NULL, NULL, NULL, NULL, 'activo', '2025-07-03 20:59:51', '2025-07-03 20:59:51');
+(null, 'Zenen Peraza', 'peraza@outlook.com', '$2y$12$KcXdyg/Y/IKDEKxzAeUEjO8nkMN1kTEyvDQndKOajybv53ZbMRWmK', NULL, '0000000000', 'Dirección Central', NULL, 'activo', '2025-07-03 03:39:42', '2025-07-03 03:39:42'),
+(null, 'monitoreonacional', 'mmelendez@asonacop.org', '$2y$12$h7UDxzcvtGtDfRiotJsYQulO90dkZ2K3e5oufh5ti2k6msB63NBoi', NULL, NULL, NULL, NULL, 'activo', '2025-06-30 22:22:02', '2025-06-30 22:22:02'),
+(null, 'Danny', 'dannyprimera@gmail.com', '$2y$12$BF30tYqbYstWE2fD6sBRQemIED.GN9o9VcGys8YscDHfZXqMeBnhO', NULL, NULL, NULL, NULL, 'activo', '2025-06-30 22:46:07', '2025-06-30 22:46:07'),
+(null, 'Jesus Villarroel', 'soporteit@asonacop.org', '$2y$12$iclkAkV9w24GkbsEUJVIp.MDvbrj00SrJroKErmDwQ1x435QH9Ksq', NULL, NULL, NULL, NULL, 'activo', '2025-07-03 20:59:51', '2025-07-03 20:59:51');
 
 --
 -- Índices para tablas volcadas
