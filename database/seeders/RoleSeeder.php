@@ -14,6 +14,7 @@ class RoleSeeder extends Seeder
         $permisos = [
             'Dashboard',
             'dashboard-user',
+            
             'Gestion casos',
             'crear casos',
             'ver casos',
@@ -22,11 +23,18 @@ class RoleSeeder extends Seeder
             'aprobar casos',            
             'clonar casos',
             'cierre atencion',
+            'ver informes',
+            'ver casos eliminados',
+            'restaurar casos eliminados',
+            'cambiar fecha actual',
+            'guardar continuar',
+
             'Gestion roles',
             'ver roles',
             'editar roles',
             'crear roles',
             'eliminar roles',
+
             'Gestion usuarios',
             'ver usuarios',
             'editar usuarios',
@@ -35,14 +43,9 @@ class RoleSeeder extends Seeder
             'Gestion permisos',
             'Gestion configuracion',
             'ver bitacora',
-            'ver casos eliminados',
-            'restaurar casos eliminados',
             'backups',
-            'guardar continuar',
-            'cambiar fecha actual',
             'configuracion',
-            'sistema deshabilitado',
-            'ver informes'
+            'sistema deshabilitado'
         ];
 
         foreach ($permisos as $permiso) {

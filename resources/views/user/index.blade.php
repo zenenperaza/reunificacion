@@ -17,7 +17,7 @@
 
 @section('content')
     <div class="container-fluid mx-2">
-        <x-breadcrumb title="Gestión de usuarios"  icono="<i class='mdi mdi-account-outline'></i>"/>
+        <x-breadcrumb title="Gestión de usuarios" icono="<i class='mdi mdi-account-outline'></i>" />
         <div class="row mb-3">
             <div class="col-sm-12">
                 <a href="{{ route('users.create') }}" class="btn btn-success">
@@ -51,6 +51,7 @@
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Rol</th>
+                                <th>Superior</th> {{-- nueva columna --}}
                                 <th>Foto</th>
                                 <th>Estatus</th>
                                 <th>Acciones</th>
@@ -120,6 +121,10 @@
                         name: 'roles'
                     },
                     {
+                        data: 'superior',
+                        name: 'superior'
+                    }, // <-- aquí
+                    {
                         data: 'photo',
                         name: 'photo',
                         orderable: false,
@@ -136,6 +141,7 @@
                         searchable: false
                     }
                 ],
+
                 language: {
                     url: "{{ asset('assets/lang/datatables/es-ES.json') }}"
                 },

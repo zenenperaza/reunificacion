@@ -12,17 +12,23 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+
+
     public function index()
     {
-        return view('user.index');
+        $usuarios = User::with('roles', 'parent')->paginate(15); // puedes ajustar el número
+
+        return view('user.index', compact('usuarios'));
     }
-
-
 
     public function create()
     {
-        $roles = Role::all(); // roles con nombre (Spatie)
-        return view('user.create', compact('roles'));
+        $roles = Role::all();
+
+        // Solo usuarios que no son hijos, es decir, que pueden ser asignados como superiores
+        $usuarios_superiores = User::whereNull('parent_id')->get();
+
+        return view('user.create', compact('roles', 'usuarios_superiores'));
     }
 
 
@@ -36,14 +42,30 @@ class UserController extends Controller
             'address' => 'nullable',
             'photo' => 'nullable|image|max:2048',
             'role' => 'required|exists:roles,name',
+            'parent_id' => 'nullable|exists:users,id',
         ]);
 
-        $data = $request->except('role'); // excluye 'role' del insert directo
+        // Validar que el usuario seleccionado como padre no sea hijo
+        if ($request->filled('parent_id')) {
+            $padre = User::find($request->parent_id);
+            if ($padre && $padre->parent_id !== null) {
+                return redirect()->back()
+                    ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
+                    ->withInput();
+            }
+        }
+
+        $data = $request->except('role'); // Excluye 'role' del insert directo
         $data['password'] = Hash::make($request->password);
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('users', 'public');
         }
+
+        $data['parent_id'] = $request->input('parent_id');
+
+        // Valor del checkbox "es_superior"
+        $data['es_superior'] = $request->has('es_superior');
 
         // Crear el usuario
         $user = User::create($data);
@@ -56,12 +78,16 @@ class UserController extends Controller
 
 
 
-
-
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('user.edit', compact('user', 'roles'));
+
+        // Solo usuarios que no son hijos y que no sean el mismo usuario
+        $usuarios_superiores = User::whereNull('parent_id')
+            ->where('id', '!=', $user->id)
+            ->get();
+
+        return view('user.edit', compact('user', 'roles', 'usuarios_superiores'));
     }
 
     public function update(Request $request, User $user)
@@ -69,14 +95,31 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6|confirmed',
+            'password' => 'nullable|min:6',
             'phone' => 'nullable',
             'address' => 'nullable',
             'photo' => 'nullable|image|max:2048',
             'role' => 'required|exists:roles,name',
+            'parent_id' => 'nullable|exists:users,id',
         ]);
 
-        $data = $request->except('role'); // excluye el campo role del update directo
+        // Validaciones de jerarquía
+        if ($request->filled('parent_id')) {
+            if ($request->parent_id == $user->id) {
+                return redirect()->back()
+                    ->withErrors(['parent_id' => '❌ Un usuario no puede ser su propio superior.'])
+                    ->withInput();
+            }
+
+            $padre = User::find($request->parent_id);
+            if ($padre && $padre->parent_id !== null) {
+                return redirect()->back()
+                    ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
+                    ->withInput();
+            }
+        }
+
+        $data = $request->except('role');
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -91,9 +134,13 @@ class UserController extends Controller
             $data['photo'] = $request->file('photo')->store('users', 'public');
         }
 
+        $data['parent_id'] = $request->input('parent_id');
+
+        // Valor del checkbox "es_superior"
+        $data['es_superior'] = $request->has('es_superior');
+
         $user->update($data);
 
-        // Actualizar rol con Spatie
         $user->syncRoles($request->role);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
@@ -117,7 +164,7 @@ class UserController extends Controller
 
     public function data()
     {
-        return DataTables::of(User::with('roles')->select('users.*'))
+        return DataTables::of(User::with(['roles', 'parent'])->select('users.*'))
             ->addColumn('roles', function ($user) {
                 return $user->roles->pluck('name')->implode(', ');
             })
@@ -128,27 +175,29 @@ class UserController extends Controller
                 }
                 return '<span class="text-muted">Sin foto</span>';
             })
-            ->addColumn('acciones', function ($user) {
-                return '           
-                </button>
-                <a href="' . route('users.edit', $user->id) . '" class="btn btn-sm btn-primary">
-                    <i class="mdi mdi-pencil"></i>
-                </a>
-                     <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#deleteModal" data-user-id="' . $user->id . '"
-                    data-user-name="' . $user->name . '">
-                    <i class="mdi mdi-delete"></i>';
+            ->addColumn('superior', function ($user) {
+                return $user->parent?->name ?? '<span class="text-muted">Ninguno</span>';
             })
             ->addColumn('estatus', function ($user) {
                 $checked = $user->estatus === 'activo' ? 'checked' : '';
                 $label = $user->estatus === 'activo' ? 'Activo' : 'Inactivo';
                 return '<input type="checkbox" class="switch-status" data-id="' . $user->id . '" ' . $checked . ' /> <span class="estatus-label">' . $label . '</span>';
             })
-
-            ->rawColumns(['acciones', 'photo', 'roles', 'estatus'])
-
+            ->addColumn('acciones', function ($user) {
+                return '
+                <a href="' . route('users.edit', $user->id) . '" class="btn btn-sm btn-primary me-1">
+                    <i class="mdi mdi-pencil"></i>
+                </a>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal" data-user-id="' . $user->id . '"
+                    data-user-name="' . $user->name . '">
+                    <i class="mdi mdi-delete"></i>
+                </button>';
+            })
+            ->rawColumns(['acciones', 'photo', 'roles', 'estatus', 'superior'])
             ->make(true);
     }
+
 
     public function cambiarEstatus(Request $request, User $user)
     {

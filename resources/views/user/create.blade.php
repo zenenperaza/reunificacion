@@ -29,14 +29,53 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" class="form-check-input" name="es_superior" id="es_superior"
+                                    {{ old('es_superior', $user->es_superior ?? false) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="es_superior">
+                                    Puede ver todos los casos (General)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3" id="parent-container">
+                            <label for="parent_id" class="form-label">Usuario Superior</label>
+                            <select name="parent_id" class="form-select">
+                                <option value="">-- Ninguno --</option>
+                                @foreach ($usuarios_superiores as $superior)
+                                    <option value="{{ $superior->id }}"
+                                        {{ old('parent_id') == $superior->id ? 'selected' : '' }}>
+                                        {{ $superior->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            @error('parent_id')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+
+
+
+                        <div class="col-md-6 mb-3">
                             <label>Nombre completo</label>
                             <input type="text" name="name" class="form-control" required value="{{ old('name') }}">
                         </div>
+
+                    </div>
+                    <div class="row">
 
                         <div class="col-md-6 mb-3">
                             <label>Email</label>
                             <input type="email" name="email" class="form-control" required value="{{ old('email') }}">
                         </div>
+
+                    </div>
+                    <div class="row">
 
                         <div class="col-md-6 mb-3">
                             <label>Teléfono</label>
@@ -48,6 +87,9 @@
                             <input type="text" name="address" class="form-control" value="{{ old('address') }}">
                         </div>
 
+                    </div>
+                    <div class="row">
+
                         <div class="col-md-6 mb-3">
                             <label>Contraseña</label>
                             <input type="password" name="password" class="form-control" required>
@@ -57,6 +99,9 @@
                             <label>Confirmar Contraseña</label>
                             <input type="password" name="password_confirmation" class="form-control" required>
                         </div>
+
+                    </div>
+                    <div class="row">
 
                         <div class="col-md-6 mb-3">
                             <label>Rol</label>
@@ -70,6 +115,9 @@
                             </select>
                         </div>
 
+                    </div>
+                    <div class="row">
+
                         <div class="col-md-6 mb-3">
                             <label>Estatus</label>
                             <select name="estatus" class="form-select" required>
@@ -78,6 +126,9 @@
                                 </option>
                             </select>
                         </div>
+
+                    </div>
+                    <div class="row">
 
                         <div class="col-lg-4">
                             <div class="mt-3">
@@ -123,5 +174,25 @@
     <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
     <script src="{{ asset('assets/libs/dropify/js/dropify.min.js') }}"></script>
     <script src="{{ asset('assets/js/pages/form-fileuploads.init.js') }}"></script>
+
+    <script>
+        function toggleParentField() {
+            const isSuperior = document.getElementById('es_superior').checked;
+            const parentContainer = document.getElementById('parent-container');
+
+            if (isSuperior) {
+                parentContainer.style.display = 'none';
+                parentContainer.querySelector('select').value = '';
+            } else {
+                parentContainer.style.display = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleParentField();
+            document.getElementById('es_superior').addEventListener('change', toggleParentField);
+        });
+    </script>
+
 
 @endsection

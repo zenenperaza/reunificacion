@@ -19,9 +19,12 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->string('photo')->nullable();            
+            $table->string('photo')->nullable();
+            $table->boolean('es_superior')->default(false);
             $table->enum('estatus', ['activo', 'inactivo'])->default('activo');
-            // $table->foreignId('role_id')->constrained()->onDelete('restrict');
+
+            // Usuario superior
+            $table->foreignId('parent_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
 

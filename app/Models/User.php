@@ -2,43 +2,62 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-
 class User extends Authenticatable
 {
-
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var list<string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'address', 'photo', 'estatus', 'role_id',
+        'name', 'email', 'password', 'phone', 'address', 'photo', 'estatus', 'parent_id', 'es_superior',
     ];
 
-     public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
+    /**
+     * Relaciones
+     */
 
     public function casos()
     {
         return $this->hasMany(Caso::class);
     }
-    
+
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(User::class, 'parent_id');
+    }
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Scope para obtener los usuarios de la misma familia
+     */
+    public function scopeFamilia($query)
+    {
+        $usuario = auth()->user();
+
+        $ids = collect([$usuario->id]);
+
+        if ($usuario->parent_id) {
+            $ids->push($usuario->parent_id);
+        }
+
+        $hijos = $usuario->children()->pluck('id');
+        $ids = $ids->merge($hijos)->unique();
+
+        return $query->whereIn('id', $ids);
+    }
+
+    /**
+     * Atributos ocultos para serialización
      */
     protected $hidden = [
         'password',
@@ -46,9 +65,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting de atributos
      */
     protected function casts(): array
     {

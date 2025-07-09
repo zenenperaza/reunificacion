@@ -16,18 +16,16 @@ class AuthenticatedSessionController extends Controller
      * Display the login view.
      */
 
-     
+
     public function create(): View
     {
-        
+
         return view('auth.login');
     }
 
     /**
      * Handle an incoming authentication request.
      */
-
-
 public function store(Request $request): RedirectResponse
 {
     $request->validate([
@@ -40,15 +38,22 @@ public function store(Request $request): RedirectResponse
     if (Auth::attempt($request->only('email', 'password'), $remember)) {
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
         // Verificar estatus
-        if (Auth::user()->estatus !== 'activo') {
+        if ($user->estatus !== 'activo') {
             Auth::logout();
             return back()->withErrors([
                 'email' => 'Tu cuenta está inactiva.',
             ]);
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        // Redirección por rol
+        if ($user->hasRole('Usuario')) {
+            return redirect()->route('dashboard.user');
+        }
+
+        return redirect()->route('dashboard'); // Ruta general por defecto
     }
 
     return back()->withErrors([
