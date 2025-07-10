@@ -6,6 +6,8 @@
 
     <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/dropify/css/dropify.min.css') }}" rel="stylesheet" />
+    
+    <link href="{{ asset('assets/css/users.css') }}" rel="stylesheet">
 
 @endsection
 
@@ -20,7 +22,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card modo-claro-forzado">
             <div class="card-body">
                 <h4 class="header-title mb-4">Registrar Nuevo Usuario</h4>
 

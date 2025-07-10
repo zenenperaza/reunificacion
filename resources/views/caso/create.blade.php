@@ -28,8 +28,8 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Registro de Caso</h4>
-                <div id="progressbarwizard">
-                    <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso">
+                <div id="progressbarwizard"  >
+                    <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso" class="modo-claro-forzado">
                         @csrf
 
                         <input type="hidden" name="caso_id" id="caso_id" value="">
@@ -208,7 +208,7 @@
                                                         'ICBF Colombia',
                                                         'Save the Children',
                                                         'OIM',
-                                                        'Aideas Infantiles',
+                                                        'Aldeas Infantiles',
                                                         'Defensoría NNA',
                                                         'CISP',
                                                         'HIAS',

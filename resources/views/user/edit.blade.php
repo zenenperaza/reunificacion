@@ -6,6 +6,8 @@
 
     <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/dropify/css/dropify.min.css') }}" rel="stylesheet" />
+    
+    <link href="{{ asset('assets/css/users.css') }}" rel="stylesheet">
 
 @endsection
 
@@ -31,7 +33,7 @@
                 @endif
 
 
-                <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="modo-claro-forzado">
                     @csrf
                     @method('PUT')
 
@@ -133,7 +135,7 @@
 
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <div class="mt-3">
                             <input type="file" name="photo" id="photo" data-plugins="dropify"
                                 data-default-file="{{ $user->photo ? asset('storage/' . $user->photo) : '' }}" />

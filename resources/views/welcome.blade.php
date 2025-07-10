@@ -16,36 +16,43 @@
 
 <body class="bg-white text-gray-900 font-sans">
 
-    <!-- Menú Sticky -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center text-sm">
-            <span class="font-bold text-lg text-[#00437c]">PROGRAMA RLF</span>
-            @if (Route::has('login'))
-                <nav>
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">Dashboard</a>
-                        
-                         <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition dropdown-item notify-item">
-                        <i class="fe-log-out"></i>
-                        <span>Cerrar sesión</span>
-                    </button>
-                </form>
-                    @else
-                        <a href="{{ route('login') }}"
-                    class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
-                    Iniciar Sesión
-                </a>
-                <a href="{{ route('register') }}"
-                    class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
-                    Registrate
-                </a>
-                    @endauth
-                </nav>
-            @endif
-        </div>
-    </header>
+ <!-- Menú Sticky Mejorado -->
+<header class="sticky top-0 z-50 bg-white shadow-sm max-w-6xl mx-auto px-4 ">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center text-sm">
+        <!-- Logo / Título -->
+        <span class="font-bold text-lg text-[#00437c]">PROGRAMA RLF</span>
+
+        <!-- Menú de Navegación -->
+        @if (Route::has('login'))
+            <nav class="flex gap-2 flex-wrap items-center">
+                @auth
+                    <a href="{{ url('/dashboard') }}"
+                        class="bg-[#00437c] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#00355f] transition">
+                        Dashboard
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="bg-[#00437c] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#00355f] transition flex items-center gap-1">
+                            <i class="fe-log-out"></i>
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}"
+                        class="bg-[#00437c] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#00355f] transition">
+                        Iniciar Sesión
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="bg-[#00437c] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#00355f] transition">
+                        Regístrate
+                    </a>
+                @endauth
+            </nav>
+        @endif
+    </div>
+</header>
 
     <!-- Contenido principal -->
     <main class="max-w-6xl mx-auto px-4 py-12">
@@ -57,8 +64,10 @@
                     Programa de Reunificación y Localización Familiar
                 </h1>
                 <p class="text-lg text-gray-700">
-                    Un esfuerzo de <strong>ASONACOP</strong> para reencontrar a niños, niñas y adolescentes con sus familiares.
-                    Ofrecemos apoyo humanitario, acompañamiento legal y soluciones seguras para proteger el derecho a vivir en familia.
+                    Un esfuerzo de <strong>ASONACOP</strong> para reencontrar a niños, niñas y adolescentes con sus
+                    familiares.
+                    Ofrecemos apoyo humanitario, acompañamiento legal y soluciones seguras para proteger el derecho a
+                    vivir en familia.
                 </p>
                 <a href="{{ route('login') }}"
                     class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">
@@ -68,8 +77,7 @@
 
             <!-- Imagen -->
             <div class="lg:w-1/2">
-                <img src="{{ asset('assets/images/rlf-landing-hero.png') }}"
-                    alt="Familia reunida - Programa RLF"
+                <img src="{{ asset('assets/images/rlf-landing-hero.png') }}" alt="Familia reunida - Programa RLF"
                     class="w-full max-w-md mx-auto lg:mx-0 rounded-xl shadow-md">
             </div>
         </section>
@@ -79,7 +87,8 @@
             <h2 class="text-2xl font-semibold mb-8">Historias que inspiran</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <blockquote class="bg-gray-100 rounded-md shadow p-6 text-left">
-                    <p>"Pensamos que nunca volveríamos a ver a nuestro hijo. Gracias al programa, estamos juntos nuevamente."</p>
+                    <p>"Pensamos que nunca volveríamos a ver a nuestro hijo. Gracias al programa, estamos juntos
+                        nuevamente."</p>
                     <footer class="mt-2 text-sm text-gray-600">– Familia González</footer>
                 </blockquote>
                 <blockquote class="bg-gray-100 rounded-md shadow p-6 text-left">
@@ -110,8 +119,9 @@
 
     <!-- Footer -->
     <footer class="text-center text-sm text-gray-500 py-8">
-        © {{ date('Y') }} Programa RLF - ASONACOP 
+        © {{ date('Y') }} Programa RLF - ASONACOP
     </footer>
 
 </body>
+
 </html>

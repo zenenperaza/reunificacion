@@ -56,7 +56,7 @@
 @section('content')
     <div class="container-fluid">
         <x-breadcrumb title="Editar Caso" />
-        <div class="card">
+        <div class="card modo-claro-forzado">
             <div class="card-body">
                 <h4 class="header-title mb-2">Editar Caso: {{ $caso->numero_caso }}</h4>
                 <div id="progressbarwizard">
@@ -223,7 +223,7 @@
                                                     'ICBF Colombia',
                                                     'Save the Children',
                                                     'OIM',
-                                                    'Aideas Infantiles',
+                                                    'Aldeas Infantiles',
                                                     'Defensoría NNA',
                                                     'CISP',
                                                     'HIAS',

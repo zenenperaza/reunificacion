@@ -4,6 +4,11 @@ php artisan make:migration create_municipios_table
 php artisan make:migration create_parroquia_table
 php artisan make:migration create_casos_table
 
+
+mi api key 
+
+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
+
 2025_06_16_175037_create_estados_table.php
 
 composer install

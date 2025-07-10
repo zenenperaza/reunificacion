@@ -6,71 +6,74 @@
 <div class="navbar-custom">
     <ul class="list-unstyled topnav-menu float-end mb-0">
 
- <li class="d-none d-lg-block position-relative" style="z-index: 1050;">
-    <form class="app-search" action="{{ route('busqueda.resultados') }}" method="GET" autocomplete="off">
-        <div class="app-search-box">
-            <div class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Buscar..." id="top-search" autocomplete="off">
-                <button class="btn input-group-text" type="submit">
-                    <i class="fe-search"></i>
-                </button>
-            </div>
-
-            <!-- Dropdown AJAX personalizado -->
-            <div id="search-dropdown"
-                style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ccc; border-top: none; max-height: 300px; overflow-y: auto; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); width: 400px;">
-                <div class="px-3 py-2 border-bottom bg-light fw-bold text-dark">Resultados encontrados</div>
-                <div id="search-results"></div>
-                <div class="px-3 py-2 text-center bg-light">
-           <a href="#" class="text-primary" id="ver-todo-link">Ver todos los resultados</a>
-    </div>
-            </div>
-        </div>
-    </form>
-</li>
-
-
-
-
-
-
-<li class="dropdown notification-list topbar-dropdown">
-    <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#">
-        <i class="fe-bell noti-icon"></i>
-        @if($cantidadNotificaciones > 0)
-            <span class="badge bg-danger rounded-circle noti-icon-badge">{{ $cantidadNotificaciones }}</span>
-        @endif
-    </a>
-    <div class="dropdown-menu dropdown-menu-end dropdown-lg">
-        <div class="dropdown-item noti-title">
-            <h5 class="m-0">
-                <span class="float-end"><a href="#" class="text-dark"><small>Limpiar Todo</small></a></span>
-                Notificaciones
-            </h5>
-        </div>
-
-        <div class="noti-scroll" data-simplebar style="max-height: 230px">
-            @forelse ($notificaciones as $caso)
-                <a href="{{ route('casos.show', $caso->id) }}" class="dropdown-item notify-item">
-                    <div class="notify-icon bg-warning">
-                        <i class="mdi mdi-clock-alert-outline"></i>
+        <li class="d-none d-lg-block position-relative" style="z-index: 1050;">
+            <form class="app-search" action="{{ route('busqueda.resultados') }}" method="GET" autocomplete="off">
+                <div class="app-search-box">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" placeholder="Buscar..."
+                            id="top-search" autocomplete="off">
+                        <button class="btn input-group-text" type="submit">
+                            <i class="fe-search"></i>
+                        </button>
                     </div>
-                    <p class="notify-details">
-                        Caso #{{ $caso->numero_caso ?? $caso->id }} en espera
-                        <small class="text-muted">{{ $caso->created_at->diffForHumans() }}</small>
-                    </p>
-                </a>
-            @empty
-                <div class="dropdown-item text-muted text-center">No hay casos en espera</div>
-            @endforelse
-        </div>
 
-        <a href="{{ route('casos.index', ['condicion' => 'En espera']) }}"
-           class="dropdown-item text-center text-primary notify-item notify-all">
-            Ver todos los casos en espera <i class="fe-arrow-right"></i>
-        </a>
-    </div>
-</li>
+                    <!-- Dropdown AJAX personalizado -->
+                    <div id="search-dropdown" class="dropdown-busqueda"
+                        style="display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 300px; overflow-y: auto; width: 400px;">
+                        <div class="dropdown-header px-3 py-2 fw-bold">Resultados encontrados</div>
+                        <div id="search-results"></div>
+                        <div class="dropdown-footer px-3 py-2 text-center">
+                            <a href="#" class="ver-todo-link">Ver todos los resultados</a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </li>
+
+
+
+
+
+
+        <li class="dropdown notification-list topbar-dropdown">
+            <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#">
+                <i class="fe-bell noti-icon"></i>
+                @if ($cantidadNotificaciones > 0)
+                    <span class="badge bg-danger rounded-circle noti-icon-badge">{{ $cantidadNotificaciones }}</span>
+                @endif
+            </a>
+            <div class="dropdown-menu dropdown-menu-end dropdown-lg">
+                <div class="dropdown-item noti-title">
+                    <h5 class="m-0">
+                        <span class="float-end"><a href="#" class="text-dark"><small>Limpiar
+                                    Todo</small></a></span>
+                        Notificaciones
+                    </h5>
+                </div>
+
+                <div class="noti-scroll" data-simplebar style="max-height: 230px">
+                    @forelse ($notificaciones as $caso)
+                        <a href="{{ route('casos.show', $caso->id) }}" class="dropdown-item notify-item">
+                            <div class="notify-icon bg-warning">
+                                <i class="mdi mdi-clock-alert-outline"></i>
+                            </div>
+                            <p class="notify-details">
+                                Caso #{{ $caso->numero_caso ?? $caso->id }} en espera
+                                <small class="text-muted">{{ $caso->created_at->diffForHumans() }}</small>
+                            </p>
+                        </a>
+                    @empty
+                        <div class="dropdown-item text-muted text-center">No hay casos en espera</div>
+                    @endforelse
+                </div>
+
+                <a href="{{ route('casos.index', ['condicion' => 'En espera']) }}"
+                    class="dropdown-item text-center text-primary notify-item notify-all">
+                    Ver todos los casos en espera <i class="fe-arrow-right"></i>
+                </a>
+            </div>
+        </li>
 
 
         <li class="dropdown notification-list topbar-dropdown">
