@@ -14,6 +14,7 @@ use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\LockScreenController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BusquedaController;
+use App\Http\Controllers\FamiliaController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
@@ -284,6 +285,8 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
             Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
         });
     });
+
+    Route::resource('familias', FamiliaController::class)->middleware(['auth']);
 
 
 

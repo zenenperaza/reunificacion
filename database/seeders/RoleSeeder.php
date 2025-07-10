@@ -45,7 +45,11 @@ class RoleSeeder extends Seeder
             'ver bitacora',
             'backups',
             'configuracion',
-            'sistema deshabilitado'
+            'sistema deshabilitado',
+            'ver familias',
+            'crear familias',
+            'editar familias',
+            'eliminar familias',
         ];
 
         foreach ($permisos as $permiso) {

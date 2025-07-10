@@ -6,7 +6,7 @@
 
     <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/dropify/css/dropify.min.css') }}" rel="stylesheet" />
-    
+
     <link href="{{ asset('assets/css/users.css') }}" rel="stylesheet">
 
 @endsection
@@ -40,8 +40,26 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-3" id="parent-container">
-                            <label for="parent_id" class="form-label">Usuario Superior</label>
+                    </div>
+                    <div class="row" id="parent-container">
+                        <div class="col-md-6 mb-3">
+                            <label for="familia_id" class="form-label">Familia</label>
+                            <select name="familia_id" id="familia_id" class="form-select" required>
+                                <option value="">-- Selecciona una familia --</option>
+                                @foreach ($familias as $familia)
+                                    <option value="{{ $familia->id }}"
+                                        {{ old('familia_id') == $familia->id ? 'selected' : '' }}>
+                                        {{ $familia->nombre }}
+                                        {{ $familia->ver_entre_hermanos ? '(✔ puede ver entre hermanos)' : '(✘ no puede ver entre hermanos)' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
+
+                        <div class="col-md-6 mb-3">
+                            <label for="parent_id" class="form-label">Usuario Superior (Padre)</label>
                             <select name="parent_id" class="form-select">
                                 <option value="">-- Ninguno --</option>
                                 @foreach ($usuarios_superiores as $superior)
@@ -51,11 +69,14 @@
                                     </option>
                                 @endforeach
                             </select>
-
-                            @error('parent_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
                         </div>
+
+                        {{-- <div class="col-md-6 mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="ver_entre_hermanos"
+                                name="ver_entre_hermanos" {{ old('ver_entre_hermanos') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="ver_entre_hermanos">¿Puede ver casos de hermanos?</label>
+                        </div> --}}
+
                     </div>
 
 

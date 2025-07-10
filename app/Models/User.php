@@ -11,17 +11,21 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'address', 'photo', 'estatus', 'parent_id', 'es_superior',
+        'name',
+        'email',
+        'password',
+        'phone',
+        'address',
+        'photo',
+        'estatus',
+        'parent_id',
+        'es_superior',
     ];
 
     /**
      * Relaciones
      */
-
     public function casos()
     {
         return $this->hasMany(Caso::class);
@@ -37,36 +41,51 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'parent_id');
     }
 
-    /**
-     * Scope para obtener los usuarios de la misma familia
-     */
+    public function familias()
+    {
+        return $this->belongsToMany(Familia::class)
+            ->withPivot('rol')
+            ->withTimestamps();
+    }
+
+ 
     public function scopeFamilia($query)
     {
         $usuario = auth()->user();
-
+        $familias = $usuario->familias()->with('usuarios')->get();
         $ids = collect([$usuario->id]);
 
-        if ($usuario->parent_id) {
-            $ids->push($usuario->parent_id);
+        foreach ($familias as $familia) {
+            $usuariosFamilia = collect($familia->usuarios);
+
+            $padres = $usuariosFamilia->where('pivot.rol', 'padre');
+            $hijos  = $usuariosFamilia->where('pivot.rol', 'hijo');
+
+            if ($padres->contains('id', $usuario->id)) {
+                // Si es padre, ve a sus hijos
+                $ids = $ids->merge($hijos->pluck('id'));
+            }
+
+            if ($hijos->contains('id', $usuario->id)) {
+                // Si es hijo, ve al padre
+                $ids = $ids->merge($padres->pluck('id'));
+
+                // Si la familia permite ver entre hermanos
+                if ($familia->ver_entre_hermanos) {
+                    $ids = $ids->merge($hijos->pluck('id'));
+                }
+            }
         }
 
-        $hijos = $usuario->children()->pluck('id');
-        $ids = $ids->merge($hijos)->unique();
-
-        return $query->whereIn('id', $ids);
+        return $query->whereIn('id', $ids->unique());
     }
 
-    /**
-     * Atributos ocultos para serialización
-     */
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Casting de atributos
-     */
     protected function casts(): array
     {
         return [

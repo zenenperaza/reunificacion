@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\Permission\Models\Role;
 
+use App\Models\Familia; // Asegúrate de tener esta línea arriba
+
+
+
+
 
 class UserController extends Controller
 {
@@ -21,60 +26,68 @@ class UserController extends Controller
         return view('user.index', compact('usuarios'));
     }
 
-    public function create()
-    {
-        $roles = Role::all();
+public function create()
+{
+    $roles = Role::all();
 
-        // Solo usuarios que no son hijos, es decir, que pueden ser asignados como superiores
-        $usuarios_superiores = User::whereNull('parent_id')->get();
+    // Solo usuarios que no son hijos, es decir, que pueden ser asignados como superiores
+    $usuarios_superiores = User::whereNull('parent_id')->get();
 
-        return view('user.create', compact('roles', 'usuarios_superiores'));
+    // Obtener todas las familias para el select
+    $familias = Familia::all();
+
+    return view('user.create', compact('roles', 'usuarios_superiores', 'familias'));
+}
+
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:6|confirmed',
+        'phone' => 'nullable',
+        'address' => 'nullable',
+        'photo' => 'nullable|image|max:2048',
+        'role' => 'required|exists:roles,name',
+        'parent_id' => 'nullable|exists:users,id',
+        'familia_id' => 'required|exists:familias,id',
+        'es_superior' => 'nullable|boolean',
+    ]);
+
+    // Validar que el usuario seleccionado como padre no sea hijo
+    if ($request->filled('parent_id')) {
+        $padre = User::find($request->parent_id);
+        if ($padre && $padre->familias()->wherePivot('rol', 'hijo')->exists()) {
+            return redirect()->back()
+                ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
+                ->withInput();
+        }
     }
 
+    $data = $request->except(['role', 'password', 'photo', 'familia_id']);
+    $data['password'] = Hash::make($request->password);
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
-            'phone' => 'nullable',
-            'address' => 'nullable',
-            'photo' => 'nullable|image|max:2048',
-            'role' => 'required|exists:roles,name',
-            'parent_id' => 'nullable|exists:users,id',
-        ]);
-
-        // Validar que el usuario seleccionado como padre no sea hijo
-        if ($request->filled('parent_id')) {
-            $padre = User::find($request->parent_id);
-            if ($padre && $padre->parent_id !== null) {
-                return redirect()->back()
-                    ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
-                    ->withInput();
-            }
-        }
-
-        $data = $request->except('role'); // Excluye 'role' del insert directo
-        $data['password'] = Hash::make($request->password);
-
-        if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('users', 'public');
-        }
-
-        $data['parent_id'] = $request->input('parent_id');
-
-        // Valor del checkbox "es_superior"
-        $data['es_superior'] = $request->has('es_superior');
-
-        // Crear el usuario
-        $user = User::create($data);
-
-        // Asignar rol
-        $user->assignRole($request->role);
-
-        return redirect()->route('users.index')->with('success', 'Usuario creado correctamente.');
+    if ($request->hasFile('photo')) {
+        $data['photo'] = $request->file('photo')->store('users', 'public');
     }
+
+    $data['parent_id'] = $request->input('parent_id');
+    $data['es_superior'] = $request->boolean('es_superior', false);
+
+    // Crear usuario
+    $user = User::create($data);
+
+    // Asociar a familia con rol en pivote
+    $familia = Familia::findOrFail($request->familia_id);
+    $rol = $request->filled('parent_id') ? 'hijo' : 'padre';
+    $user->familias()->attach($familia->id, ['rol' => $rol]);
+
+    // Asignar rol (Spatie)
+    $user->assignRole($request->role);
+
+    return redirect()->route('users.index')->with('success', '✅ Usuario creado correctamente.');
+}
+
 
 
 

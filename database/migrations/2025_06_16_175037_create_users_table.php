@@ -23,10 +23,18 @@ return new class extends Migration
             $table->boolean('es_superior')->default(false);
             $table->enum('estatus', ['activo', 'inactivo'])->default('activo');
 
-            // Usuario superior
+            // Familia a la que pertenece el usuario (ej: Zulia, Táchira)
+            $table->string('familia')->nullable();
+
+            // Usuario superior (padre)
             $table->foreignId('parent_id')->nullable()->constrained('users')->onDelete('set null');
+
+            // Si puede ver casos de sus hermanos en la familia
+            $table->boolean('ver_entre_hermanos')->default(false);
+
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

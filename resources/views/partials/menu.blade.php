@@ -137,6 +137,13 @@
                                         </a>
                                     </li>
                                 @endcan
+                                <li class="menu-item">
+                                    <a href="{{ route('familias.index') }}" class="menu-link">
+                                        <i class="mdi mdi-account-group-outline"></i>
+                                        <span> Familias </span>
+                                    </a>
+                                </li>
+
 
 
 

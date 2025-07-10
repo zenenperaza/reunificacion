@@ -7,6 +7,8 @@ use App\Models\Caso;
 use App\Models\Configuracion;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Familia;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +24,7 @@ class DatabaseSeeder extends Seeder
             MunicipioSeeder::class,
             ParroquiaSeeder::class,
             ConfiguracionSeeder::class, 
+            FamiliaSeeder::class,
         ]);
 
 
