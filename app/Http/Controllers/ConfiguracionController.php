@@ -21,33 +21,37 @@ class ConfiguracionController extends Controller
             'sistema_deshabilitado' => 'required|in:si,no',
             'periodo' => 'required|date_format:Y-m',
             'nombre_sistema' => 'nullable|string|max:255',
+            'texto_portada' => 'nullable|string',
             'logo_sistema' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'imagen_portada' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $config = Configuracion::first();
-
-        if (!$config) {
-            $config = new Configuracion(); // Por si no existe aún
-        }
+        $config = Configuracion::first() ?? new Configuracion();
 
         $config->conf_fecha_actual = $request->conf_fecha_actual;
         $config->sistema_deshabilitado = $request->sistema_deshabilitado;
         $config->periodo = $request->periodo;
         $config->nombre_sistema = $request->nombre_sistema;
+        $config->texto_portada = $request->texto_portada;
 
-        // Si subieron un nuevo logo
+        // ✔️ Cargar nuevo logo si se subió
         if ($request->hasFile('logo_sistema')) {
-            // Opcional: eliminar logo anterior si existe
             if ($config->logo_sistema && Storage::disk('public')->exists($config->logo_sistema)) {
                 Storage::disk('public')->delete($config->logo_sistema);
             }
+            $config->logo_sistema = $request->file('logo_sistema')->store('logos', 'public');
+        }
 
-            $path = $request->file('logo_sistema')->store('logos', 'public');
-            $config->logo_sistema = $path;
+        // ✔️ Cargar nueva imagen de portada si se subió
+        if ($request->hasFile('imagen_portada')) {
+            if ($config->imagen_portada && Storage::disk('public')->exists($config->imagen_portada)) {
+                Storage::disk('public')->delete($config->imagen_portada);
+            }
+            $config->imagen_portada = $request->file('imagen_portada')->store('portada', 'public');
         }
 
         $config->save();
 
-        return redirect()->back()->with('success', 'Configuración actualizada correctamente.');
+        return redirect()->back()->with('success', '✅ Configuración actualizada correctamente.');
     }
 }

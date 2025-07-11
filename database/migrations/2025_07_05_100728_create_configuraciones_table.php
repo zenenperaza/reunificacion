@@ -17,6 +17,8 @@ class CreateConfiguracionesTable extends Migration
             $table->string('periodo')->nullable()->default(null);
             $table->string('nombre_sistema')->nullable(); // Nombre del sistema
             $table->string('logo_sistema')->nullable();   // Ruta al logo en storage o public
+            $table->text('texto_portada')->nullable();
+            $table->string('imagen_portada')->nullable();
 
             $table->timestamps();
         });

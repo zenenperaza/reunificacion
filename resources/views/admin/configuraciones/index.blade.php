@@ -72,6 +72,30 @@
                         <small class="form-text text-muted">Formatos permitidos: jpg, jpeg, png, webp. Tamaño máximo:
                             2MB.</small>
                     </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Texto del encabezado público</label>
+                            <textarea name="texto_portada" rows="4" class="form-control">{{ old('texto_portada', $config->texto_portada) }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Imagen actual de portada:</label><br>
+                        @if ($config->imagen_portada)
+                            <img src="{{ Storage::url($config->imagen_portada) }}" alt="Imagen portada"
+                                class="img-thumbnail" style="max-height: 180px;">
+                        @else
+                            <p class="text-muted">No hay imagen de portada cargada.</p>
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nueva imagen de portada</label>
+                        <input type="file" name="imagen_portada" class="form-control">
+                        <small class="form-text text-muted">Formatos permitidos: jpg, jpeg, png, webp. Tamaño máximo:
+                            2MB.</small>
+                    </div>
+
 
                     <button type="submit" class="btn btn-primary">Guardar configuración</button>
                 </form>
