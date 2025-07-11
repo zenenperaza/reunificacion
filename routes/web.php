@@ -213,11 +213,11 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
     });
 
 
-    // Gestin de roles y permisos (solo Admin)
-    Route::middleware(['auth', 'role:Administrador'])->group(function () {
+    Route::middleware(['auth', 'permission:Gestion roles'])->group(function () {
         Route::resource('role', RoleController::class)->except(['show']);
         Route::resource('permission', PermissionController::class)->except(['show', 'create', 'edit']);
     });
+
 
 
     Route::middleware('auth')->group(function () {

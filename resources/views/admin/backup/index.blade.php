@@ -30,7 +30,7 @@
                 </form>
 
                 {{-- Restaurar Backup --}}
-                <form method="POST" action="{{ url('/admin/backup/restaurar') }}" enctype="multipart/form-data"
+                {{-- <form method="POST" action="{{ url('/admin/backup/restaurar') }}" enctype="multipart/form-data"
                     class="row g-2 mt-3">
                     @csrf
                     <div class="col-md-6">
@@ -41,7 +41,7 @@
                         <button type="submit" class="btn btn-warning mt-2"><i class="uil uil-upload-alt"></i> Restaurar
                             Backup</button>
                     </div>
-                </form>
+                </form> --}}
             </div>
         </div>
 
@@ -74,7 +74,7 @@
                                             <i class="uil uil-import"></i> Descargar
                                         </a>
 
-                                        <form method="POST" action="{{ route('backup.delete', $file['name']) }}"
+                                        {{-- <form method="POST" action="{{ route('backup.delete', $file['name']) }}"
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
@@ -83,7 +83,7 @@
                                                 <i class="uil uil-trash-alt"></i> Eliminar
                                             </button>
 
-                                        </form>
+                                        </form> --}}
                                     </td>
                                 </tr>
                             @empty

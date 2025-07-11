@@ -35,10 +35,10 @@ class CasosExport implements
     protected $search;
     protected $estadoCompletado;
     protected $condicion;
+    protected $user;
 
 
-
-    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null, $condicion = null)
+    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null, $condicion = null, $user = null)
     {
         $this->start = $start;
         $this->end = $end;
@@ -47,6 +47,7 @@ class CasosExport implements
         $this->search = $search;
         $this->estadoCompletado = $estadoCompletado;
         $this->condicion = $condicion;
+        $this->user = $user;
     }
 
     public function collection()
@@ -60,6 +61,33 @@ class CasosExport implements
             'parroquiaDestino',
             'user'
         ]);
+
+        if (!$this->user->es_superior && !$this->user->hasRole('Administrador')) {
+            if (is_null($this->user->parent_id)) {
+                // Es padre: ver sus casos y los de sus hijos
+                $ids = \App\Models\User::where('parent_id', $this->user->id)->pluck('id')->toArray();
+                $ids[] = $this->user->id;
+                $query->whereIn('user_id', $ids);
+            } else {
+                // Es hijo
+                $padreId = $this->user->parent_id;
+                $ids = [$this->user->id, $padreId];
+
+                // Ver entre hermanos solo si la familia lo permite
+                $familias = $this->user->familias()->wherePivot('rol', 'hijo')->get();
+                $puedeVerHermanos = $familias->contains(function ($familia) {
+                    return $familia->ver_entre_hermanos;
+                });
+
+                if ($puedeVerHermanos) {
+                    $hermanos = \App\Models\User::where('parent_id', $padreId)->pluck('id')->toArray();
+                    $ids = array_unique(array_merge($ids, $hermanos));
+                }
+
+                $query->whereIn('user_id', $ids);
+            }
+        }
+
 
         if ($this->start && $this->end) {
             $query->whereBetween('fecha_actual', [$this->start, $this->end]);

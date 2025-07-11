@@ -56,6 +56,15 @@
 @section('content')
     <div class="container-fluid">
         <x-breadcrumb title="Editar Caso" />
+        
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <a href="{{ route('casos.index') }}" class="btn btn-secondary">
+                    <i class="mdi mdi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
+
         <div class="card modo-claro-forzado">
             <div class="card-body">
                 <h4 class="header-title mb-2">Editar Caso: {{ $caso->numero_caso }}</h4>

@@ -23,7 +23,15 @@
 
 @section('content')
     <div class="container-fluid">
-        <x-breadcrumb title="Crear Caso" />
+        <x-breadcrumb title="Crear Caso" />   
+        
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <a href="{{ route('casos.index') }}" class="btn btn-secondary">
+                    <i class="mdi mdi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
 
         <div class="card">
             <div class="card-body">
@@ -1734,7 +1742,7 @@
                             toast: true,
                             position: 'center',
                             icon: 'success',
-                            title: 'Datos guardados correctamente. ',
+                            title: 'Datos guardados correctamente. Continue con la siguiente seccion.',
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true,
@@ -1760,7 +1768,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Hubo un problema al guardar el caso. Recuerda llenar los Campos obligatorios: Estado, Municipio, Parroquia...',
+                        text: 'Hubo un problema al guardar el caso. Recuerda llenar los Campos obligatorios: Fecha atencion, Estado, Municipio, Parroquia...',
                         footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el desarrollador</a>'
                     });
                 })

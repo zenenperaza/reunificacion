@@ -43,25 +43,44 @@ class CasoController extends Controller
     public function data(Request $request)
     {
         $query = Caso::with(['estado', 'municipio']);
-
         $user = auth()->user();
 
         if (!$user->es_superior && !$user->hasRole('Administrador')) {
+            $idsPermitidos = [$user->id];
+
+            // Si es PADRE
             if (is_null($user->parent_id)) {
-                // Es PADRE: ver sus casos y los de sus hijos
-                $ids = User::where('parent_id', $user->id)->pluck('id')->toArray();
-                $ids[] = $user->id;
-                $query->whereIn('user_id', $ids);
-            } else {
-                // Es HIJO: ver sus casos, los de su padre y sus hermanos
-                $padreId = $user->parent_id;
-                $hermanosIds = User::where('parent_id', $padreId)->pluck('id')->toArray();
-                $ids = array_unique(array_merge($hermanosIds, [$user->id, $padreId]));
-                $query->whereIn('user_id', $ids);
+                $hijosIds = User::where('parent_id', $user->id)->pluck('id')->toArray();
+                $idsPermitidos = array_merge($idsPermitidos, $hijosIds);
             }
+            // Si es HIJO
+            else {
+                // Agrega al padre
+                $idsPermitidos[] = $user->parent_id;
+
+                // Solo agregar hermanos si la familia tiene ver_entre_hermanos activado
+                $familiasVisibles = $user->familias()
+                    ->wherePivot('rol', 'hijo')
+                    ->where('ver_entre_hermanos', true)
+                    ->pluck('familias.id');
+
+                if ($familiasVisibles->isNotEmpty()) {
+                    $hermanos = User::where('parent_id', $user->parent_id)
+                        ->where('id', '!=', $user->id)
+                        ->whereHas('familias', function ($q) use ($familiasVisibles) {
+                            $q->whereIn('familias.id', $familiasVisibles)->where('rol', 'hijo');
+                        })
+                        ->pluck('id')
+                        ->toArray();
+
+                    $idsPermitidos = array_merge($idsPermitidos, $hermanos);
+                }
+            }
+
+            $query->whereIn('user_id', array_unique($idsPermitidos));
         }
 
-
+        // Filtros adicionales
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('fecha_actual', [$request->start_date, $request->end_date]);
         }
@@ -74,6 +93,7 @@ class CasoController extends Controller
             $query->where('condicion', $request->condicion);
         }
 
+        // Campos validados para saber si está completo
         $camposValidacion = [
             'numero_caso' => 'Número de Caso',
             'fecha_atencion' => 'Fecha de Atención',
@@ -148,18 +168,19 @@ class CasoController extends Controller
             return $botones;
         };
 
+        // Completado vs incompleto
         if (!$request->filled('estado_completado')) {
             return datatables()->eloquent($query)
                 ->addColumn('condicion', $getCondicion)
                 ->addColumn('estado_completado', $getEstadoCompletado)
                 ->addColumn('acciones', $getAcciones)
-                ->editColumn('fecha_atencion', fn($caso) => $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '')
-                ->editColumn('fecha_actual', fn($caso) => $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '')
+                ->editColumn('fecha_atencion', fn($caso) => optional($caso->fecha_atencion)->format('d/m/Y'))
+                ->editColumn('fecha_actual', fn($caso) => optional($caso->fecha_actual)->format('d/m/Y'))
                 ->rawColumns(['acciones', 'condicion', 'estado_completado'])
                 ->make(true);
         }
 
-        // ✅ Con filtro "estado_completado"
+        // Con filtro estado_completado
         $casos = $query->get();
         $valor = $request->estado_completado;
 
@@ -178,11 +199,12 @@ class CasoController extends Controller
             ->addColumn('condicion', $getCondicion)
             ->addColumn('estado_completado', $getEstadoCompletado)
             ->addColumn('acciones', $getAcciones)
-            ->editColumn('fecha_atencion', fn($caso) => $caso->fecha_atencion ? \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') : '')
-            ->editColumn('fecha_actual', fn($caso) => $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('d/m/Y') : '')
+            ->editColumn('fecha_atencion', fn($caso) => optional($caso->fecha_atencion)->format('d/m/Y'))
+            ->editColumn('fecha_actual', fn($caso) => optional($caso->fecha_actual)->format('d/m/Y'))
             ->rawColumns(['acciones', 'condicion', 'estado_completado'])
             ->make(true);
     }
+
 
     public function create()
     {
@@ -502,7 +524,7 @@ class CasoController extends Controller
         $filename = 'casos_' . ($start ?? 'inicio') . '_a_' . ($end ?? 'hoy') . '.xlsx';
 
         return Excel::download(
-            new CasosExport($start, $end, null, $estatus, $search, $estadoCompletado, $condicion),
+            new CasosExport($start, $end, null, $estatus, $search, $estadoCompletado, $condicion, auth()->user()),
             $filename
         );
     }

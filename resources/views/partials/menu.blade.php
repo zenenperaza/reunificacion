@@ -96,13 +96,8 @@
                             <span class="menu-arrow"></span>
                         </a>
                         <div class="collapse" id="contacts">
-                            <ul class="nav-second-level">
-                                @can('Gestion roles')
-                                    <li><a href="{{ route('role.index') }}">
-                                            <i class="fab fa-critical-role"></i>
-                                            <span> Roles </span></a></li>
-                                @endcan
 
+                            <ul class="nav-second-level">
                                 @can('Gestion permisos')
                                     <li>
                                         <a href="{{ route('permission.index') }}">
@@ -111,6 +106,26 @@
                                         </a>
                                     </li>
                                 @endcan
+
+                                @can('Gestion roles')
+                                    <li>
+                                        <a href="{{ route('role.index') }}">
+                                            <i class="fab fa-critical-role"></i>
+                                            <span> Roles </span></a>
+                                    </li>
+                                @endcan
+                                
+                                
+                                @can('ver familias')
+                                <li class="menu-item">
+                                    <a href="{{ route('familias.index') }}" class="menu-link">
+                                        <i class="mdi mdi-account-group-outline"></i>
+                                        <span> Familias </span>
+                                    </a>
+                                </li>                                
+                                @endcan
+
+                           
 
                                 @can('configuracion')
                                     <li class="nav-item">
@@ -137,12 +152,6 @@
                                         </a>
                                     </li>
                                 @endcan
-                                <li class="menu-item">
-                                    <a href="{{ route('familias.index') }}" class="menu-link">
-                                        <i class="mdi mdi-account-group-outline"></i>
-                                        <span> Familias </span>
-                                    </a>
-                                </li>
 
 
 
