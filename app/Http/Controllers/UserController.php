@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\Permission\Models\Role;
 
+use Illuminate\Validation\Rule;
+
 use App\Models\Familia; // Asegúrate de tener esta línea arriba
 
 
@@ -26,68 +28,84 @@ class UserController extends Controller
         return view('user.index', compact('usuarios'));
     }
 
-public function create()
-{
-    $roles = Role::all();
+    public function create()
+    {
+        $roles = Role::all();
 
-    // Solo usuarios que no son hijos, es decir, que pueden ser asignados como superiores
-    $usuarios_superiores = User::whereNull('parent_id')->get();
+        // Solo usuarios que no son hijos, es decir, que pueden ser asignados como superiores
+        $usuarios_superiores = User::whereNull('parent_id')->get();
 
-    // Obtener todas las familias para el select
-    $familias = Familia::all();
+        // Obtener todas las familias para el select
+        $familias = Familia::all();
 
-    return view('user.create', compact('roles', 'usuarios_superiores', 'familias'));
-}
+        return view('user.create', compact('roles', 'usuarios_superiores', 'familias'));
+    }
 
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6|confirmed',
-        'phone' => 'nullable',
-        'address' => 'nullable',
-        'photo' => 'nullable|image|max:2048',
-        'role' => 'required|exists:roles,name',
-        'parent_id' => 'nullable|exists:users,id',
-        'familia_id' => 'required|exists:familias,id',
-        'es_superior' => 'nullable|boolean',
-    ]);
 
-    // Validar que el usuario seleccionado como padre no sea hijo
-    if ($request->filled('parent_id')) {
-        $padre = User::find($request->parent_id);
-        if ($padre && $padre->familias()->wherePivot('rol', 'hijo')->exists()) {
-            return redirect()->back()
-                ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
-                ->withInput();
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'phone' => 'nullable',
+            'address' => 'nullable',
+            'photo' => 'nullable|image|max:2048',
+            'role' => 'required|exists:roles,name',
+            'parent_id' => 'nullable|exists:users,id',
+            'es_superior' => 'nullable|boolean',
+
+            // Validaciones condicionales
+            'familia_id' => 'required_if:parent_id,!null|nullable|exists:familias,id',
+            'familias'    => 'required_if:parent_id,null|array',
+            'familias.*'  => 'exists:familias,id',
+        ]);
+
+        // Validar que el usuario seleccionado como padre no sea hijo
+        if ($request->filled('parent_id')) {
+            $padre = User::find($request->parent_id);
+            if ($padre && $padre->familias()->wherePivot('rol', 'hijo')->exists()) {
+                return redirect()->back()
+                    ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
+                    ->withInput();
+            }
         }
+
+        $data = $request->except(['role', 'password', 'photo', 'familias', 'familia_id']);
+        $data['password'] = Hash::make($request->password);
+
+        if ($request->hasFile('photo')) {
+            $data['photo'] = $request->file('photo')->store('users', 'public');
+        }
+
+        $data['parent_id'] = $request->input('parent_id');
+        $data['es_superior'] = $request->boolean('es_superior', false);
+
+        // Crear usuario
+        $user = User::create($data);
+
+        // Asociar familia(s) solo si no es superior
+        if (!$user->es_superior) {
+            if ($request->filled('parent_id')) {
+                // Es hijo: familia_id
+                if ($request->filled('familia_id')) {
+                    $user->familias()->attach($request->familia_id, ['rol' => 'hijo']);
+                }
+            } else {
+                // Es padre: familias[]
+                if ($request->filled('familias')) {
+                    foreach ($request->input('familias', []) as $familia_id) {
+                        $user->familias()->attach($familia_id, ['rol' => 'padre']);
+                    }
+                }
+            }
+        }
+
+        // Asignar rol (Spatie)
+        $user->assignRole($request->role);
+
+        return redirect()->route('users.index')->with('success', '✅ Usuario creado correctamente.');
     }
-
-    $data = $request->except(['role', 'password', 'photo', 'familia_id']);
-    $data['password'] = Hash::make($request->password);
-
-    if ($request->hasFile('photo')) {
-        $data['photo'] = $request->file('photo')->store('users', 'public');
-    }
-
-    $data['parent_id'] = $request->input('parent_id');
-    $data['es_superior'] = $request->boolean('es_superior', false);
-
-    // Crear usuario
-    $user = User::create($data);
-
-    // Asociar a familia con rol en pivote
-    $familia = Familia::findOrFail($request->familia_id);
-    $rol = $request->filled('parent_id') ? 'hijo' : 'padre';
-    $user->familias()->attach($familia->id, ['rol' => $rol]);
-
-    // Asignar rol (Spatie)
-    $user->assignRole($request->role);
-
-    return redirect()->route('users.index')->with('success', '✅ Usuario creado correctamente.');
-}
-
 
 
 
@@ -95,16 +113,26 @@ public function store(Request $request)
     {
         $roles = Role::all();
 
-        // Solo usuarios que no son hijos y que no sean el mismo usuario
+        // Usuarios que pueden ser padres (no hijos y no él mismo)
         $usuarios_superiores = User::whereNull('parent_id')
             ->where('id', '!=', $user->id)
             ->get();
 
-        return view('user.edit', compact('user', 'roles', 'usuarios_superiores'));
+        $familias = Familia::all();
+        $familiasAsignadas = $user->familias->pluck('id')->toArray();
+        $rolFamilias = $user->familias->pluck('pivot.rol', 'id')->toArray();
+
+        return view('user.edit', compact('user', 'roles', 'usuarios_superiores', 'familias', 'familiasAsignadas', 'rolFamilias'));
     }
+
 
     public function update(Request $request, User $user)
     {
+        // Asegurar que es_superior tenga valor booleano
+        $request->merge([
+            'es_superior' => $request->has('es_superior'),
+        ]);
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -113,26 +141,42 @@ public function store(Request $request)
             'address' => 'nullable',
             'photo' => 'nullable|image|max:2048',
             'role' => 'required|exists:roles,name',
-            'parent_id' => 'nullable|exists:users,id',
+            'parent_id' => [
+                Rule::requiredIf(!$request->es_superior),
+                'nullable',
+                'exists:users,id',
+            ],
+
+            'es_superior' => 'boolean',
+
+            'familia_id' => [
+                Rule::requiredIf(!$request->es_superior && $request->filled('parent_id')),
+                'nullable',
+                'exists:familias,id',
+            ],
+
+            'familias' => [
+                Rule::requiredIf(!$request->es_superior && !$request->filled('parent_id')),
+                'array',
+            ],
+
+            'familias.*' => 'exists:familias,id',
+
         ]);
 
         // Validaciones de jerarquía
         if ($request->filled('parent_id')) {
             if ($request->parent_id == $user->id) {
-                return redirect()->back()
-                    ->withErrors(['parent_id' => '❌ Un usuario no puede ser su propio superior.'])
-                    ->withInput();
+                return back()->withErrors(['parent_id' => '❌ Un usuario no puede ser su propio superior.'])->withInput();
             }
 
             $padre = User::find($request->parent_id);
-            if ($padre && $padre->parent_id !== null) {
-                return redirect()->back()
-                    ->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])
-                    ->withInput();
+            if ($padre && $padre->familias()->wherePivot('rol', 'hijo')->exists()) {
+                return back()->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])->withInput();
             }
         }
 
-        $data = $request->except('role');
+        $data = $request->except(['role', 'password', 'photo', 'familia_id', 'familias']);
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -148,15 +192,27 @@ public function store(Request $request)
         }
 
         $data['parent_id'] = $request->input('parent_id');
-
-        // Valor del checkbox "es_superior"
-        $data['es_superior'] = $request->has('es_superior');
+        $data['es_superior'] = $request->boolean('es_superior', false);
 
         $user->update($data);
-
         $user->syncRoles($request->role);
 
-        return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
+        // Actualizar familias
+        $user->familias()->detach(); // Limpieza general
+
+        if (!$user->es_superior) {
+            if ($request->filled('parent_id') && $request->filled('familia_id')) {
+                // Es hijo
+                $user->familias()->attach($request->familia_id, ['rol' => 'hijo']);
+            } elseif ($request->filled('familias')) {
+                // Es padre
+                foreach ($request->familias as $familia_id) {
+                    $user->familias()->attach($familia_id, ['rol' => 'padre']);
+                }
+            }
+        }
+
+        return redirect()->route('users.index')->with('success', '✅ Usuario actualizado correctamente.');
     }
 
     public function destroy(User $user)
@@ -173,11 +229,9 @@ public function store(Request $request)
     }
 
 
-
-
     public function data()
     {
-        return DataTables::of(User::with(['roles', 'parent'])->select('users.*'))
+        return DataTables::of(User::with(['roles', 'parent', 'familias'])->select('users.*'))
             ->addColumn('roles', function ($user) {
                 return $user->roles->pluck('name')->implode(', ');
             })
@@ -190,6 +244,13 @@ public function store(Request $request)
             })
             ->addColumn('superior', function ($user) {
                 return $user->parent?->name ?? '<span class="text-muted">Ninguno</span>';
+            })
+            ->addColumn('familias', function ($user) {
+                return $user->familias->map(function ($familia) {
+                    $icono = $familia->pivot->rol === 'padre' ? '👨‍👧' : '👧';
+                    $visible = $familia->ver_entre_hermanos ? '✓' : '✗';
+                    return $icono . ' ' . e($familia->nombre) . " ({$visible})";
+                })->implode('<br>');
             })
             ->addColumn('estatus', function ($user) {
                 $checked = $user->estatus === 'activo' ? 'checked' : '';
@@ -207,7 +268,7 @@ public function store(Request $request)
                     <i class="mdi mdi-delete"></i>
                 </button>';
             })
-            ->rawColumns(['acciones', 'photo', 'roles', 'estatus', 'superior'])
+            ->rawColumns(['acciones', 'photo', 'roles', 'estatus', 'superior', 'familias'])
             ->make(true);
     }
 
@@ -217,5 +278,23 @@ public function store(Request $request)
         $user->estatus = $request->estatus;
         $user->save();
         return response()->json(['success' => true]);
+    }
+
+
+    public function familiasDelPadre($id)
+    {
+        $padre = User::with(['familias' => function ($q) {
+            $q->wherePivot('rol', 'padre');
+        }])->findOrFail($id);
+
+        $familias = $padre->familias->map(function ($familia) {
+            return [
+                'id' => $familia->id,
+                'nombre' => $familia->nombre,
+                'ver_entre_hermanos' => $familia->ver_entre_hermanos,
+            ];
+        });
+
+        return response()->json($familias);
     }
 }

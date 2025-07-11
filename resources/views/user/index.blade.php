@@ -53,6 +53,7 @@
                                 <th>Rol</th>
                                 <th>Superior</th> {{-- nueva columna --}}
                                 <th>Foto</th>
+                                <th>Familias</th>
                                 <th>Estatus</th>
                                 <th>Acciones</th>
                             </tr>
@@ -97,8 +98,8 @@
     <script src="{{ asset('assets/libs/mohithg-switchery/switchery.min.js') }}"></script>
     <!-- Sweet Alerts js -->
     <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
+
     <script>
-        // En tu script JS
         $(function() {
             let tabla = $('#users-table').DataTable({
                 processing: true,
@@ -123,10 +124,16 @@
                     {
                         data: 'superior',
                         name: 'superior'
-                    }, // <-- aquí
+                    },
                     {
                         data: 'photo',
                         name: 'photo',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'familias',
+                        name: 'familias',
                         orderable: false,
                         searchable: false
                     },
@@ -141,7 +148,6 @@
                         searchable: false
                     }
                 ],
-
                 language: {
                     url: "{{ asset('assets/lang/datatables/es-ES.json') }}"
                 },
@@ -153,11 +159,14 @@
                     });
                 }
             });
+            
 
+            // Manejo de cambio de estatus
             $(document).on('change', '.switch-status', function() {
                 let checkbox = $(this);
                 let id = checkbox.data('id');
                 let estatus = checkbox.is(':checked') ? 'activo' : 'inactivo';
+
                 $.ajax({
                     url: '/users/' + id + '/estatus',
                     method: 'POST',
@@ -181,7 +190,6 @@
             });
         });
     </script>
-
 
     <script>
         $('#deleteModal').on('show.bs.modal', function(event) {

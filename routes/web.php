@@ -236,6 +236,8 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
         Route::post('/users/{user}/estatus', [UserController::class, 'cambiarEstatus']);
+        Route::get('/users/{id}/familias', [UserController::class, 'familiasDelPadre']);
+
 
         // Rutas con permisos específicos (fuera del grupo "Gestion casos")
         Route::post('/casos/{id}/aprobar', [CasoController::class, 'aprobar'])

@@ -48,29 +48,51 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
- 
+    public function familiasComoPadre()
+    {
+        return $this->familias()->wherePivot('rol', 'padre');
+    }
+
+    public function familiaComoHijo()
+    {
+        return $this->familias()->wherePivot('rol', 'hijo')->first();
+    }
+
+    public function esPadreEn($familia_id)
+    {
+        return $this->familias()
+            ->where('familias.id', $familia_id)
+            ->wherePivot('rol', 'padre')
+            ->exists();
+    }
+
+    public function esHijoEn($familia_id)
+    {
+        return $this->familias()
+            ->where('familias.id', $familia_id)
+            ->wherePivot('rol', 'hijo')
+            ->exists();
+    }
+
+    /**
+     * Scope para filtrar usuarios visibles por jerarquía familiar
+     */
     public function scopeFamilia($query)
     {
         $usuario = auth()->user();
-        $familias = $usuario->familias()->with('usuarios')->get();
         $ids = collect([$usuario->id]);
 
-        foreach ($familias as $familia) {
-            $usuariosFamilia = collect($familia->usuarios);
+        foreach ($usuario->familias as $familia) {
+            $usuarios = $familia->usuarios;
+            $padres = $usuarios->filter(fn($u) => $u->pivot->rol === 'padre');
+            $hijos  = $usuarios->filter(fn($u) => $u->pivot->rol === 'hijo');
 
-            $padres = $usuariosFamilia->where('pivot.rol', 'padre');
-            $hijos  = $usuariosFamilia->where('pivot.rol', 'hijo');
-
-            if ($padres->contains('id', $usuario->id)) {
-                // Si es padre, ve a sus hijos
+            if ($usuario->esPadreEn($familia->id)) {
                 $ids = $ids->merge($hijos->pluck('id'));
             }
 
-            if ($hijos->contains('id', $usuario->id)) {
-                // Si es hijo, ve al padre
+            if ($usuario->esHijoEn($familia->id)) {
                 $ids = $ids->merge($padres->pluck('id'));
-
-                // Si la familia permite ver entre hermanos
                 if ($familia->ver_entre_hermanos) {
                     $ids = $ids->merge($hijos->pluck('id'));
                 }
@@ -79,7 +101,6 @@ class User extends Authenticatable
 
         return $query->whereIn('id', $ids->unique());
     }
-
 
     protected $hidden = [
         'password',

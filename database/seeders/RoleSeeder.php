@@ -40,12 +40,14 @@ class RoleSeeder extends Seeder
             'editar usuarios',
             'crear usuarios',
             'eliminar usuarios',
+
             'Gestion permisos',
             'Gestion configuracion',
             'ver bitacora',
             'backups',
             'configuracion',
             'sistema deshabilitado',
+
             'ver familias',
             'crear familias',
             'editar familias',
@@ -57,9 +59,15 @@ class RoleSeeder extends Seeder
         }
 
         $admin = Role::firstOrCreate(['name' => 'Administrador']);
+        $coordinador = Role::firstOrCreate(['name' => 'Coordinador']);        
+        $puntofocal = Role::firstOrCreate(['name' => 'Punto focal']);       
+        $monitor = Role::firstOrCreate(['name' => 'Monitor']);
         $usuario = Role::firstOrCreate(['name' => 'Usuario']);
 
         $admin->syncPermissions(Permission::all());
+        $coordinador->syncPermissions(Permission::all());
+        $puntofocal->syncPermissions(Permission::all());
+        $monitor->syncPermissions(Permission::all());
 
         $usuario->syncPermissions([
             'dashboard-user',

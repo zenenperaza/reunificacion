@@ -6,7 +6,7 @@
 
     <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/dropify/css/dropify.min.css') }}" rel="stylesheet" />
-    
+
     <link href="{{ asset('assets/css/users.css') }}" rel="stylesheet">
 
 @endsection
@@ -14,8 +14,16 @@
 @section('content')
     <div class="container-fluid">
         <x-breadcrumb title="Editar usuario" />
-        <div class="row mx-4">
-            <div class="col-12">
+        
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                    <i class="mdi mdi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
+        <div class="card modo-claro-forzado">
+            <div class="card-body">
 
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -33,14 +41,12 @@
                 @endif
 
 
-                <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="modo-claro-forzado">
+                <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data"
+                    class="modo-claro-forzado">
                     @csrf
                     @method('PUT')
-
-
-
-
                     <div class="row">
+                        {{-- Checkbox es_superior --}}
                         <div class="col-md-6 mb-3">
                             <div class="form-check mt-4">
                                 <input class="form-check-input" type="checkbox" name="es_superior" id="es_superior"
@@ -50,20 +56,46 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="row" id="bloque_jerarquia">
+                        {{-- Selección de padre --}}
                         <div class="col-md-6 mb-3" id="parent-container">
                             <label for="parent_id" class="form-label">Usuario Superior</label>
-                            <select name="parent_id" class="form-select">
+                            <select name="parent_id" id="parent_id" class="form-select">
                                 <option value="">-- Ninguno --</option>
                                 @foreach ($usuarios_superiores as $superior)
                                     <option value="{{ $superior->id }}"
-                                        {{ old('parent_id', $user->parent_id ?? null) == $superior->id ? 'selected' : '' }}>
+                                        {{ old('parent_id', $user->parent_id) == $superior->id ? 'selected' : '' }}>
                                         {{ $superior->name }}
                                     </option>
                                 @endforeach
                             </select>
-
                             @error('parent_id')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                    </div>
+                    <div class="row">
+
+                        {{-- Selección dinámica de familia(s) --}}
+                        <div class="col-md-6 mb-3" id="bloque_familia"
+                            style="{{ old('es_superior', $user->es_superior) ? 'display: none;' : '' }}">
+                            <label for="familia_select" class="form-label">Familia(s)</label>
+                            <select id="familia_select" class="form-select" name="familias[]" multiple>
+                                @foreach ($familias as $familia)
+                                    <option value="{{ $familia->id }}"
+                                        {{ collect(old('familias', old('familia_id') ? [old('familia_id')] : $familiasAsignadas))->contains($familia->id) ? 'selected' : '' }}>
+                                        {{ $familia->nombre }}
+                                        ({{ $familia->ver_entre_hermanos ? '✓ puede ver entre hermanos' : '✗ no puede ver entre hermanos' }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('familia_id')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                            @error('familias')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
@@ -92,14 +124,16 @@
                             <input type="text" name="phone" id="phone" class="form-control"
                                 value="{{ old('phone', $user->phone) }}">
                         </div>
-                    </div>
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
+                           <div class="col-md-6 mb-3">
                             <label for="address" class="form-label">Dirección</label>
                             <input type="text" name="address" id="address" class="form-control"
                                 value="{{ old('address', $user->address) }}">
                         </div>
+
+                    </div>
+                    <div class="row">
+
+                     
 
                         <div class="col-md-6 mb-3">
                             <label for="role" class="form-label">Rol</label>
@@ -113,7 +147,8 @@
                                 @endforeach
                             </select>
                         </div>
-
+                    </div>
+                    <div class="row">
 
                         <div class="col-md-6 mb-3">
                             <label for="estatus" class="form-label">Estatus</label>
@@ -180,23 +215,47 @@
     <script src="{{ asset('assets/js/pages/form-fileuploads.init.js') }}"></script>
 
     <script>
-        function toggleParentField() {
-            const isSuperior = document.getElementById('es_superior').checked;
-            const parentContainer = document.getElementById('parent-container');
+        const checkboxSuperior = document.getElementById('es_superior');
+        const bloqueFamilia = document.getElementById('bloque_familia');
+        const bloquePadre = document.getElementById('parent-container');
+        const selectParent = document.getElementById('parent_id');
+        const selectFamilias = document.getElementById('familia_select');
 
-            if (isSuperior) {
-                parentContainer.style.display = 'none';
-                parentContainer.querySelector('select').value = '';
+        function actualizarFamiliaDinamica() {
+            const esSuperior = checkboxSuperior.checked;
+
+            // Ocultar o mostrar bloques de jerarquía
+            bloqueFamilia.style.display = esSuperior ? 'none' : 'block';
+            bloquePadre.style.display = esSuperior ? 'none' : 'block';
+
+            if (esSuperior) {
+                // Limpiar valores si es superior
+                selectParent.value = '';
+                Array.from(selectFamilias.options).forEach(opt => opt.selected = false);
+                return;
+            }
+
+            // Si NO es superior
+            if (selectParent.value === '') {
+                // No tiene padre → PADRE → múltiples familias
+                selectFamilias.setAttribute('multiple', 'multiple');
+                selectFamilias.name = 'familias[]';
             } else {
-                parentContainer.style.display = '';
+                // Tiene padre → HIJO → una sola familia
+                selectFamilias.removeAttribute('multiple');
+                selectFamilias.name = 'familia_id';
+
+                // Si hay múltiples seleccionadas, dejar solo una
+                const selected = Array.from(selectFamilias.selectedOptions);
+                if (selected.length > 1) {
+                    selected.forEach((opt, index) => opt.selected = index === 0);
+                }
             }
         }
 
-        // Ejecutar al cargar la página
-        toggleParentField();
-
-        // Ejecutar al cambiar el checkbox
-        document.getElementById('es_superior').addEventListener('change', toggleParentField);
+        checkboxSuperior.addEventListener('change', actualizarFamiliaDinamica);
+        selectParent.addEventListener('change', actualizarFamiliaDinamica);
+        document.addEventListener('DOMContentLoaded', actualizarFamiliaDinamica);
     </script>
 
 
