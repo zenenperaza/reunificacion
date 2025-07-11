@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             'name' => 'Zenen Peraza',
             'email' => 'peraza@outlook.com',
             'password' => Hash::make('123456'),
-            'phone' => '0000000000',
+            'phone' => '04245034999',
             'address' => 'Dirección Central',
             'estatus' => 'activo',
         ]);

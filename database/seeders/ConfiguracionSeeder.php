@@ -13,7 +13,7 @@ class ConfiguracionSeeder extends Seeder
             'conf_fecha_actual' => 'no',
             'sistema_deshabilitado' => 'no',
             'periodo' => now()->format('Y-m'),
-            'nombre_sistema' => 'Sistema RLF',
+            'nombre_sistema' => 'Sistema LRF',
         ]);
     }
 }

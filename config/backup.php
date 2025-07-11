@@ -55,7 +55,7 @@ return [
     'mail' => [
         'to' => 'zenenperaza@gmail.com',
         'from' => [
-            'address' => env('MAIL_FROM_ADDRESS', 'programalrf@asonacop.com'),
+            'address' => env('MAIL_FROM_ADDRESS', 'sistemalrf@asonacop.org'),
             'name' => env('MAIL_FROM_NAME', 'Programa LRF'),
         ],
     ],

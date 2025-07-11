@@ -126,94 +126,102 @@ class UserController extends Controller
     }
 
 
-    public function update(Request $request, User $user)
-    {
-        // Asegurar que es_superior tenga valor booleano
-        $request->merge([
-            'es_superior' => $request->has('es_superior'),
-        ]);
+ public function update(Request $request, User $user)
+{
+    // Asegurar que es_superior tenga valor booleano
+    $request->merge([
+        'es_superior' => $request->has('es_superior'),
+    ]);
 
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6',
-            'phone' => 'nullable',
-            'address' => 'nullable',
-            'photo' => 'nullable|image|max:2048',
-            'role' => 'required|exists:roles,name',
-            'parent_id' => [
-                Rule::requiredIf(!$request->es_superior),
-                'nullable',
-                'exists:users,id',
-            ],
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'password' => 'nullable|min:6',
+        'phone' => 'nullable',
+        'address' => 'nullable',
+        'photo' => 'nullable|image|max:2048',
+        'role' => 'required|exists:roles,name',
 
-            'es_superior' => 'boolean',
+        'parent_id' => [
+            'nullable',
+            'different:' . $user->id,
+            'exists:users,id',
+        ],
 
-            'familia_id' => [
-                Rule::requiredIf(!$request->es_superior && $request->filled('parent_id')),
-                'nullable',
-                'exists:familias,id',
-            ],
+        'es_superior' => 'boolean',
 
-            'familias' => [
-                Rule::requiredIf(!$request->es_superior && !$request->filled('parent_id')),
-                'array',
-            ],
-
-            'familias.*' => 'exists:familias,id',
-
-        ]);
-
-        // Validaciones de jerarquía
-        if ($request->filled('parent_id')) {
-            if ($request->parent_id == $user->id) {
-                return back()->withErrors(['parent_id' => '❌ Un usuario no puede ser su propio superior.'])->withInput();
-            }
-
-            $padre = User::find($request->parent_id);
-            if ($padre && $padre->familias()->wherePivot('rol', 'hijo')->exists()) {
-                return back()->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])->withInput();
-            }
-        }
-
-        $data = $request->except(['role', 'password', 'photo', 'familia_id', 'familias']);
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        } else {
-            unset($data['password']);
-        }
-
-        if ($request->hasFile('photo')) {
-            if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
-            }
-            $data['photo'] = $request->file('photo')->store('users', 'public');
-        }
-
-        $data['parent_id'] = $request->input('parent_id');
-        $data['es_superior'] = $request->boolean('es_superior', false);
-
-        $user->update($data);
-        $user->syncRoles($request->role);
-
-        // Actualizar familias
-        $user->familias()->detach(); // Limpieza general
-
-        if (!$user->es_superior) {
-            if ($request->filled('parent_id') && $request->filled('familia_id')) {
-                // Es hijo
-                $user->familias()->attach($request->familia_id, ['rol' => 'hijo']);
-            } elseif ($request->filled('familias')) {
-                // Es padre
-                foreach ($request->familias as $familia_id) {
-                    $user->familias()->attach($familia_id, ['rol' => 'padre']);
+        'familia_id' => [
+            function ($attribute, $value, $fail) use ($request) {
+                if (!$request->boolean('es_superior') && $request->filled('parent_id') && empty($value)) {
+                    $fail('El campo familia_id es obligatorio cuando el usuario tiene un superior.');
                 }
-            }
+            },
+            'nullable',
+            'exists:familias,id',
+        ],
+
+        'familias' => [
+            function ($attribute, $value, $fail) use ($request) {
+                if (!$request->boolean('es_superior') && !$request->filled('parent_id') && empty($value)) {
+                    $fail('Debe seleccionar al menos una familia si el usuario no tiene superior ni es usuario superior.');
+                }
+            },
+            'array',
+        ],
+        'familias.*' => 'exists:familias,id',
+    ]);
+
+    // Validación adicional de jerarquía
+    if ($request->filled('parent_id')) {
+        if ($request->parent_id == $user->id) {
+            return back()->withErrors(['parent_id' => '❌ Un usuario no puede ser su propio superior.'])->withInput();
         }
 
-        return redirect()->route('users.index')->with('success', '✅ Usuario actualizado correctamente.');
+        $padre = User::find($request->parent_id);
+        if ($padre && $padre->familias()->wherePivot('rol', 'hijo')->exists()) {
+            return back()->withErrors(['parent_id' => '❌ No puedes asignar como superior a un usuario que ya es hijo.'])->withInput();
+        }
     }
+
+    // Preparar datos
+    $data = $request->except(['role', 'password', 'photo', 'familia_id', 'familias']);
+
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
+    } else {
+        unset($data['password']);
+    }
+
+    if ($request->hasFile('photo')) {
+        if ($user->photo) {
+            Storage::disk('public')->delete($user->photo);
+        }
+        $data['photo'] = $request->file('photo')->store('users', 'public');
+    }
+
+    $data['parent_id'] = $request->input('parent_id');
+    $data['es_superior'] = $request->boolean('es_superior', false);
+
+    $user->update($data);
+    $user->syncRoles($request->role);
+
+    // Reasignar familias
+    $user->familias()->detach();
+
+    if (!$user->es_superior) {
+        if ($request->filled('parent_id') && $request->filled('familia_id')) {
+            // Es hijo
+            $user->familias()->attach($request->familia_id, ['rol' => 'hijo']);
+        } elseif ($request->filled('familias')) {
+            // Es padre
+            foreach ($request->familias as $familia_id) {
+                $user->familias()->attach($familia_id, ['rol' => 'padre']);
+            }
+        }
+    }
+
+    return redirect()->route('users.index')->with('success', '✅ Usuario actualizado correctamente.');
+}
 
     public function destroy(User $user)
     {
