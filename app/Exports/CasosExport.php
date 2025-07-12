@@ -116,14 +116,18 @@ class CasosExport implements
 
         if ($this->search) {
             $searchTerm = '%' . $this->search . '%';
+
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('numero_caso', 'like', $searchTerm)
                     ->orWhere('beneficiario', 'like', $searchTerm)
                     ->orWhere('tipo_atencion', 'like', $searchTerm)
                     ->orWhere('elaborado_por', 'like', $searchTerm)
-                    ->orWhere('direccion_domicilio', 'like', $searchTerm);
+                    ->orWhere('direccion_domicilio', 'like', $searchTerm)
+                    ->orWhereRaw("DATE_FORMAT(fecha_actual, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("fecha_actual LIKE ?", [$searchTerm]); // por si viene en formato YYYY-MM-DD
             });
         }
+
 
         // Ejecutar consulta
         $casos = $query->get();

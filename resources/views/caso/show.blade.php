@@ -13,18 +13,16 @@
     <div class="container-fluid">
 
         {{-- <x-breadcrumb title="Mostrar Caso" /> --}}
-        <div class="row page-title align-items-center my-2">
-            <div class="col-sm-6 col-xl-6">
-                <h4 class="mb-1 mt-0">Gestión de Casos</h4>
-            </div>
-            <div class="col-sm-6 col-xl-6">
-                <ol class="breadcrumb float-end">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('casos.index') }}">Casos</a></li>
-                    <li class="breadcrumb-item active">Mostrar Caso</li>
-                </ol>
+         <x-breadcrumb title="Ver Caso " />
+        
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <a href="{{ route('casos.index') }}" class="btn btn-secondary">
+                    <i class="mdi mdi-arrow-left"></i> Volver a la lista
+                </a>
             </div>
         </div>
+
         <h4 class="mb-4">Detalle del Caso: {{ $caso->numero_caso }}</h4>
 
         <ul class="nav nav-tabs" id="casoTabs" role="tablist">

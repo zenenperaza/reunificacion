@@ -160,6 +160,7 @@
                         <tr>
                             <th>ID</th>
                             <th>N° Caso</th>
+                            <th>Elaborado por</th>
                             <th>Beneficiario</th>
                             <th>Tipo Atención</th>
                             <th>Fecha actual</th>
@@ -280,6 +281,10 @@
                     className: 'all'
                 },
                 {
+                    data: 'elaborado_por',
+                    name: 'elaborado_por',
+                },
+                {
                     data: 'beneficiario',
                     name: 'beneficiario'
                 },
@@ -289,7 +294,8 @@
                 },
                 {
                     data: 'fecha_actual',
-                    name: 'fecha_actual'
+                    name: 'fecha_actual',
+                    searchable: true
                 },
                 {
                     data: 'estado_completado',
@@ -378,7 +384,7 @@
 
                 if (badgeClass !== '') {
                     const badgeHTML = `<span class="badge ${badgeClass}">${data.estatus}</span>`;
-                    $('td', row).eq(7).html(badgeHTML); // reemplaza contenido de la celda de estatus
+                    $('td', row).eq(8).html(badgeHTML); // reemplaza contenido de la celda de estatus
                 }
             }
 
@@ -458,41 +464,47 @@
     </script>
 
 
-    <script>
-        $('#exportExcel').on('click', function(e) {
-            e.preventDefault();
+<script>
+    $('#exportExcel').on('click', function (e) {
+        e.preventDefault();
 
-            const dt = $('#casos-table').DataTable();
-            const searchInput = $('input[type=search]').val();
-            const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
+        const dt = $('#casos-table').DataTable();
+        const searchInput = dt.search(); // forma correcta de obtener el filtro global
+        const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
 
-            if (startDate && endDate) {
-                url.searchParams.append('start_date', startDate);
-                url.searchParams.append('end_date', endDate);
-            }
+        // Rango de fechas (deben estar definidos como variables globales o inputs)
+        if (startDate && endDate) {
+            url.searchParams.set('start_date', startDate);
+            url.searchParams.set('end_date', endDate);
+        }
 
-            const estatus = $('#filtro_estatus').val();
-            if (estatus) {
-                url.searchParams.append('estatus', estatus);
-            }
+        // Filtro estatus
+        const estatus = $('#filtro_estatus').val();
+        if (estatus) {
+            url.searchParams.set('estatus', estatus);
+        }
 
-            const estadoCompletado = $('#filtro_estado_completado').val();
-            if (estadoCompletado) {
-                url.searchParams.append('estado_completado', estadoCompletado);
-            }
+        // Filtro estado completado
+        const estadoCompletado = $('#filtro_estado_completado').val();
+        if (estadoCompletado) {
+            url.searchParams.set('estado_completado', estadoCompletado);
+        }
 
-            const condicion = (new URLSearchParams(window.location.search)).get('condicion');
-            if (condicion) {
-                url.searchParams.append('condicion', condicion);
-            }
+        // Filtro por condicion (en URL)
+        const condicion = new URLSearchParams(window.location.search).get('condicion');
+        if (condicion) {
+            url.searchParams.set('condicion', condicion);
+        }
 
-            if (searchInput) {
-                url.searchParams.append('search', searchInput);
-            }
+        // Filtro de búsqueda global (barra de búsqueda)
+        if (searchInput) {
+            url.searchParams.set('search', searchInput);
+        }
 
-            window.location.href = url.toString();
-        });
-    </script>
+        // Redirigir a la ruta de exportación
+        window.location.href = url.toString();
+    });
+</script>
 
 
 

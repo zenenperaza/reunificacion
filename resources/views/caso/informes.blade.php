@@ -43,16 +43,19 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label>Estatus:</label>
-                                <select name="estatus" class="form-control">
-                                    <option value="">Todos</option>
-                                    <option value="pendiente" {{ request('estatus') == 'pendiente' ? 'selected' : '' }}>
-                                        Pendiente</option>
-                                    <option value="cerrado" {{ request('estatus') == 'cerrado' ? 'selected' : '' }}>Cerrado
-                                    </option>
-                                </select>
-                            </div>
+                   <div class="col-md-3">
+    <label>Estatus:</label>
+    <select name="estatus" class="form-control">
+        <option value="">Todos</option>
+        <option value="En proceso" {{ request('estatus') == 'En proceso' ? 'selected' : '' }}>
+            En proceso</option>
+        <option value="En seguimiento" {{ request('estatus') == 'En seguimiento' ? 'selected' : '' }}>
+            En seguimiento</option>
+        <option value="Cierre de atención" {{ request('estatus') == 'Cierre de atención' ? 'selected' : '' }}>
+            Cierre de atención</option>
+    </select>
+</div>
+
 
                             <div class="col-md-4 mt-2">
                                 <label>Búsqueda:</label>

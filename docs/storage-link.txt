@@ -85,3 +85,183 @@ Route::get('/run-migrate-fresh', function () {
   #  abort(403, 'No autorizado');
 });
 
+
+
+Route::get('/limpiar-config', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    return 'Configuración y caché limpiadas.';
+});
+Route::get('/fix-permisos', function () {
+    $paths = [
+        storage_path(),
+        storage_path('framework'),
+        storage_path('framework/views'),
+        base_path('bootstrap/cache')
+    ];
+
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            chmod($path, 0775); // permisos rwxrwxr-x
+        }
+    }
+
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+
+    return '✔️ Permisos y cachés corregidos.';
+});
+
+Route::get('/crear-storage-link', function () {
+    abort_unless(auth()->check() && auth()->user()->hasRole('Administrador'), 403);
+
+    // Ejecuta el comando de forma segura
+    try {
+        if (!file_exists(public_path('storage'))) {
+            Artisan::call('storage:link');
+            return '✔️ Enlace simbólico creado.';
+        } else {
+            return 'ℹ️ El enlace simbólico ya existe.';
+        }
+    } catch (\Exception $e) {
+        return '❌ Error al crear el enlace simbólico: ' . $e->getMessage();
+    }
+});
+// Route::get('/fix-storage-permisos', function () {
+//     try {
+//         $path = storage_path('app/public');
+//         chmod($path, 0775); // Carpeta base
+//         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)) as $file) {
+//             chmod($file, 0644); // Archivos
+//         }
+//         return '✅ Permisos corregidos.';
+//     } catch (\Exception $e) {
+//         return '❌ Error: ' . $e->getMessage();
+//     }
+// });
+
+Route::get('/fix-excel', function () {
+    $path = storage_path('framework/cache/laravel-excel');
+
+    if (!file_exists($path)) {
+        mkdir($path, 0775, true);
+    }
+
+    chmod($path, 0775);
+
+    return '✔️ Carpeta de Laravel Excel creada y con permisos.';
+});
+
+
+
+// Route::get('/fix-storage-link', function () {
+//     try {
+//         // Elimina el enlace si existe
+//         $publicStorage = public_path('storage');
+//         if (file_exists($publicStorage)) {
+//             unlink($publicStorage); // elimina el symlink
+//         }
+
+//         // Crea el nuevo enlace simbólico correctamente
+//         Artisan::call('storage:link');
+
+//         return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
+//     } catch (\Exception $e) {
+//         return " Error al recrear el enlace: " . $e->getMessage();
+//     }
+// });
+
+
+Route::get('/fix-storage-link', function () {
+    try {
+        $publicStorage = public_path('storage');
+
+        // Si el enlace existe, lo elimina
+        if (is_link($publicStorage) || file_exists($publicStorage)) {
+            File::delete($publicStorage);
+        }
+
+        // Crea nuevamente el symlink
+        Artisan::call('storage:link');
+
+        return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
+    } catch (\Exception $e) {
+        return "❌ Error al recrear el enlace: " . $e->getMessage();
+    }
+});
+Route::get('/fix-storage-permisos', function () {
+    try {
+        $path = storage_path('app/public');
+        chmod($path, 0775); // Carpeta base
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)) as $file) {
+            if ($file->isFile()) {
+                chmod($file->getPathname(), 0644); // Archivos
+            } elseif ($file->isDir()) {
+                chmod($file->getPathname(), 0775); // Subdirectorios
+            }
+        }
+        return '✅ Permisos de almacenamiento corregidos.';
+    } catch (\Exception $e) {
+        return '❌ Error: ' . $e->getMessage();
+    }
+});
+
+Route::get('/repair-storage-link', function () {
+    try {
+        $publicStorage = public_path('storage');
+
+        // Elimina el enlace simbólico si existe
+        if (is_link($publicStorage) || file_exists($publicStorage)) {
+            File::delete($publicStorage);
+        }
+
+        // Vuelve a crear el symlink
+        Artisan::call('storage:link');
+
+        return "✅ Enlace simbólico 'public/storage' reparado exitosamente.";
+    } catch (\Exception $e) {
+        return "❌ Error al reparar el enlace: " . $e->getMessage();
+    }
+});
+
+
+
+Route::get('/run-migrate-fresh', function () {
+    // SOLO USAR EN LOCAL O ENTORNOS CONTROLADOS
+    #if (app()->environment('local', 'staging') && Auth::check() && Auth::user()->email === 'zenenperaza@gmail.com') {
+    try {
+        Artisan::call('migrate:fresh', [
+            '--seed' => true,
+            '--force' => true,
+        ]);
+
+        return '✅ Migraciones reiniciadas y seeders ejecutados.';
+    } catch (\Exception $e) {
+        return '❌ Error: ' . $e->getMessage();
+    }
+    # }
+
+    #  abort(403, 'No autorizado');
+});
+
+  Route::get('/forzar-restore', function () {
+        $path = storage_path('app/tmp_restore/restore.sql');
+        if (!file_exists($path)) return 'No existe .sql';
+
+        DB::unprepared(File::get($path));
+        return 'Restauración completada.';
+    });
+
+
+    Route::get('/zip-test', function () {
+        $zip = new ZipArchive;
+        $path = storage_path('app/backup/ATENCION-PROGRAMA-RLF/backup.zip');
+
+        if (!file_exists($path)) {
+            return 'Archivo no existe en: ' . $path;
+        }
+
+        $res = $zip->open($path);
+        return $res === true ? 'ZIP OK' : 'Error: ' . $res;
+    });

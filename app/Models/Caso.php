@@ -21,7 +21,10 @@ class Caso extends Model
 
     use HasFactory, LogsActivity, SoftDeletes;
 
-
+    protected $casts = [
+        'fecha_actual' => 'date',
+        'fecha_atencion' => 'date',
+    ];
 
     protected $fillable = [
         'user_id',

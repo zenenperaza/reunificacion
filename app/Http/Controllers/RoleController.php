@@ -16,7 +16,7 @@ class RoleController extends Controller
 
     public function create()
     {
-        $permissions = Permission::orderBy('name')->get();
+        $permissions = Permission::orderBy('id')->get();
         return view('role.create', compact('permissions'));
     }
 
@@ -58,11 +58,10 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        if (in_array($role->name, ['Administrador'])) {
-            return redirect()->route('role.index')->with('error', 'No puedes eliminar este rol.');
+        if ($role->name === 'Administrador') {
+            return redirect()->route('role.index')->with('error', '❌ No puedes eliminar el rol Administrador.');
         }
 
         $role->delete();
-        return redirect()->route('role.index')->with('success', 'Rol eliminado correctamente.');
     }
 }

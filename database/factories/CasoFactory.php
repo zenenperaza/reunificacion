@@ -190,7 +190,7 @@ class CasoFactory extends Factory
             'municipio_destino_id' => $municipioDestino->id,
             'parroquia_destino_id' => $parroquiaDestino->id,
 
-            'elaborado_por' => $this->faker->name,
+            'elaborado_por' => $this->faker->randomElement(User::pluck('name')->toArray()),
             'numero_caso' => 'RLF-' . $codigoEstado . '-' . $numero,
             'organizacion_programa' => implode(', ', $this->faker->randomElements(['UNICEF', 'COSUDE'], rand(1, 2))),
             'organizacion_solicitante' => implode(', ', $this->faker->randomElements($organizaciones, rand(1, 3))),

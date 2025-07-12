@@ -17,123 +17,7 @@ use App\Http\Controllers\BusquedaController;
 use App\Http\Controllers\FamiliaController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-
-Route::get('/limpiar-config', function () {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    return 'Configuración y caché limpiadas.';
-});
-Route::get('/fix-permisos', function () {
-    $paths = [
-        storage_path(),
-        storage_path('framework'),
-        storage_path('framework/views'),
-        base_path('bootstrap/cache')
-    ];
-
-    foreach ($paths as $path) {
-        if (file_exists($path)) {
-            chmod($path, 0775); // permisos rwxrwxr-x
-        }
-    }
-
-    Artisan::call('view:clear');
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-
-    return '✔️ Permisos y cachés corregidos.';
-});
-
-// Route::get('/crear-storage-link', function () {
-//     abort_unless(auth()->check() && auth()->user()->hasRole('Administrador'), 403);
-
-//     // Ejecuta el comando de forma segura
-//     try {
-//         if (!file_exists(public_path('storage'))) {
-//             Artisan::call('storage:link');
-//             return '✔️ Enlace simbólico creado.';
-//         } else {
-//             return 'ℹ️ El enlace simbólico ya existe.';
-//         }
-//     } catch (\Exception $e) {
-//         return '❌ Error al crear el enlace simbólico: ' . $e->getMessage();
-//     }
-// });
-Route::get('/fix-storage-permisos', function () {
-    try {
-        $path = storage_path('app/public');
-        chmod($path, 0775); // Carpeta base
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)) as $file) {
-            chmod($file, 0644); // Archivos
-        }
-        return '✅ Permisos corregidos.';
-    } catch (\Exception $e) {
-        return '❌ Error: ' . $e->getMessage();
-    }
-});
-
-Route::get('/fix-excel', function () {
-    $path = storage_path('framework/cache/laravel-excel');
-
-    if (!file_exists($path)) {
-        mkdir($path, 0775, true);
-    }
-
-    chmod($path, 0775);
-
-    return '✔️ Carpeta de Laravel Excel creada y con permisos.';
-});
-
-
-
-// Route::get('/fix-storage-link', function () {
-//     try {
-//         // Elimina el enlace si existe
-//         $publicStorage = public_path('storage');
-//         if (file_exists($publicStorage)) {
-//             unlink($publicStorage); // elimina el symlink
-//         }
-
-//         // Crea el nuevo enlace simbólico correctamente
-//         Artisan::call('storage:link');
-
-//         return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
-//     } catch (\Exception $e) {
-//         return " Error al recrear el enlace: " . $e->getMessage();
-//     }
-// });
-// Route::get('/fix-storage-link', function () {
-//     try {
-//         $publicStorage = public_path('storage');
-
-//         if (!file_exists($publicStorage)) {
-//             Artisan::call('storage:link');
-//             return "✅ Enlace simbólico 'public/storage' creado.";
-//         }
-
-//         return "⚠️ El enlace simbólico 'public/storage' ya existe.";
-//     } catch (\Exception $e) {
-//         return "❌ Error al crear el enlace: " . $e->getMessage();
-//     }
-// });
-
-Route::get('/run-migrate-fresh', function () {
-    // SOLO USAR EN LOCAL O ENTORNOS CONTROLADOS
-    #if (app()->environment('local', 'staging') && Auth::check() && Auth::user()->email === 'zenenperaza@gmail.com') {
-    try {
-        Artisan::call('migrate:fresh', [
-            '--seed' => true,
-            '--force' => true,
-        ]);
-
-        return '✅ Migraciones reiniciadas y seeders ejecutados.';
-    } catch (\Exception $e) {
-        return '❌ Error: ' . $e->getMessage();
-    }
-    # }
-
-    #  abort(403, 'No autorizado');
-});
+use Illuminate\Support\Facades\File;
 
 
 Route::get('/busqueda', [BusquedaController::class, 'resultados'])->name('busqueda.resultados');
@@ -152,28 +36,7 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
         }
         return back()->with('error', 'Archivo no encontrado.');
     })->name('backup.descargar');
-
-
-    Route::get('/forzar-restore', function () {
-        $path = storage_path('app/tmp_restore/restore.sql');
-        if (!file_exists($path)) return 'No existe .sql';
-
-        DB::unprepared(File::get($path));
-        return 'Restauración completada.';
-    });
-
-
-    Route::get('/zip-test', function () {
-        $zip = new ZipArchive;
-        $path = storage_path('app/backup/ATENCION-PROGRAMA-RLF/backup.zip');
-
-        if (!file_exists($path)) {
-            return 'Archivo no existe en: ' . $path;
-        }
-
-        $res = $zip->open($path);
-        return $res === true ? 'ZIP OK' : 'Error: ' . $res;
-    });
+  
 
     Route::get('/', function () {
         return view('welcome');
@@ -292,66 +155,6 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
 
 
 
-    // Route::middleware(['auth'])->group(function () {
-    //     Route::resource('users', UserController::class)->except(['show']);
-    //     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
-    //     Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
-    //     Route::post('/users/{user}/estatus', [UserController::class, 'cambiarEstatus']);
-
-
-    //     //  Primero rutas específicas
-    //     Route::post('/casos/{id}/aprobar', [CasoController::class, 'aprobar'])
-    //         ->name('casos.aprobar')
-    //         ->middleware('can:aprobar casos');
-
-    //     Route::get('/casos/informes', [CasoController::class, 'informes'])->name('casos.informes')->middleware('can:ver informes');
-    //     Route::get('/casos/informes/export', [CasoController::class, 'exportInformes'])->name('casos.informes.export')->middleware('can:ver informes');
-
-    //     Route::get('/casos/informes/pdf', [CasoController::class, 'exportarInformePDF'])->name('casos.informes.pdf');
-
-
-    //     Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');
-    //     Route::get('/casos/exportar-por-estatus', [CasoController::class, 'exportarPorEstatus'])->name('casos.exportarPorEstatus');
-    //     Route::get('/casos/exportar-por-estado', [CasoController::class, 'exportarPorEstado'])->name('casos.exportarPorEstado');
-    //     Route::get('/casos/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('casos.pdf');
-    //     // Route::post('/casos/importar', [CasoController::class, 'importarExcel'])->name('casos.importar');
-    //     Route::get('/casos/plantilla-ejemplo', [CasoController::class, 'descargarPlantilla'])->name('casos.plantilla');
-    //     // Vista opcional para testeo
-    //     Route::post('/casos/{caso}/restaurar', [CasoController::class, 'restaurar'])->name('casos.restaurar');
-    //     Route::get('/casos/importar', [CasoController::class, 'importarVista'])->name('casos.importar.vista');
-    //     Route::get('/casos/eliminados/data', [CasoController::class, 'dataEliminados'])->name('casos.eliminados.data');
-
-    //     Route::get('/casos/{id}/descargar-archivos', [CasoController::class, 'descargarArchivos'])->name('casos.descargarArchivos');
-
-
-
-    //     // Lógica AJAX de previsualización
-    //     Route::post('/casos/preview-excel', [CasoController::class, 'previsualizarExcel'])->name('casos.preview');
-
-    //     // Confirmar la importación real
-    //     Route::post('/casos/confirmar-importacion', [CasoController::class, 'confirmarImportacion'])->name('casos.confirmar');
-
-    //     Route::post('/casos/{caso}/cerrar', [CasoController::class, 'cerrar'])->middleware('can:cierre atencion');
-
-
-    //     Route::get('/casos/eliminados', [CasoController::class, 'eliminados'])->name('casos.eliminados');
-
-
-    //     // ✅ Luego el resource completo
-    //     Route::resource('casos', CasoController::class);
-
-
-    //     Route::get('casos-data', [CasoController::class, 'data'])->name('casos.data');
-
-    //     Route::get('/get-municipios/{estado_id}', [CasoController::class, 'getMunicipios']);
-    //     Route::get('/get-parroquias/{municipio_id}', [CasoController::class, 'getParroquias']);
-
-    //     Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
-
-    //     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
-
-    //     Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
-    // });
 });
 
 

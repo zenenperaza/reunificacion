@@ -4,12 +4,59 @@
 
 @section('styles')
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
-
 @endsection
+
+@php
+    $permisosProtegidos = [
+           'Dashboard',
+
+            'Gestion casos',
+            'crear casos',
+            'ver casos',
+            'editar casos',
+            'eliminar casos',
+            'aprobar casos',            
+            'clonar casos',
+            'cierre atencion',
+            'ver informes',
+            'ver casos eliminados',
+            'restaurar casos eliminados',
+            'guardar continuar',
+
+            'ver bitacora',
+
+            'Gestion permisos',
+
+            'Gestion roles',
+            'ver roles',
+            'editar roles',
+            'crear roles',
+            'eliminar roles',
+
+            'Gestion usuarios',
+            'ver usuarios',
+            'editar usuarios',
+            'crear usuarios',
+            'eliminar usuarios',
+
+            'Gestion configuracion',
+            'backups',
+            'configuracion',
+            'sistema deshabilitado',
+            'cambiar fecha actual',
+
+            'ver familias',
+            'crear familias',
+            'editar familias',
+            'eliminar familias',
+            
+            'dashboard-user',
+    ];
+@endphp
 
 @section('content')
     <div class="container-fluid mx-4">
-        <x-breadcrumb title="Gestión de Permisos"  icono="<i class='fas fa-list-ul'></i>"/>
+        <x-breadcrumb title="Gestión de Permisos" icono="<i class='fas fa-list-ul'></i>" />
 
         <div class="row">
             <div class="col-lg-6">
@@ -40,28 +87,39 @@
                             </thead>
                             <tbody>
                                 @foreach ($permissions as $permiso)
+                                    @php
+                                        $esProtegido = in_array($permiso->name, $permisosProtegidos);
+                                    @endphp
                                     <tr>
                                         <td>
-                                            <form action="{{ route('permission.update', $permiso) }}" method="POST"
-                                                class="d-flex">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="text" name="name" value="{{ $permiso->name }}"
-                                                    class="form-control form-control-sm me-2" required>
-                                                <button class="btn btn-sm btn-success">Guardar</button>
-                                            </form>
+                                            @if ($esProtegido)
+                                                <input type="text" value="{{ $permiso->name }}"
+                                                    class="form-control form-control-sm" readonly disabled>
+                                            @else
+                                                <form action="{{ route('permission.update', $permiso) }}" method="POST" class="d-flex">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="text" name="name" value="{{ $permiso->name }}"
+                                                        class="form-control form-control-sm me-2" required>
+                                                    <button class="btn btn-sm btn-success">Guardar</button>
+                                                </form>
+                                            @endif
                                         </td>
                                         <td class="text-center">
-                                            <form action="{{ route('permission.destroy', $permiso) }}" method="POST"
-                                                class="form-eliminar d-inline-block">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                                            </form>
+                                            @if ($esProtegido)
+                                                <span class="text-muted">Protegido</span>
+                                            @else
+                                                <form action="{{ route('permission.destroy', $permiso) }}" method="POST"
+                                                    class="form-eliminar d-inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                                </form>
+                                            @endif
                                         </td>
-
                                     </tr>
                                 @endforeach
+
                                 @if ($permissions->isEmpty())
                                     <tr>
                                         <td colspan="2" class="text-center text-muted">No hay permisos registrados.</td>
@@ -77,30 +135,6 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
-
-    <script>
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: '{{ session('success') }}',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        @endif
-
-        @if (session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('error') }}',
-                timer: 2500,
-                showConfirmButton: false
-            });
-        @endif
-    </script>
-
     <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
 
     <script>

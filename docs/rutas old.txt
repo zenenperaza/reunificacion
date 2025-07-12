@@ -1,0 +1,61 @@
+
+    // Route::middleware(['auth'])->group(function () {
+    //     Route::resource('users', UserController::class)->except(['show']);
+    //     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
+    //     Route::post('/users/upload', [UserController::class, 'upload'])->name('users.upload');
+    //     Route::post('/users/{user}/estatus', [UserController::class, 'cambiarEstatus']);
+
+
+    //     //  Primero rutas específicas
+    //     Route::post('/casos/{id}/aprobar', [CasoController::class, 'aprobar'])
+    //         ->name('casos.aprobar')
+    //         ->middleware('can:aprobar casos');
+
+    //     Route::get('/casos/informes', [CasoController::class, 'informes'])->name('casos.informes')->middleware('can:ver informes');
+    //     Route::get('/casos/informes/export', [CasoController::class, 'exportInformes'])->name('casos.informes.export')->middleware('can:ver informes');
+
+    //     Route::get('/casos/informes/pdf', [CasoController::class, 'exportarInformePDF'])->name('casos.informes.pdf');
+
+
+    //     Route::get('/casos/exportar-excel', [CasoController::class, 'exportarExcel'])->name('casos.exportarExcel');
+    //     Route::get('/casos/exportar-por-estatus', [CasoController::class, 'exportarPorEstatus'])->name('casos.exportarPorEstatus');
+    //     Route::get('/casos/exportar-por-estado', [CasoController::class, 'exportarPorEstado'])->name('casos.exportarPorEstado');
+    //     Route::get('/casos/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('casos.pdf');
+    //     // Route::post('/casos/importar', [CasoController::class, 'importarExcel'])->name('casos.importar');
+    //     Route::get('/casos/plantilla-ejemplo', [CasoController::class, 'descargarPlantilla'])->name('casos.plantilla');
+    //     // Vista opcional para testeo
+    //     Route::post('/casos/{caso}/restaurar', [CasoController::class, 'restaurar'])->name('casos.restaurar');
+    //     Route::get('/casos/importar', [CasoController::class, 'importarVista'])->name('casos.importar.vista');
+    //     Route::get('/casos/eliminados/data', [CasoController::class, 'dataEliminados'])->name('casos.eliminados.data');
+
+    //     Route::get('/casos/{id}/descargar-archivos', [CasoController::class, 'descargarArchivos'])->name('casos.descargarArchivos');
+
+
+
+    //     // Lógica AJAX de previsualización
+    //     Route::post('/casos/preview-excel', [CasoController::class, 'previsualizarExcel'])->name('casos.preview');
+
+    //     // Confirmar la importación real
+    //     Route::post('/casos/confirmar-importacion', [CasoController::class, 'confirmarImportacion'])->name('casos.confirmar');
+
+    //     Route::post('/casos/{caso}/cerrar', [CasoController::class, 'cerrar'])->middleware('can:cierre atencion');
+
+
+    //     Route::get('/casos/eliminados', [CasoController::class, 'eliminados'])->name('casos.eliminados');
+
+
+    //     // ✅ Luego el resource completo
+    //     Route::resource('casos', CasoController::class);
+
+
+    //     Route::get('casos-data', [CasoController::class, 'data'])->name('casos.data');
+
+    //     Route::get('/get-municipios/{estado_id}', [CasoController::class, 'getMunicipios']);
+    //     Route::get('/get-parroquias/{municipio_id}', [CasoController::class, 'getParroquias']);
+
+    //     Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
+
+    //     Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
+
+    //     Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
+    // });

@@ -14,7 +14,9 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre del Rol</label>
-                            <input type="text" class="form-control" name="name" value="{{ $role->name }}" required>
+                          <input type="text" class="form-control" name="name" value="{{ $role->name }}" required 
+    {{ $role->name === 'Administrador' ? 'readonly' : '' }}>
+
                         </div>
 
                         <div class="mb-3">

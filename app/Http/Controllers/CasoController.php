@@ -171,11 +171,17 @@ class CasoController extends Controller
         // Completado vs incompleto
         if (!$request->filled('estado_completado')) {
             return datatables()->eloquent($query)
+                ->addColumn('elaborado_por', fn($caso) => $caso->elaborado_por)
                 ->addColumn('condicion', $getCondicion)
                 ->addColumn('estado_completado', $getEstadoCompletado)
                 ->addColumn('acciones', $getAcciones)
                 ->editColumn('fecha_atencion', fn($caso) => optional($caso->fecha_atencion)->format('d/m/Y'))
-                ->editColumn('fecha_actual', fn($caso) => optional($caso->fecha_actual)->format('d/m/Y'))
+                ->filterColumn('fecha_actual', function ($query, $keyword) {
+                    $query->whereRaw("DATE_FORMAT(fecha_actual, '%d/%m/%Y') LIKE ?", ["%{$keyword}%"]);
+                })
+                ->editColumn('fecha_actual', fn($caso) => $caso->fecha_actual?->format('d/m/Y'))
+
+
                 ->rawColumns(['acciones', 'condicion', 'estado_completado'])
                 ->make(true);
         }
@@ -196,6 +202,7 @@ class CasoController extends Controller
         });
 
         return datatables()->of($casos)
+            ->addColumn('elaborado_por', fn($caso) => $caso->elaborado_por)
             ->addColumn('condicion', $getCondicion)
             ->addColumn('estado_completado', $getEstadoCompletado)
             ->addColumn('acciones', $getAcciones)
@@ -890,7 +897,6 @@ class CasoController extends Controller
             'informeIA'
         ));
     }
-
     public function exportInformes(Request $request)
     {
         $start = $request->input('start');
@@ -899,12 +905,15 @@ class CasoController extends Controller
         $estatus = $request->input('estatus');
         $search = $request->input('search');
         $estadoCompletado = $request->input('estadoCompletado');
-        $condicion = $request->input('condicion'); // ✅ Nuevo parámetro
+        $condicion = $request->input('condicion');
 
-        $export = new CasosExport($start, $end, $estadoId, $estatus, $search, $estadoCompletado, $condicion);
+        $user = auth()->user(); // ✅ Agrega esto
+
+        $export = new CasosExport($start, $end, $estadoId, $estatus, $search, $estadoCompletado, $condicion, $user);
 
         return Excel::download($export, 'informe_casos.xlsx');
     }
+
 
 
 
