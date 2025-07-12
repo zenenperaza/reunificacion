@@ -29,5 +29,15 @@ class UserSeeder extends Seeder
             'estatus' => 'activo',
         ]);
         $trabajador->assignRole('Administrador');
+
+        
+        // Crear trabajador
+        $trabajador = User::create([
+            'name' => 'Danny Primera',
+            'email' => 'dannyprimera@gmail.com',
+            'password' => Hash::make('123456'),
+            'estatus' => 'activo',
+        ]);
+        $trabajador->assignRole('Monitor');
     }
 }
