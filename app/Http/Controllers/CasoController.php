@@ -172,6 +172,9 @@ class CasoController extends Controller
         if (!$request->filled('estado_completado')) {
             return datatables()->eloquent($query)
                 ->addColumn('elaborado_por', fn($caso) => $caso->elaborado_por)
+                ->filterColumn('elaborado_por', function ($query, $keyword) {
+                    $query->where('elaborado_por', 'like', "%{$keyword}%");
+                })
                 ->addColumn('condicion', $getCondicion)
                 ->addColumn('estado_completado', $getEstadoCompletado)
                 ->addColumn('acciones', $getAcciones)
