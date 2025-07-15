@@ -356,6 +356,7 @@
                                     ];
 
                                     $etnias_indigenas = [
+                                        'Ninguna',
                                         'Akawayo',
                                         'Añu',
                                         'Banova o Kurripako',
@@ -484,8 +485,8 @@
                                 </div>
 
                                 {{-- Estado mujer --}}
-                                <div class="row mt-3">
                                     <div class="col-md-8" id="estado-mujer-block" style="display: none;">
+                                <div class="row mt-3" >
                                         <label class="form-label mb-2">Estado beneficiario (Si es mujer)</label>
                                         <div class="row">
                                             @foreach (['Embarazada', 'Lactante', 'No aplica estado'] as $estado)
@@ -676,13 +677,13 @@
                                                 <option value="">Seleccione</option>
                                                 @php
                                                     $discapacidades = [
+                                                        'Ninguna',
                                                         'Física o Motora',
                                                         'Sensorial (auditiva y visual)',
                                                         'Auditiva',
                                                         'Visual',
                                                         'Intelectual',
                                                         'Psíquica',
-                                                        'Ninguna',
                                                     ];
                                                 @endphp
 
@@ -944,7 +945,7 @@
                                         'Artículo 29 Derechos de los niños, niñas y adolescentes con necesidades especiales',
                                         'Artículo 30 Derecho a un nivel de vida adecuado',
                                         'Artículo 32 Derecho a la integridad personal',
-                                        'Artículo 32-A. Derecho al buen trato',
+                                        'Artículo 32 Derecho al buen trato',
                                         'Artículo 33 Derecho a ser protegidos y protegidas contra abuso y explotación sexual',
                                         'Artículo 34 Servicios forenses',
                                         'Artículo 35 Derecho a la libertad de pensamiento, conciencia y religión',

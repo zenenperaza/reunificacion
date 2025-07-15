@@ -62,11 +62,10 @@
     <section class="flex flex-col lg:flex-row items-center gap-10">
         <!-- Texto -->
         <div class="lg:w-1/2 text-center lg:text-left space-y-6">
-            <h1 class="text-3xl lg:text-5xl font-bold leading-tight">
-                Programa de Reunificación y Localización Familiar
-            </h1>
+          
             <p class="text-lg text-gray-700">
-                {!! nl2br(e($config->texto_portada ?? 'Un esfuerzo de ASONACOP para reencontrar a niños, niñas y adolescentes con sus familiares.')) !!}
+                {!! nl2br(e($config->texto_portada ?? 'CAMINOS SEGUROS es una plataforma digital integral creada por ASONACOP para el registro, monitoreo y seguimiento especializado de casos de niñas, niños y adolescentes (NNA) en situación de movilidad humana, en riesgo de desprotección o en proceso de reunificación familiar.
+.')) !!}
             </p>
             <a href="{{ route('login') }}"
                 class="inline-block bg-[#00437c] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#00355f] transition">

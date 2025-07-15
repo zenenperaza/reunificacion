@@ -19,6 +19,23 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
+Route::get('/fix-storage-link', function () {
+    try {
+        // Elimina el enlace si existe
+        // FUNCIONA EN LOCAL
+        $publicStorage = public_path('storage');
+        if (file_exists($publicStorage)) {
+            unlink($publicStorage); // elimina el symlink
+        }
+
+        // Crea el nuevo enlace simbólico correctamente
+        Artisan::call('storage:link');
+
+        return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
+    } catch (\Exception $e) {
+        return " Error al recrear el enlace: " . $e->getMessage();
+    }
+});
 
 Route::get('/busqueda', [BusquedaController::class, 'resultados'])->name('busqueda.resultados');
 Route::get('/busqueda/ajax', [App\Http\Controllers\BusquedaController::class, 'ajax'])->name('busqueda.ajax');

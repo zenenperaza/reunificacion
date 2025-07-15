@@ -45,13 +45,13 @@
             </x-primary-button>
         </div>
     </form>
-    {{-- <div class="mt-4 text-center">
+    <div class="mt-4 text-center">
         <p class="text-sm text-gray-600">
-            ¿No tienes una cuenta?
+   
             <a href="{{ route('register') }}" class="text-primary fw-semibold hover:underline">
                 Regístrate aquí
             </a>
         </p>
-    </div> --}}
+    </div>
 
 </x-guest-layout>

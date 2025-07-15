@@ -51,20 +51,10 @@
                             <h4 class="header-title mt-0 mb-4">Beneficiarios Masculinos</h4>
                             <div class="widget-chart-1">
                                 <div class="widget-chart-box-1 float-start" dir="ltr">
-                                    <input 
-    data-plugin="knob"
-    data-width="70"
-    data-height="70"
-    data-fgColor="#4fc6e1"
-    data-bgColor="#e0f7fa"
-    value="{{ $totales['masculino_pct'] }}"
-    data-max="100"
-    data-skin="tron"
-    data-angleOffset="180"
-    data-readOnly="true"
-    data-thickness=".2"
-    data-displayInput="true"
-/>
+                                    <input data-plugin="knob" data-width="70" data-height="70" data-fgColor="#4fc6e1"
+                                        data-bgColor="#e0f7fa" value="{{ $totales['masculino_pct'] }}" data-max="100"
+                                        data-skin="tron" data-angleOffset="180" data-readOnly="true" data-thickness=".2"
+                                        data-displayInput="true" />%
 
 
                                 </div>
@@ -88,7 +78,7 @@
                                         data-bgColor="#fce4ec" value="{{ $totales['femenino_pct'] }}" data-max="100"
                                         data-skin="tron" data-angleOffset="180" data-readOnly="true" data-thickness=".2"
                                         data-displayInput="true" data-displayPrevious="true" data-font="inherit"
-                                        data-format="percentage" />
+                                        data-format="percentage" />%
 
                                 </div>
                                 <div class="widget-detail-1 text-end">
@@ -161,24 +151,20 @@
                     </span>
                 </h5>
             </div> --}}
-            <div class="row  flex-row bg-white p-3 rounded mx-1">
-                {{-- Mapa a la izquierda --}}
-                <div class="col-md-8">
-                    <div class=" h-100">
-                        <div class="card-body">
-                            <h4 class="header-title mb-3">Casos por Estado de Destino</h4>
-                            <div id="mapa-venezuela-casos" style="height: 500px;"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="row  ">
+
 
                 {{-- Chart a la derecha --}}
                 <div class="col-md-4">
-                    <div class=" h-100">
-                        <div class="card-body">
-                            <h4 class="header-title mb-3">Top 5 Estados Destino</h4>
-                            <canvas id="bar-top-estados" height="250"></canvas>
+                    <div class="card">
+
+                        <div class=" h-100">
+                            <div class="card-body">
+                                <h4 class="header-title mb-3">Top 5 Estados Destino</h4>
+                                <canvas id="bar-top-estados" height="250"></canvas>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -200,10 +186,7 @@
     <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    {{-- Highcharts Map --}}
-    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
-    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/mapdata/countries/ve/ve-all.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
@@ -268,92 +251,29 @@
 
 
     <script>
-      $(function () {
-    $('[data-plugin="knob"]').each(function () {
-        var $this = $(this);
-        var val = parseFloat($this.val()) || 0;
+        $(function() {
+            $('[data-plugin="knob"]').each(function() {
+                var $this = $(this);
+                var val = parseFloat($this.val()) || 0;
 
-        // Establece data-max si no está
-        if (!$this.attr('data-max')) {
-            $this.attr('data-max', 100);
-        }
-
-        $this.knob({
-            draw: function () {
-                // Sobrescribe el valor con símbolo %
-                if (this.$.data('displayInput') && this.$.is(':visible')) {
-                    this.$.val(this.cv + '%');
+                // Establece data-max si no está
+                if (!$this.attr('data-max')) {
+                    $this.attr('data-max', 100);
                 }
-            }
-        });
-    });
-});
 
-    </script>
-
-
-
-    <script>
-        Highcharts.mapChart('mapa-venezuela-casos', {
-            chart: {
-                map: 'countries/ve/ve-all',
-                backgroundColor: '#fff',
-                spacingBottom: 20
-            },
-
-            title: {
-                text: 'Casos por Estado de Destino',
-                style: {
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    color: '#2c3e50'
-                }
-            },
-
-            tooltip: {
-                useHTML: true,
-                backgroundColor: '#ffffff',
-                borderColor: '#3498db',
-                borderRadius: 8,
-                shadow: true,
-                style: {
-                    fontSize: '13px',
-                    color: '#2c3e50'
-                },
-                pointFormat: '<b>{point.name}</b><br>Casos destino: <span style="color:#3498db">{point.value}</span>'
-            },
-
-            colorAxis: {
-                min: 0,
-                minColor: '#e0f7fa',
-                maxColor: '#007acc'
-            },
-
-            series: [{
-                data: [
-                    @foreach ($mapaEstados as $codigo => $cantidad)
-                        ['{{ $codigo }}', {{ $cantidad }}],
-                    @endforeach
-                ],
-                name: 'Casos',
-                states: {
-                    hover: {
-                        color: '#ffa726'
+                $this.knob({
+                    draw: function() {
+                        // Sobrescribe el valor con símbolo %
+                        if (this.$.data('displayInput') && this.$.is(':visible')) {
+                            this.$.val(this.cv + '%');
+                        }
                     }
-                },
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name} {point.value}',
-                    style: {
-                        fontSize: '11px',
-                        fontWeight: 'normal',
-                        color: '#2c3e50',
-                        textOutline: 'none'
-                    }
-                }
-            }]
+                });
+            });
         });
     </script>
+
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
