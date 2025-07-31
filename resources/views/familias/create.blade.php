@@ -16,7 +16,7 @@
 
     <div class="card">
         <div class="card-body">
-            <h4 class="header-title mb-4">Registrar Familia</h4>
+            <h4 class="header-title mb-4">Registrar Coordinacion</h4>
 
             {{-- Solo se incluye el formulario --}}
             @include('familias._form')

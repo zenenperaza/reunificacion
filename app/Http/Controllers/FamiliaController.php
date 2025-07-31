@@ -35,7 +35,7 @@ class FamiliaController extends Controller
             'ver_entre_hermanos' => $request->boolean('ver_entre_hermanos'),
         ]);
 
-        return redirect()->route('familias.index')->with('success', '✅ Familia creada correctamente.');
+        return redirect()->route('familias.index')->with('success', '✅ Coordinacion creada correctamente.');
     }
 
     public function edit(Familia $familia)
@@ -55,12 +55,12 @@ class FamiliaController extends Controller
             'ver_entre_hermanos' => $request->boolean('ver_entre_hermanos'),
         ]);
 
-        return redirect()->route('familias.index')->with('success', '✅ Familia actualizada correctamente.');
+        return redirect()->route('familias.index')->with('success', '✅ Coordinacion actualizada correctamente.');
     }
 
     public function destroy(Familia $familia)
     {
         $familia->delete();
-        return redirect()->route('familias.index')->with('success', '🗑️ Familia eliminada correctamente.');
+        return redirect()->route('familias.index')->with('success', '🗑️ Coordinacion eliminada correctamente.');
     }
 }

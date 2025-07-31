@@ -46,10 +46,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `remember_token`, `phone`, `address`, `photo`, `estatus`, `created_at`, `updated_at`) VALUES
-(null, 'Zenen Peraza', 'peraza@outlook.com', '$2y$12$KcXdyg/Y/IKDEKxzAeUEjO8nkMN1kTEyvDQndKOajybv53ZbMRWmK', NULL, '0000000000', 'Dirección Central', NULL, 'activo', '2025-07-03 03:39:42', '2025-07-03 03:39:42'),
-(null, 'monitoreonacional', 'mmelendez@asonacop.org', '$2y$12$h7UDxzcvtGtDfRiotJsYQulO90dkZ2K3e5oufh5ti2k6msB63NBoi', NULL, NULL, NULL, NULL, 'activo', '2025-06-30 22:22:02', '2025-06-30 22:22:02'),
-(null, 'Danny', 'dannyprimera@gmail.com', '$2y$12$BF30tYqbYstWE2fD6sBRQemIED.GN9o9VcGys8YscDHfZXqMeBnhO', NULL, NULL, NULL, NULL, 'activo', '2025-06-30 22:46:07', '2025-06-30 22:46:07'),
-(null, 'Jesus Villarroel', 'soporteit@asonacop.org', '$2y$12$ErrIN7bMOZcLxlqR4NglFeho4RdI5kRnPuWBYqsws71jQ/3zzGCUa', NULL, NULL, NULL, NULL, 'activo', '2025-07-03 20:59:51', '2025-07-03 20:59:51');
+(4, 'monitoreonacional', 'mmelendez@asonacop.org', '$2y$12$h7UDxzcvtGtDfRiotJsYQulO90dkZ2K3e5oufh5ti2k6msB63NBoi', NULL, NULL, NULL, NULL, 0, 'activo', NULL, NULL, 0, '2025-07-01 02:22:02', '2025-07-28 09:46:17'),
+(5, 'Danny', 'dannyprimera@gmail.com', '$2y$12$BF30tYqbYstWE2fD6sBRQemIED.GN9o9VcGys8YscDHfZXqMeBnhO', NULL, NULL, NULL, NULL, 0, 'activo', NULL, NULL, 0, '2025-07-01 02:46:07', '2025-07-21 18:25:13'),
+(6, 'Jesus Villarroel', 'soporteit@asonacop.org', '$2y$12$ErrIN7bMOZcLxlqR4NglFeho4RdI5kRnPuWBYqsws71jQ/3zzGCUa', NULL, NULL, NULL, NULL, 0, 'activo', NULL, NULL, 0, '2025-07-04 00:59:51', '2025-07-21 18:25:32'),
+(7, 'Lily Torres', 'lilytorres@asonacop.org', '$2y$12$yKORccprRj8xV/Ev22Db2uPtTYtim22WKlR4kpkhdoiT6Nc6GWeVa', NULL, NULL, NULL, NULL, 0, 'activo', NULL, NULL, 0, '2025-07-28 09:44:16', '2025-07-28 09:45:59'),
+(8, 'Yohana Moros', 'pocha2207@hotmail.com', '$2y$12$BdnrOCTNs75pFKusLQGhhe1dcim57HCo52svDgOUWqNhSuT3mQSN6', NULL, NULL, NULL, NULL, 0, 'activo', NULL, NULL, 0, '2025-07-30 09:25:59', '2025-07-30 09:29:08');
 
 --
 -- Índices para tablas volcadas

@@ -24,7 +24,19 @@
     {{--
 <link rel="stylesheet" href="{{ asset('assets/css/casos_theme_google_forms.css') }}"> --}}
 
-
+    <style>
+        form#formCaso .form-group,
+        form#formCaso .card,
+        form#formCaso .section-block,
+        form#formCaso .row.mt-3 {
+            background: #fff;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.07);
+            border-left: 5px solid #abf1dd;
+        }
+    </style>
 
 
 
@@ -56,7 +68,7 @@
 @section('content')
     <div class="container-fluid">
         <x-breadcrumb title="Editar Caso" />
-        
+
         <div class="row mb-3">
             <div class="col-md-12">
                 <a href="{{ route('casos.index') }}" class="btn btn-secondary">
@@ -148,7 +160,8 @@
                                         <div class="mb-3">
                                             <label for="fecha_atencion" class="form-label mb-2">Fecha de Atención</label>
                                             <input type="date" class="form-control" name="fecha_atencion"
-                                                value="{{ $caso->fecha_atencion }}">
+                                                value="{{ optional($caso->fecha_atencion)->format('Y-m-d') }}">
+
                                         </div>
                                     </div>
                                 </div>
@@ -405,6 +418,26 @@
 
                                 {{-- Beneficiaria/o del programa --}}
                                 <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="fecha_nacimiento" class="form-label mb-2">Fecha de
+                                                Nacimiento </label>
+                                            <input type="date" class="form-control" name="fecha_nacimiento"
+                                                id="fecha_nacimiento"
+                                                value="{{ old('fecha_nacimiento', $caso->fecha_nacimiento ? date('Y-m-d', strtotime($caso->fecha_nacimiento)) : '') }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mt-0">
+                                        <label class="form-label mb-2">Edad del beneficiario</label>
+                                        <input type="number" class="form-control" name="edad_beneficiario"
+                                            id="edad-beneficiario-input" min="0" max="120"
+                                            value="{{ old('edad_beneficiario', $caso->edad_beneficiario) }}" readonly>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mt-3">
                                     <div class="col-md-8">
                                         <label class="form-label mb-2">Beneficiaria/o del programa</label>
                                         <div class="row">
@@ -485,8 +518,8 @@
                                 </div>
 
                                 {{-- Estado mujer --}}
-                                    <div class="col-md-8" id="estado-mujer-block" style="display: none;">
-                                <div class="row mt-3" >
+                                <div class="col-md-8" id="estado-mujer-block" style="display: none;">
+                                    <div class="row mt-3">
                                         <label class="form-label mb-2">Estado beneficiario (Si es mujer)</label>
                                         <div class="row">
                                             @foreach (['Embarazada', 'Lactante', 'No aplica estado'] as $estado)
@@ -499,19 +532,6 @@
                                                 </div>
                                             @endforeach
                                         </div>
-                                    </div>
-                                </div>
-
-                                {{-- Edad beneficiario --}}
-                                <div class="row mt-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-2">Edad del beneficiario</label>
-
-                                        <select class="form-select" id="selectEdad" name="edad_beneficiario"
-                                            data-edad="{{ $caso->edad_beneficiario }}">
-                                            <option value="">Seleccione</option>
-                                        </select>
-
                                     </div>
                                 </div>
 
@@ -643,8 +663,8 @@
                                     <div class="col-md-6" id="otro_pais_nacimiento_container"
                                         style="{{ $caso->pais_nacimiento == 'Otro País' ? '' : 'display: none;' }}">
                                         <label class="form-label mb-2">Indique otro país de nacimiento</label>
-                                        <input type="text" class="form-control" name="otro_pais_nacimientos"
-                                            id="otro_pais_nacimientos" value="{{ $caso->otro_pais_nacimientos }}">
+                                        <input type="text" class="form-control" name="otro_pais_nacimiento"
+                                            id="otro_pais_nacimiento" value="{{ $caso->otro_pais_nacimiento }}">
                                     </div>
                                 </div>
 
@@ -863,9 +883,9 @@
                                             style="{{ in_array('Otros tipos de actuación', $tipoActuacion) ? '' : 'display: none;' }}">
                                             <label for="otros_actuacion_texto" class="form-label">Describa otro tipo de
                                                 actuación</label>
-                                            <input type="text" class="form-control" name="otros_actuacion_descripcion"
+                                            <input type="text" class="form-control" name="otro_tipo_actuacion"
                                                 id="otros_actuacion_texto" placeholder="Especifique..."
-                                                value="{{ old('otros_actuacion_descripcion', $caso->otros_actuacion_descripcion) }}">
+                                                value="{{ old('otro_tipo_actuacion', $caso->otro_tipo_actuacion) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -1065,6 +1085,79 @@
                                         'Institucional (por no manejo de perspectiva de género por sesgo androadultocéntrico)',
                                     ];
 
+                                    $violenciasMarcadas = collect(
+                                        json_decode($caso->identificacion_violencia, true) ?: [],
+                                    )
+                                        ->map(fn($v) => trim(preg_replace('/\s+/', ' ', $v)))
+                                        ->toArray();
+
+                                    $vicariasMarcadas = collect(json_decode($caso->tipos_violencia_vicaria, true) ?: [])
+                                        ->map(fn($v) => trim(preg_replace('/\s+/', ' ', $v)))
+                                        ->toArray();
+
+                                    $remisionesMarcadas = collect(json_decode($caso->remisiones, true) ?: [])
+                                        ->map(fn($v) => trim($v))
+                                        ->toArray();
+                                @endphp
+
+
+                                {{-- IDENTIFICACIÓN DE VIOLENCIA BASADA EN GÉNERO --}}
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Identificación de violencia basada en género
+                                            VBG</label>
+                                        <small class="d-block text-muted mb-2">Elegir varias opciones de ser
+                                            necesario</small>
+                                        <div class="row">
+                                            @foreach ($tipos_violencia as $violencia)
+                                                @php $valor = trim(preg_replace('/\s+/', ' ', $violencia)); @endphp
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="identificacion_violencia[]"
+                                                            value="{{ $valor }}"
+                                                            id="{{ Str::slug($valor, '_') }}"
+                                                            {{ in_array($valor, $violenciasMarcadas) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($valor, '_') }}">
+                                                            {{ $violencia }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- TIPOS DE VIOLENCIA VICARIA --}}
+                                <div class="row mt-3" id="bloque_tipos_vicaria"
+                                    style="{{ in_array('Violencia Vicaría', $violenciasMarcadas) ? '' : 'display: none;' }}">
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Tipos de violencia vicaria</label>
+                                        <small class="d-block text-muted mb-2">Elegir varias opciones de ser
+                                            necesario</small>
+                                        <div class="row">
+                                            @foreach ($tipos_vicaria as $vicaria)
+                                                @php $valor = trim(preg_replace('/\s+/', ' ', $vicaria)); @endphp
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="tipos_violencia_vicaria[]" value="{{ $valor }}"
+                                                            id="{{ Str::slug($valor, '_') }}"
+                                                            {{ in_array($valor, $vicariasMarcadas) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($valor, '_') }}">
+                                                            {{ $vicaria }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- REMISIONES --}}
+                                @php
                                     $remisiones = [
                                         'Para EMD ASONACOP',
                                         'Para Consejo de Proteccion NNA',
@@ -1083,112 +1176,45 @@
                                         'Sin Remisión',
                                     ];
 
-                                    $violenciasMarcadas = collect(
-                                        json_decode($caso->identificacion_violencia, true) ?: [],
-                                    )
-                                        ->map(fn($v) => trim(preg_replace('/\s+/', ' ', $v)))
-                                        ->toArray();
+                                    $remisionesMarcadas = $remisionesMarcadas ?? [];
 
-                                    $vicariasMarcadas = collect(json_decode($caso->tipos_violencia_vicaria, true) ?: [])
-                                        ->map(fn($v) => trim(preg_replace('/\s+/', ' ', $v)))
-                                        ->toArray();
-
-                                    $remisionesMarcadas = collect(json_decode($caso->remisiones, true) ?: [])
-                                        ->map(fn($v) => trim($v))
-                                        ->toArray();
+                                    $mostrarBloqueOtras =
+                                        in_array('Otras Remisiones', $remisionesMarcadas) ||
+                                        !empty($caso->otras_remisiones);
                                 @endphp
 
-                                <div>
-                                    {{-- IDENTIFICACIÓN DE VIOLENCIA BASADA EN GÉNERO --}}
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label fw-bold">Identificación de violencia basada en género
-                                                VBG</label>
-                                            <small class="d-block text-muted mb-2">Elegir varias opciones de ser
-                                                necesario</small>
-                                            <div class="row">
-                                                @foreach ($tipos_violencia as $violencia)
-                                                    @php $valor = trim(preg_replace('/\s+/', ' ', $violencia)); @endphp
-                                                    <div class="col-md-6">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="identificacion_violencia[]"
-                                                                value="{{ $valor }}"
-                                                                id="{{ Str::slug($valor, '_') }}"
-                                                                {{ in_array($valor, $violenciasMarcadas) ? 'checked' : '' }}>
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($valor, '_') }}">
-                                                                {{ $violencia }}
-                                                            </label>
-                                                        </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Remisiones</label>
+                                        <div class="row">
+                                            @foreach ($remisiones as $remision)
+                                                @php $valor = trim($remision); @endphp
+                                                <div class="col-md-4 mb-1">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="remisiones[]" value="{{ $valor }}"
+                                                            id="{{ Str::slug($valor, '_') }}"
+                                                            {{ in_array($valor, $remisionesMarcadas) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ Str::slug($valor, '_') }}">
+                                                            {{ $remision }}
+                                                        </label>
                                                     </div>
-                                                @endforeach
-                                            </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
+                                </div>
 
-                                    {{-- TIPOS DE VIOLENCIA VICARIA --}}
-                                    <div class="row mt-3" id="bloque_tipos_vicaria"
-                                        style="{{ in_array('Violencia Vicaría', $violenciasMarcadas) ? '' : 'display: none;' }}">
-                                        <div class="col-md-12">
-                                            <label class="form-label fw-bold">Tipos de violencia vicaria</label>
-                                            <small class="d-block text-muted mb-2">Elegir varias opciones de ser
-                                                necesario</small>
-                                            <div class="row">
-                                                @foreach ($tipos_vicaria as $vicaria)
-                                                    @php $valor = trim(preg_replace('/\s+/', ' ', $vicaria)); @endphp
-                                                    <div class="col-md-6">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="tipos_violencia_vicaria[]"
-                                                                value="{{ $valor }}"
-                                                                id="{{ Str::slug($valor, '_') }}"
-                                                                {{ in_array($valor, $vicariasMarcadas) ? 'checked' : '' }}>
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($valor, '_') }}">
-                                                                {{ $vicaria }}
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- REMISIONES --}}
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label fw-bold">Remisiones</label>
-                                            <div class="row">
-                                                @foreach ($remisiones as $remision)
-                                                    @php $valor = trim($remision); @endphp
-                                                    <div class="col-md-4 mb-1">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="remisiones[]" value="{{ $valor }}"
-                                                                id="{{ Str::slug($valor, '_') }}"
-                                                                {{ in_array($valor, $remisionesMarcadas) ? 'checked' : '' }}>
-                                                            <label class="form-check-label"
-                                                                for="{{ Str::slug($valor, '_') }}">
-                                                                {{ $remision }}
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- Campo adicional si hay "Otras Remisiones" --}}
-                                    <div class="row mt-3" id="bloque_otras_remisiones"
-                                        style="{{ in_array('Otras Remisiones', $remisionesMarcadas) ? '' : 'display: none;' }}">
-                                        <div class="col-md-6">
-                                            <label for="detalle_otras_remisiones" class="form-label">Especifique otras
-                                                remisiones</label>
-                                            <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
-                                                class="form-control"
-                                                value="{{ old('otras_remisiones', $caso->otras_remisiones ?? '') }}">
-                                        </div>
+                                {{-- Campo adicional si hay "Otras Remisiones" --}}
+                                <div class="row mt-3" id="bloque_otras_remisiones"
+                                    style="{{ $mostrarBloqueOtras ? '' : 'display: none;' }}">
+                                    <div class="col-md-6">
+                                        <label for="detalle_otras_remisiones" class="form-label">Especifique otras
+                                            remisiones</label>
+                                        <input type="text" name="otras_remisiones" id="detalle_otras_remisiones"
+                                            class="form-control"
+                                            value="{{ old('otras_remisiones', $caso->otras_remisiones ?? '') }}">
                                     </div>
                                 </div>
 
@@ -1207,8 +1233,10 @@
                                         <div class="card-body">
                                             <h4 class="header-title mb-2">Fotos e Imágenes</h4>
                                             <p class="sub-header mb-3">
-                                                Por favor, sube aquí las fotos o imágenes relacionadas con el caso. Puedes
-                                                arrastrarlas al área o hacer clic para seleccionarlas desde tu dispositivo.
+                                                Por favor, sube aquí las fotos o imágenes relacionadas con el caso.
+                                                Puedes
+                                                arrastrarlas al área o hacer clic para seleccionarlas desde tu
+                                                dispositivo.
                                                 <br>
                                                 <strong>Formatos permitidos: .jpg, .jpeg, .png, .gif</strong>
                                             </p>
@@ -1309,7 +1337,8 @@
                                                 <div class="dz-message needsclick">
                                                     <i class="h1 text-muted dripicons-cloud-upload"></i>
                                                     <h3>Arrastra los archivos aquí o haz clic para subirlos.</h3>
-                                                    <span class="text-muted font-13">Puedes subir varios documentos en esta
+                                                    <span class="text-muted font-13">Puedes subir varios documentos en
+                                                        esta
                                                         sección.</span>
                                                 </div>
                                             </div>
@@ -1402,10 +1431,10 @@
 
                                                 @if (configuracion('conf_fecha_actual') === 'si' && auth()->user()->can('cambiar fecha actual'))
                                                     <input type="date" class="form-control" name="fecha_actual"
-                                                        value="{{ old('fecha_actual', $caso->fecha_actual ?? date('Y-m-d')) }}">
+                                                        value="{{ old('fecha_actual', $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('Y-m-d') : date('Y-m-d')) }}">
                                                 @else
                                                     <input type="date" class="form-control" name="fecha_actual"
-                                                        value="{{ old('fecha_actual', $caso->fecha_actual ?? date('Y-m-d')) }}"
+                                                        value="{{ old('fecha_actual', $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('Y-m-d') : date('Y-m-d')) }}"
                                                         readonly>
                                                 @endif
 
@@ -1518,7 +1547,8 @@
 
 
                                 <li class="next list-inline-item  float-end">
-                                    <button type="submit" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
+                                    <button type="submit"
+                                        class="btn btn-success waves-effect waves-light btn-guardar mx-2"
                                         data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
                                         finalizar</button>
 
@@ -1847,7 +1877,7 @@
                         let siglas = nombre.substring(0, 3).toUpperCase();
 
                         const numero = String(data.conteo + 1).padStart(3, '0');
-                        numeroCasoInput.value = `RLF-${siglas}-${numero}`;
+                        numeroCasoInput.value = `LRF-${siglas}-${numero}`;
                     })
                     .catch(err => {
                         console.error('Error al obtener datos del estado:', err);
@@ -2223,86 +2253,86 @@
 
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectEdad = document.getElementById('selectEdad');
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const selectEdad = document.getElementById('selectEdad');
 
-            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+        //     const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
 
-            const rangos = {
-                'nina_adolescente': [0, 17],
-                'mujer_joven': [18, 21],
-                'mujer_adulta': [22, 100],
-                'nino_adolescente': [0, 17],
-                'hombre_joven': [18, 21],
-                'hombre_adulto': [22, 100]
-            };
+        //     const rangos = {
+        //         'nina_adolescente': [0, 17],
+        //         'mujer_joven': [18, 21],
+        //         'mujer_adulta': [22, 100],
+        //         'nino_adolescente': [0, 17],
+        //         'hombre_joven': [18, 21],
+        //         'hombre_adulto': [22, 100]
+        //     };
 
-            function normalizarTexto(texto) {
-                return texto
-                    .toLowerCase()
-                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
-                    .replace(/\s+/g, '_'); // espacios a guión bajo
-            }
+        //     function normalizarTexto(texto) {
+        //         return texto
+        //             .toLowerCase()
+        //             .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
+        //             .replace(/\s+/g, '_'); // espacios a guión bajo
+        //     }
 
-            function cargarRangoDeEdad(valorNormalizado) {
-                selectEdad.innerHTML = '<option value="">Seleccione</option>';
+        //     function cargarRangoDeEdad(valorNormalizado) {
+        //         selectEdad.innerHTML = '<option value="">Seleccione</option>';
 
-                if (!(valorNormalizado in rangos)) return;
+        //         if (!(valorNormalizado in rangos)) return;
 
-                const [min, max] = rangos[valorNormalizado];
-                const edadActual = parseInt(selectEdad.dataset.edad);
+        //         const [min, max] = rangos[valorNormalizado];
+        //         const edadActual = parseInt(selectEdad.dataset.edad);
 
-                for (let i = min; i <= max; i++) {
-                    const option = document.createElement("option");
-                    option.value = i;
-                    option.textContent = `${i} años`;
-                    if (i === edadActual) {
-                        option.selected = true;
-                    }
-                    selectEdad.appendChild(option);
-                }
-            }
-
-
-            radiosBeneficiario.forEach(radio => {
-                radio.addEventListener("change", function() {
-                    const slug = normalizarTexto(this.value);
-                    cargarRangoDeEdad(slug);
-                });
-            });
-
-            // Ejecutar al cargar si hay selección previa
-            const seleccionado = document.querySelector('input[name="beneficiario"]:checked');
-            if (seleccionado) {
-                const slug = normalizarTexto(seleccionado.value);
-                cargarRangoDeEdad(slug);
-            }
-        });
+        //         for (let i = min; i <= max; i++) {
+        //             const option = document.createElement("option");
+        //             option.value = i;
+        //             option.textContent = `${i} años`;
+        //             if (i === edadActual) {
+        //                 option.selected = true;
+        //             }
+        //             selectEdad.appendChild(option);
+        //         }
+        //     }
 
 
+        //     radiosBeneficiario.forEach(radio => {
+        //         radio.addEventListener("change", function() {
+        //             const slug = normalizarTexto(this.value);
+        //             cargarRangoDeEdad(slug);
+        //         });
+        //     });
+
+        //     // Ejecutar al cargar si hay selección previa
+        //     const seleccionado = document.querySelector('input[name="beneficiario"]:checked');
+        //     if (seleccionado) {
+        //         const slug = normalizarTexto(seleccionado.value);
+        //         cargarRangoDeEdad(slug);
+        //     }
+        // });
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const checkNoAplica = document.querySelector('input[name="estado_mujer[]"][value="No aplica estado"]');
-            const otrosEstados = document.querySelectorAll(
-                'input[name="estado_mujer[]"]:not([value="No aplica estado"])');
 
-            if (checkNoAplica) {
-                checkNoAplica.addEventListener("change", function() {
-                    if (this.checked) {
-                        otrosEstados.forEach(cb => cb.checked = false);
-                    }
-                });
 
-                otrosEstados.forEach(cb => {
-                    cb.addEventListener("change", function() {
-                        if (this.checked) {
-                            checkNoAplica.checked = false;
-                        }
-                    });
-                });
-            }
-        });
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const checkNoAplica = document.querySelector('input[name="estado_mujer[]"][value="No aplica estado"]');
+        //     const otrosEstados = document.querySelectorAll(
+        //         'input[name="estado_mujer[]"]:not([value="No aplica estado"])');
+
+        //     if (checkNoAplica) {
+        //         checkNoAplica.addEventListener("change", function() {
+        //             if (this.checked) {
+        //                 otrosEstados.forEach(cb => cb.checked = false);
+        //             }
+        //         });
+
+        //         otrosEstados.forEach(cb => {
+        //             cb.addEventListener("change", function() {
+        //                 if (this.checked) {
+        //                     checkNoAplica.checked = false;
+        //                 }
+        //             });
+        //         });
+        //     }
+        // });
 
 
 
@@ -2516,32 +2546,49 @@
                 }
             });
         });
+    </script>
 
 
 
+    <script>
         $(document).ready(function() {
+            $('#otras_remisiones').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#bloque_otras_remisiones').slideDown();
+                } else {
+                    $('#bloque_otras_remisiones').slideUp();
+                    $('#detalle_otras_remisiones').val('');
+                }
+            });
+
+            // Mostrar si ya hay texto aunque el checkbox no esté marcado
+            if ($('#otras_remisiones').is(':checked') || $('#detalle_otras_remisiones').val().trim() !== '') {
+                $('#bloque_otras_remisiones').show();
+            }
+
+            // Lógica de "Sin Remisión"
             $('#sin_remision').on('change', function() {
                 if ($(this).is(':checked')) {
-                    // Desmarcar todos los demás checkbox excepto "Sin Remisión"
                     $('input[name="remisiones[]"]').not(this).prop('checked', false);
                 }
             });
 
-            // Si se marca otro checkbox, desmarcar "Sin Remisión"
             $('input[name="remisiones[]"]').not('#sin_remision').on('change', function() {
                 if ($(this).is(':checked')) {
                     $('#sin_remision').prop('checked', false);
                 }
             });
         });
+    </script>
 
 
 
+    <script>
         $(document).ready(function() {
             $('#pais_nacimiento').on('change', function() {
                 const seleccion = $(this).val();
                 const bloque = $('#otro_pais_nacimiento_container');
-                const input = $('#otro_pais_nacimientos');
+                const input = $('#otro_pais_nacimiento');
 
                 if (seleccion === 'Otro País') {
                     bloque.slideDown();
@@ -2568,6 +2615,123 @@
         });
     </script>
 
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputFecha = document.querySelector('input[name="fecha_nacimiento"]');
+            const inputEdad = document.getElementById('edad-beneficiario-input');
+            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+            const bloqueEducacion = document.getElementById('bloque_educacion');
+            const bloqueNivelTipo = document.getElementById('bloque_nivel_educativo_tipo_isntitucion');
+            const bloqueEstadoMujer = document.getElementById('estado-mujer-block');
+            const radioEducacion = document.querySelectorAll('input[name="educacion"]');
+
+            const mapToLabel = {
+                'niña_adolescente': 'nina_adolescente',
+                'niño_adolescente': 'nino_adolescente',
+                'mujer_joven': 'mujer_joven',
+                'hombre_joven': 'hombre_joven',
+                'mujer_adulta': 'mujer_adulta',
+                'hombre_adulto': 'hombre_adulto',
+            };
+
+            const rangos = {
+                'nina_adolescente': [0, 17],
+                'mujer_joven': [18, 21],
+                'mujer_adulta': [22, 100],
+                'nino_adolescente': [0, 17],
+                'hombre_joven': [18, 21],
+                'hombre_adulto': [22, 100]
+            };
+
+            function mostrarRadiosSegunEdad(edad) {
+                radiosBeneficiario.forEach(radio => {
+                    const key = radio.id;
+                    const rango = rangos[key];
+                    if (rango && edad >= rango[0] && edad <= rango[1]) {
+                        radio.closest('.form-check').style.display = 'block';
+                    } else {
+                        radio.closest('.form-check').style.display = 'none';
+                        radio.checked = false;
+                    }
+                });
+            }
+
+
+            const esAdolescente = (key) => ['nina_adolescente', 'nino_adolescente'].includes(key);
+            const esFemenina = (key) => ['nina_adolescente', 'mujer_joven', 'mujer_adulta'].includes(key);
+
+            function actualizarVisibilidadBloques(id) {
+                bloqueEducacion.style.display = esAdolescente(id) ? 'block' : 'none';
+                if (!esAdolescente(id)) bloqueNivelTipo.style.display = 'none';
+
+                bloqueEstadoMujer.style.display = esFemenina(id) ? 'block' : 'none';
+            }
+
+            function calcularEdadDesdeFecha(fechaStr) {
+                const fecha = new Date(fechaStr);
+                const hoy = new Date();
+                let edad = hoy.getFullYear() - fecha.getFullYear();
+                const m = hoy.getMonth() - fecha.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
+                    edad--;
+                }
+                return edad;
+            }
+
+            inputFecha.addEventListener('change', function() {
+                if (!this.value) return;
+
+                const edad = calcularEdadDesdeFecha(this.value);
+                inputEdad.value = edad;
+
+                mostrarRadiosSegunEdad(edad);
+
+                // Si solo queda uno visible, lo seleccionamos automáticamente
+                const visibles = Array.from(radiosBeneficiario).filter(radio =>
+                    radio.closest('.form-check').style.display !== 'none'
+                );
+
+                if (visibles.length === 1) {
+                    visibles[0].checked = true;
+                    actualizarVisibilidadBloques(visibles[0].id);
+                }
+            });
+
+
+            radiosBeneficiario.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarVisibilidadBloques(this.id);
+                });
+            });
+
+            radioEducacion.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    bloqueNivelTipo.style.display = this.value === 'Si estudia' ? 'flex' : 'none';
+                });
+            });
+
+            // ✅ Al cargar la página (modo edición)
+            (function inicializar() {
+                const radioSeleccionado = document.querySelector('input[name="beneficiario"]:checked');
+                if (radioSeleccionado) {
+                    actualizarVisibilidadBloques(radioSeleccionado.id);
+                }
+
+                const educacionSeleccionada = document.querySelector('input[name="educacion"]:checked');
+                if (educacionSeleccionada && educacionSeleccionada.value === 'Si estudia') {
+                    bloqueNivelTipo.style.display = 'flex';
+                }
+
+                // También calcula edad si hay fecha ya cargada
+                if (inputFecha.value && !inputEdad.value) {
+                    const edad = calcularEdadDesdeFecha(inputFecha.value);
+                    inputEdad.value = edad;
+                }
+            })();
+        });
+    </script>
 
 
 

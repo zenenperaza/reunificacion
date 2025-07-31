@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $config->nombre_sistema ?? 'PROGRAMA RLF' }}</title>
+    <title>{{ $config->nombre_sistema ?? 'Caminos seguros' }}</title>
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +23,7 @@
 <header class="sticky top-0 z-50 bg-white shadow-sm max-w-6xl mx-auto px-4">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center text-sm">
         <span class="font-bold text-lg text-[#00437c]">
-            {{ $config->nombre_sistema ?? 'PROGRAMA RLF' }}
+            {{ $config->nombre_sistema ?? 'Caminos seguros' }}
         </span>
 
         @if (Route::has('login'))
@@ -120,7 +120,7 @@
 </main>
 
 <footer class="text-center text-sm text-gray-500 py-8">
-    © {{ date('Y') }} {{ $config->nombre_sistema ?? 'Programa RLF' }} - ASONACOP
+    © {{ date('Y') }} {{ $config->nombre_sistema ?? 'Caminos seguros' }} - ASONACOP
 </footer>
 
 </body>

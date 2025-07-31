@@ -62,6 +62,27 @@ class CasoFactory extends Factory
 
         // Listas de datos
         $beneficiarios = ['Niña adolescente', 'Mujer joven', 'Mujer adulta', 'Niño adolescente', 'Hombre joven', 'Hombre adulto'];
+
+
+        $beneficiario = $this->faker->randomElement($beneficiarios);
+
+        // Mapear beneficiario al rango
+        $rangos = [
+            'Niña adolescente' => [0, 17],
+            'Niño adolescente' => [0, 17],
+            'Mujer joven' => [18, 21],
+            'Hombre joven' => [18, 21],
+            'Mujer adulta' => [22, 100],
+            'Hombre adulto' => [22, 100],
+        ];
+
+        // Obtener el rango correspondiente
+        [$edadMin, $edadMax] = $rangos[$beneficiario];
+        $edad = rand($edadMin, $edadMax);
+
+        // Calcular fecha de nacimiento
+        $fechaNacimiento = now()->subYears($edad)->subDays(rand(0, 364))->format('Y-m-d');
+
         $acompanantes = ['Padre', 'Madre', 'Representante legal', 'No aplica acompanante'];
         $serviciosCosude = ['Kits de higiene personal', 'Kit de alimentación (cesta de alimentos)', 'Platos servidos', 'Movilizaciones por caso', 'Hospedaje', 'Ningún servicio COSUDE'];
         $serviciosUnicef = ['Kits de higiene (NNA)', 'Viáticos alimentos', 'Traslado (NNA)', 'Traslado seguimiento', 'Traslado consejeros', 'Orientación', 'Ningún servicio UNICEF'];
@@ -191,7 +212,7 @@ class CasoFactory extends Factory
             'parroquia_destino_id' => $parroquiaDestino->id,
 
             'elaborado_por' => $this->faker->randomElement(User::pluck('name')->toArray()),
-            'numero_caso' => 'RLF-' . $codigoEstado . '-' . $numero,
+            'numero_caso' => 'LRF-' . $codigoEstado . '-' . $numero,
             'organizacion_programa' => implode(', ', $this->faker->randomElements(['UNICEF', 'COSUDE'], rand(1, 2))),
             'organizacion_solicitante' => implode(', ', $this->faker->randomElements($organizaciones, rand(1, 3))),
             'otras_organizaciones' => 'Save the Children',
@@ -200,9 +221,12 @@ class CasoFactory extends Factory
 
             'tipo_atencion' => $this->faker->randomElement(['Individual', 'Grupo familiar']),
 
-            'beneficiario' => $this->faker->randomElement($beneficiarios),
+
+            'beneficiario' => $beneficiario,
+            'edad_beneficiario' => $edad,
+            'fecha_nacimiento' => $fechaNacimiento,
+
             'estado_mujer' => 'No aplica',
-            'edad_beneficiario' => $this->faker->numberBetween(1, 17),
             'poblacion_lgbti' => $this->faker->boolean() ? 'Sí' : 'No',
             'acompanante' => $this->faker->randomElement($acompanantes),
             'representante_legal' => $this->faker->randomElement($acompanantes),

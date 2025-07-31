@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <title>@yield('title', config('app.name', ''))</title>
-    <title>{{ configuracion('nombre_sistema') ?? 'Sistema RLF' }}</title>
+    <title>{{ configuracion('nombre_sistema') ?? 'Caminos seguros' }}</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

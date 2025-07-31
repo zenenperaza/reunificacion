@@ -37,6 +37,7 @@ Route::get('/fix-storage-link', function () {
     }
 });
 
+
 Route::get('/busqueda', [BusquedaController::class, 'resultados'])->name('busqueda.resultados');
 Route::get('/busqueda/ajax', [App\Http\Controllers\BusquedaController::class, 'ajax'])->name('busqueda.ajax');
 

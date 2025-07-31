@@ -10,7 +10,8 @@
         class="mx-auto" 
         style="width: 150px">
 </div>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="" action="">
+    {{-- <form method="POST" action="{{ route('register') }}"> --}}
         @csrf
 
         <!-- Name -->

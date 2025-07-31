@@ -3,13 +3,13 @@
     $esEdicion = isset($familia);
 @endphp
 
-@can($esEdicion ? 'editar familias' : 'crear familias')
+@can($esEdicion ? 'editar coordinaciones' : 'crear coordinaciones')
     <form action="{{ $esEdicion ? route('familias.update', $familia) : route('familias.store') }}" method="POST">
         @csrf
         @if($esEdicion) @method('PUT') @endif
 
         <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre de la familia</label>
+            <label for="nombre" class="form-label">Nombre de la Coordinacion</label>
             <input type="text" class="form-control" name="nombre" value="{{ old('nombre', $familia->nombre ?? '') }}" required>
         </div>
 
@@ -23,6 +23,6 @@
     </form>
 @else
     <div class="alert alert-danger">
-        No tienes permiso para {{ $esEdicion ? 'editar' : 'crear' }} familias.
+        No tienes permiso para {{ $esEdicion ? 'editar' : 'crear' }} coordinacion.
     </div>
 @endcan

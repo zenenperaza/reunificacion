@@ -49,10 +49,10 @@ class RoleSeeder extends Seeder
             'sistema deshabilitado',
             'cambiar fecha actual',
 
-            'ver familias',
-            'crear familias',
-            'editar familias',
-            'eliminar familias',
+            'ver coordinaciones',
+            'crear coordinaciones',
+            'editar coordinaciones',
+            'eliminar coordinaciones',
             
             'dashboard-user',
         ];
@@ -95,10 +95,10 @@ class RoleSeeder extends Seeder
             'sistema deshabilitado',
             'cambiar fecha actual',
 
-            'ver familias',
-            'crear familias',
-            'editar familias',
-            'eliminar familias',
+            'ver coordinaciones',
+            'crear coordinaciones',
+            'editar coordinaciones',
+            'eliminar coordinaciones',
             
         ];
 

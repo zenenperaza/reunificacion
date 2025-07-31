@@ -23,8 +23,8 @@
 
 @section('content')
     <div class="container-fluid">
-        <x-breadcrumb title="Crear Caso" />   
-        
+        <x-breadcrumb title="Crear Caso" />
+
         <div class="row mb-3">
             <div class="col-md-12">
                 <a href="{{ route('casos.index') }}" class="btn btn-secondary">
@@ -36,8 +36,9 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Registro de Caso</h4>
-                <div id="progressbarwizard"  >
-                    <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso" class="modo-claro-forzado">
+                <div id="progressbarwizard">
+                    <form action="{{ route('casos.store') }}" method="POST" enctype="multipart/form-data" id="formCaso"
+                        class="modo-claro-forzado">
                         @csrf
 
                         <input type="hidden" name="caso_id" id="caso_id" value="">
@@ -327,6 +328,25 @@
 
                                         {{-- Beneficiario --}}
                                         <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="fecha_nacimiento" class="form-label mb-2">Fecha de
+                                                        Nacimiento</label>
+                                                    <input type="date" class="form-control" name="fecha_nacimiento">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mt-0">
+                                                <label class="form-label mb-2">Edad del beneficiario</label>
+                                                <input type="number" class="form-control" name="edad_beneficiario"
+                                                    id="edad-beneficiario-input" min="0" max="120" readonly>
+
+                                            </div>
+                                        </div>
+
+                                        {{-- <div class="row mt-3">
+                                        
+                                        </div> --}}
+                                        <div class="row mt-3">
                                             <div class="col-md-8">
                                                 <label class="form-label mb-2">Beneficiaria/o del programa</label>
                                                 <div class="row">
@@ -443,16 +463,6 @@
                                                 </div>
                                             </div>
 
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-md-4 mt-0">
-                                                <label class="form-label mb-2">Edad del beneficiario</label>
-                                                <select class="form-select" name="edad_beneficiario"
-                                                    id="edad-beneficiario-select">
-                                                    <option value="">Seleccione</option>
-                                                </select>
-                                            </div>
                                         </div>
 
                                         <div class="row mt-3">
@@ -695,7 +705,7 @@
                                                     <label for="otro_pais" class="form-label mb-2">Indique otro
                                                         país de nacimiento</label>
                                                     <input type="text" class="form-control"
-                                                        name="otro_pais_nacimientos" id="otro_pais_nacimientos">
+                                                        name="otro_pais_nacimiento" id="otro_pais_nacimiento">
                                                 </div>
                                             </div>
                                         </div>
@@ -956,14 +966,17 @@
                                             @endforeach
                                         </div>
 
-                                        {{-- Campo extra visible solo si se marca "Otros tipos de actuación" --}}
-                                        <div class="mt-3" id="otros_actuacion_container" style="display: none;">
-                                            <label for="otros_actuacion_texto" class="form-label">Describa otro tipo de
-                                                actuación</label>
-                                            <input type="text" class="form-control" name="otros_actuacion_descripcion"
-                                                id="otros_actuacion_texto" placeholder="Especifique...">
-                                        </div>
+
                                     </div>
+                                </div>
+
+                                <div class="row mt-3" id="otros_actuacion_container" style="display: none;">
+
+                                    <label for="otros_actuacion_texto" class="form-label">Describa otro tipo de
+                                        actuación</label>
+                                    <input type="text" class="form-control" name="otro_tipo_actuacion"
+                                        id="otros_actuacion_texto" placeholder="Especifique...">
+
                                 </div>
 
                             </div>
@@ -1436,19 +1449,25 @@
                                                 class="text-danger">*</span></label>
                                         <small class="text-muted d-block mb-2">Elegir estatus del caso/expediente</small>
 
+                                        @php
+                                            $estatusSeleccionado = old('estatus', 'En proceso'); // ← "En proceso" predeterminado
+                                        @endphp
+
                                         @foreach (['En proceso', 'En seguimiento', 'Cierre de atención'] as $i => $estatus)
                                             @if ($estatus == 'Cierre de atención' && !auth()->user()->can('cierre atencion'))
                                                 @continue
                                             @endif
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="estatus"
-                                                    id="estatus{{ $i + 1 }}" value="{{ $estatus }}">
+                                                    id="estatus{{ $i + 1 }}" value="{{ $estatus }}"
+                                                    {{ $estatusSeleccionado === $estatus ? 'checked' : '' }}>
                                                 <label class="form-check-label"
                                                     for="estatus{{ $i + 1 }}">{{ $estatus }}</label>
                                             </div>
                                         @endforeach
                                     </div>
                                 </div>
+
 
 
                                 <div class="row mt-3">
@@ -1529,7 +1548,7 @@
                                         <li class="previous list-inline-item">
 
                                             <button type="button"
-                                                class="btn btn-success waves-effect waves-light  btn-guardar  float-end"
+                                                class="btn btn-success waves-effect btn-guardar  float-end"
                                                 data-final="true">
                                                 <span class="btn-label"><i class="mdi mdi-check-all"></i></span>Guardar y
                                                 finalizar
@@ -1826,12 +1845,18 @@
                 inputText.prop('disabled', false).prop('required', true);
             }
         });
+    </script>
 
+    <script>
+        const prefijo = @json(configuracion('prefijo_caso') ?? 'LRF');
+    </script>
 
-
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
+
+            const prefijo = @json(configuracion('prefijo_caso') ?? 'LRF');
 
             estadoSelect.addEventListener('change', function() {
                 const estadoId = this.value;
@@ -1845,11 +1870,11 @@
                     .then(response => response.json())
                     .then(data => {
                         let nombre = data.estado_nombre.trim().normalize("NFD").replace(
-                            /[\u0300-\u036f]/g, ""); // Quitar acentos
+                            /[\u0300-\u036f]/g, "");
                         let siglas = nombre.substring(0, 3).toUpperCase();
 
                         const numero = String(data.conteo + 1).padStart(3, '0');
-                        numeroCasoInput.value = `RLF-${siglas}-${numero}`;
+                        numeroCasoInput.value = `${prefijo}-${siglas}-${numero}`;
                     })
                     .catch(err => {
                         console.error('Error al obtener datos del estado:', err);
@@ -1857,11 +1882,10 @@
                     });
             });
         });
+    </script>
 
 
-
-
-
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const radios = document.querySelectorAll('input[name="beneficiario[]"]');
             const estadoMujerBlock = document.getElementById('estado-mujer-block');
@@ -2172,89 +2196,89 @@
         });
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
-            const radiosEducacion = document.querySelectorAll('input[name="educacion"]');
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+        //     const radiosEducacion = document.querySelectorAll('input[name="educacion"]');
 
-            const bloqueEducacion = document.getElementById("bloque_educacion");
-            const bloqueNivelTipo = document.getElementById("bloque_nivel_educativo_tipo_isntitucion");
-            const bloqueEstadoMujer = document.getElementById("estado-mujer-block");
+        //     const bloqueEducacion = document.getElementById("bloque_educacion");
+        //     const bloqueNivelTipo = document.getElementById("bloque_nivel_educativo_tipo_isntitucion");
+        //     const bloqueEstadoMujer = document.getElementById("estado-mujer-block");
 
-            function actualizarBloques() {
-                const beneficiario = document.querySelector('input[name="beneficiario"]:checked');
-                const educacion = document.querySelector('input[name="educacion"]:checked');
-                const valor = beneficiario ? beneficiario.value.trim() : "";
+        //     function actualizarBloques() {
+        //         const beneficiario = document.querySelector('input[name="beneficiario"]:checked');
+        //         const educacion = document.querySelector('input[name="educacion"]:checked');
+        //         const valor = beneficiario ? beneficiario.value.trim() : "";
 
-                // Mostrar educación si es NNA
-                const esNNA = valor === "Niña adolescente" || valor === "Niño adolescente";
-                bloqueEducacion.style.display = esNNA ? "block" : "none";
+        //         // Mostrar educación si es NNA
+        //         const esNNA = valor === "Niña adolescente" || valor === "Niño adolescente";
+        //         bloqueEducacion.style.display = esNNA ? "block" : "none";
 
-                // Mostrar nivel educativo + tipo institución si "Si estudia"
-                const estudia = educacion && educacion.value === "Si estudia";
-                bloqueNivelTipo.style.display = (esNNA && estudia) ? "flex" : "none";
+        //         // Mostrar nivel educativo + tipo institución si "Si estudia"
+        //         const estudia = educacion && educacion.value === "Si estudia";
+        //         bloqueNivelTipo.style.display = (esNNA && estudia) ? "flex" : "none";
 
-                // Mostrar bloque de estado si es mujer (niña adolescente, mujer joven o mujer adulta)
-                const esMujer = valor === "Niña adolescente" || valor === "Mujer joven" || valor === "Mujer adulta";
-                bloqueEstadoMujer.style.display = esMujer ? "block" : "none";
-            }
+        //         // Mostrar bloque de estado si es mujer (niña adolescente, mujer joven o mujer adulta)
+        //         const esMujer = valor === "Niña adolescente" || valor === "Mujer joven" || valor === "Mujer adulta";
+        //         bloqueEstadoMujer.style.display = esMujer ? "block" : "none";
+        //     }
 
-            radiosBeneficiario.forEach(rb => rb.addEventListener("change", actualizarBloques));
-            radiosEducacion.forEach(rb => rb.addEventListener("change", actualizarBloques));
+        //     radiosBeneficiario.forEach(rb => rb.addEventListener("change", actualizarBloques));
+        //     radiosEducacion.forEach(rb => rb.addEventListener("change", actualizarBloques));
 
-            // Ejecutar al cargar por si hay datos precargados
-            actualizarBloques();
-        });
+        //     // Ejecutar al cargar por si hay datos precargados
+        //     actualizarBloques();
+        // });
 
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectEdad = document.getElementById("edad-beneficiario-select");
-            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const selectEdad = document.getElementById("edad-beneficiario-select");
+        //     const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
 
-            const rangos = {
-                'nina_adolescente': [0, 17],
-                'mujer_joven': [18, 21],
-                'mujer_adulta': [22, 100],
-                'nino_adolescente': [0, 17],
-                'hombre_joven': [18, 21],
-                'hombre_adulto': [22, 100]
-            };
+        //     const rangos = {
+        //         'nina_adolescente': [0, 17],
+        //         'mujer_joven': [18, 21],
+        //         'mujer_adulta': [22, 100],
+        //         'nino_adolescente': [0, 17],
+        //         'hombre_joven': [18, 21],
+        //         'hombre_adulto': [22, 100]
+        //     };
 
-            function normalizarTexto(texto) {
-                return texto
-                    .toLowerCase()
-                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
-                    .replace(/\s+/g, '_'); // espacios a guión bajo
-            }
+        //     function normalizarTexto(texto) {
+        //         return texto
+        //             .toLowerCase()
+        //             .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
+        //             .replace(/\s+/g, '_'); // espacios a guión bajo
+        //     }
 
-            function cargarRangoDeEdad(valorNormalizado) {
-                selectEdad.innerHTML = '<option value="">Seleccione</option>';
+        //     function cargarRangoDeEdad(valorNormalizado) {
+        //         selectEdad.innerHTML = '<option value="">Seleccione</option>';
 
-                if (!(valorNormalizado in rangos)) return;
+        //         if (!(valorNormalizado in rangos)) return;
 
-                const [min, max] = rangos[valorNormalizado];
-                for (let i = min; i <= max; i++) {
-                    const option = document.createElement("option");
-                    option.value = i;
-                    option.textContent = `${i} años`;
-                    selectEdad.appendChild(option);
-                }
-            }
+        //         const [min, max] = rangos[valorNormalizado];
+        //         for (let i = min; i <= max; i++) {
+        //             const option = document.createElement("option");
+        //             option.value = i;
+        //             option.textContent = `${i} años`;
+        //             selectEdad.appendChild(option);
+        //         }
+        //     }
 
-            radiosBeneficiario.forEach(radio => {
-                radio.addEventListener("change", function() {
-                    const slug = normalizarTexto(this.value);
-                    cargarRangoDeEdad(slug);
-                });
-            });
+        //     radiosBeneficiario.forEach(radio => {
+        //         radio.addEventListener("change", function() {
+        //             const slug = normalizarTexto(this.value);
+        //             cargarRangoDeEdad(slug);
+        //         });
+        //     });
 
-            // Ejecutar al cargar si hay selección previa
-            const seleccionado = document.querySelector('input[name="beneficiario"]:checked');
-            if (seleccionado) {
-                const slug = normalizarTexto(seleccionado.value);
-                cargarRangoDeEdad(slug);
-            }
-        });
+        //     // Ejecutar al cargar si hay selección previa
+        //     const seleccionado = document.querySelector('input[name="beneficiario"]:checked');
+        //     if (seleccionado) {
+        //         const slug = normalizarTexto(seleccionado.value);
+        //         cargarRangoDeEdad(slug);
+        //     }
+        // });
 
 
 
@@ -2341,17 +2365,22 @@
                 }
             });
         });
+    </script>
 
-
-
-
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxOtros = document.getElementById("otros_tipos_de_actuacion");
             const containerTexto = document.getElementById("otros_actuacion_container");
+            const inputTexto = document.getElementById("otros_actuacion_texto");
 
             if (checkboxOtros) {
                 checkboxOtros.addEventListener("change", function() {
-                    containerTexto.style.display = this.checked ? 'block' : 'none';
+                    if (this.checked) {
+                        containerTexto.style.display = 'block';
+                    } else {
+                        containerTexto.style.display = 'none';
+                        inputTexto.value = ''; // ✅ limpiar campo al deseleccionar
+                    }
                 });
 
                 // Mostrar si ya estaba seleccionado al recargar
@@ -2360,9 +2389,8 @@
                 }
             }
         });
-
-
-
+    </script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoIdentifica = document.querySelector(
                 'input[name="vulnerabilidades[]"][value="No se identifica vulnerabilidad"]');
@@ -2497,9 +2525,10 @@
 
 
         $(document).ready(function() {
+            // Checkbox "Sin Remisión"
             $('#sin_remision').on('change', function() {
                 if ($(this).is(':checked')) {
-                    // Desmarcar todos los demás checkbox excepto "Sin Remisión"
+                    // Desmarcar todos los demás
                     $('input[name="remisiones[]"]').not(this).prop('checked', false);
                 }
             });
@@ -2510,7 +2539,23 @@
                     $('#sin_remision').prop('checked', false);
                 }
             });
+
+            // Mostrar/ocultar el campo de texto al marcar "Otras Remisiones"
+            $('#otras_remisiones').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#bloque_otras_remisiones').slideDown();
+                } else {
+                    $('#bloque_otras_remisiones').slideUp();
+                    $('#detalle_otras_remisiones').val(''); // ✅ Limpiar contenido
+                }
+            });
+
+            // Mostrar el bloque si ya está marcado al cargar
+            if ($('#otras_remisiones').is(':checked')) {
+                $('#bloque_otras_remisiones').show();
+            }
         });
+
 
 
 
@@ -2518,7 +2563,7 @@
             $('#pais_nacimiento').on('change', function() {
                 const seleccion = $(this).val();
                 const bloque = $('#otro_pais_nacimiento_container');
-                const input = $('#otro_pais_nacimientos');
+                const input = $('#otro_pais_nacimiento');
 
                 if (seleccion === 'Otro País') {
                     bloque.slideDown();
@@ -2568,6 +2613,123 @@
             }
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputFecha = document.querySelector('input[name="fecha_nacimiento"]');
+            const inputEdad = document.getElementById('edad-beneficiario-input');
+            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+            const bloqueEducacion = document.getElementById('bloque_educacion');
+            const bloqueNivelTipo = document.getElementById('bloque_nivel_educativo_tipo_isntitucion');
+            const bloqueEstadoMujer = document.getElementById('estado-mujer-block');
+            const radioEducacion = document.querySelectorAll('input[name="educacion"]');
+
+            const mapToLabel = {
+                'niña_adolescente': 'nina_adolescente',
+                'niño_adolescente': 'nino_adolescente',
+                'mujer_joven': 'mujer_joven',
+                'hombre_joven': 'hombre_joven',
+                'mujer_adulta': 'mujer_adulta',
+                'hombre_adulto': 'hombre_adulto',
+            };
+
+            const rangos = {
+                'nina_adolescente': [0, 17],
+                'mujer_joven': [18, 21],
+                'mujer_adulta': [22, 100],
+                'nino_adolescente': [0, 17],
+                'hombre_joven': [18, 21],
+                'hombre_adulto': [22, 100]
+            };
+
+            function mostrarRadiosSegunEdad(edad) {
+                radiosBeneficiario.forEach(radio => {
+                    const key = radio.id;
+                    const rango = rangos[key];
+                    if (rango && edad >= rango[0] && edad <= rango[1]) {
+                        radio.closest('.form-check').style.display = 'block';
+                    } else {
+                        radio.closest('.form-check').style.display = 'none';
+                        radio.checked = false;
+                    }
+                });
+            }
+
+
+            const esAdolescente = (key) => ['nina_adolescente', 'nino_adolescente'].includes(key);
+            const esFemenina = (key) => ['nina_adolescente', 'mujer_joven', 'mujer_adulta'].includes(key);
+
+            function actualizarVisibilidadBloques(id) {
+                bloqueEducacion.style.display = esAdolescente(id) ? 'block' : 'none';
+                if (!esAdolescente(id)) bloqueNivelTipo.style.display = 'none';
+
+                bloqueEstadoMujer.style.display = esFemenina(id) ? 'block' : 'none';
+            }
+
+            function calcularEdadDesdeFecha(fechaStr) {
+                const fecha = new Date(fechaStr);
+                const hoy = new Date();
+                let edad = hoy.getFullYear() - fecha.getFullYear();
+                const m = hoy.getMonth() - fecha.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
+                    edad--;
+                }
+                return edad;
+            }
+
+            inputFecha.addEventListener('change', function() {
+                if (!this.value) return;
+
+                const edad = calcularEdadDesdeFecha(this.value);
+                inputEdad.value = edad;
+
+                mostrarRadiosSegunEdad(edad);
+
+                // Si solo queda uno visible, lo seleccionamos automáticamente
+                const visibles = Array.from(radiosBeneficiario).filter(radio =>
+                    radio.closest('.form-check').style.display !== 'none'
+                );
+
+                if (visibles.length === 1) {
+                    visibles[0].checked = true;
+                    actualizarVisibilidadBloques(visibles[0].id);
+                }
+            });
+
+
+            radiosBeneficiario.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarVisibilidadBloques(this.id);
+                });
+            });
+
+            radioEducacion.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    bloqueNivelTipo.style.display = this.value === 'Si estudia' ? 'flex' : 'none';
+                });
+            });
+
+            // ✅ Al cargar la página (modo edición)
+            (function inicializar() {
+                const radioSeleccionado = document.querySelector('input[name="beneficiario"]:checked');
+                if (radioSeleccionado) {
+                    actualizarVisibilidadBloques(radioSeleccionado.id);
+                }
+
+                const educacionSeleccionada = document.querySelector('input[name="educacion"]:checked');
+                if (educacionSeleccionada && educacionSeleccionada.value === 'Si estudia') {
+                    bloqueNivelTipo.style.display = 'flex';
+                }
+
+                // También calcula edad si hay fecha ya cargada
+                if (inputFecha.value && !inputEdad.value) {
+                    const edad = calcularEdadDesdeFecha(inputFecha.value);
+                    inputEdad.value = edad;
+                }
+            })();
+        });
+    </script>
+
 
 
 

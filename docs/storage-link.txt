@@ -85,13 +85,12 @@ Route::get('/run-migrate-fresh', function () {
   #  abort(403, 'No autorizado');
 });
 
-
-
 Route::get('/limpiar-config', function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     return 'Configuración y caché limpiadas.';
 });
+
 Route::get('/fix-permisos', function () {
     $paths = [
         storage_path(),
@@ -155,6 +154,13 @@ Route::get('/fix-excel', function () {
 
 
 
+
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/caminosseguros/public/
+RewriteRule ^(.*)$ /caminosseguros/public/$1 [L,R=302]
+
+
+
 // Route::get('/fix-storage-link', function () {
 //     try {
 //         // Elimina el enlace si existe
@@ -171,6 +177,25 @@ Route::get('/fix-excel', function () {
 //         return " Error al recrear el enlace: " . $e->getMessage();
 //     }
 // });
+
+// FUNCIONA EN SERVIDRO .ORG PROBADO
+Route::get('/fix-storage-link2', function () {
+    try {
+        // Elimina el enlace si existe
+        // FUNCIONA EN LOCAL
+        $publicStorage = public_path('storage');
+        if (file_exists($publicStorage)) {
+            unlink($publicStorage); // elimina el symlink
+        }
+
+        // Crea el nuevo enlace simbólico correctamente
+        Artisan::call('storage:link');
+
+        return "✅ Enlace simbólico 'public/storage' recreado con éxito.";
+    } catch (\Exception $e) {
+        return " Error al recrear el enlace: " . $e->getMessage();
+    }
+});
 
 
 Route::get('/fix-storage-link', function () {
@@ -190,6 +215,7 @@ Route::get('/fix-storage-link', function () {
         return "❌ Error al recrear el enlace: " . $e->getMessage();
     }
 });
+
 Route::get('/fix-storage-permisos', function () {
     try {
         $path = storage_path('app/public');

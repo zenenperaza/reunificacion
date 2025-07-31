@@ -13,8 +13,8 @@
     <div class="container-fluid">
 
         {{-- <x-breadcrumb title="Mostrar Caso" /> --}}
-         <x-breadcrumb title="Ver Caso " />
-        
+        <x-breadcrumb title="Ver Caso " />
+
         <div class="row mb-3">
             <div class="col-md-12">
                 <a href="{{ route('casos.index') }}" class="btn btn-secondary">
@@ -52,13 +52,16 @@
                     <x-readonly-input label="Fecha de Atención"
                         value="{{ \Carbon\Carbon::parse($caso->fecha_atencion)->format('d/m/Y') }}" />
                     <x-readonly-input label="Tipo de Atención" value="{{ $caso->tipo_atencion }}" />
+                    <x-readonly-input label="Fecha nacimiento"
+                        value="{{ $caso->fecha_nacimiento ? \Carbon\Carbon::parse($caso->fecha_nacimiento)->format('d/m/Y') : '' }}" />
+
                     <x-readonly-input label="Beneficiario" value="{{ $caso->beneficiario }}" />
                     <x-readonly-input label="Edad del Beneficiario" value="{{ $caso->edad_beneficiario }}" />
                     <x-readonly-input label="Población LGBTI" value="{{ $caso->poblacion_lgbti }}" />
                     <x-readonly-input label="Estatus" value="{{ $caso->estatus }}" />
-                    <x-readonly-input label="Obsrvaciones" value="{{ $caso->observaciones }}" />
-                    <x-readonly-input label="Verificador" value="{{ $caso->verificador }}" />
-                        
+                    <x-readonly-input label="Observaciones" value="{{ $caso->observaciones }}" />
+                    {{-- <x-readonly-input label="Verificador" value="{{ $caso->verificador }}" /> --}}
+
                     <x-readonly-input label="Condicion" value="{{ $caso->condicion }}" />
                 </div>
 
@@ -242,43 +245,46 @@
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        $(document).on('click', '.btn-aprobar-caso', function (e) {
-            e.preventDefault();
-            const id = $(this).data('id');
+        document.addEventListener('DOMContentLoaded', function() {
+            $(document).on('click', '.btn-aprobar-caso', function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
 
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Deseas aprobar este caso?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, aprobar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#6c757d'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/casos/' + id + '/aprobar',
-                        method: 'POST',
-                        data: {
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            aprobado: 'Aprobado'
-                        },
-                        success: function (response) {
-                            Swal.fire('¡Aprobado!', response.message, 'success').then(() => {
-                                location.reload(); // Recargar para reflejar cambios
-                            });
-                        },
-                        error: function () {
-                            Swal.fire('Error', 'No se pudo aprobar el caso.', 'error');
-                        }
-                    });
-                }
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¿Deseas aprobar este caso?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, aprobar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/casos/' + id + '/aprobar',
+                            method: 'POST',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                aprobado: 'Aprobado'
+                            },
+                            success: function(response) {
+                                Swal.fire('¡Aprobado!', response.message, 'success')
+                                    .then(() => {
+                                        location
+                                    .reload(); // Recargar para reflejar cambios
+                                    });
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'No se pudo aprobar el caso.',
+                                    'error');
+                            }
+                        });
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 
 
 @endsection

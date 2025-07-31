@@ -32,6 +32,7 @@ return new class extends Migration
         $table->string('tipo_atencion_programa')->nullable(); 
         $table->string('tipo_atencion')->nullable();
 
+        $table->date('fecha_nacimiento')->nullable();
         $table->string('beneficiario')->nullable();
         $table->string('estado_mujer')->nullable();
         $table->integer('edad_beneficiario')->nullable();

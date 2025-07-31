@@ -6,7 +6,7 @@
                             <script>
                                 document.write(new Date().getFullYear())
                             </script>
-                             &copy;  <a href="">{{ configuracion('nombre_sistema') ?? 'Sistema RLF' }}</a>
+                             &copy;  <a href="">{{ configuracion('nombre_sistema') ?? ' Caminos seguros' }}</a>
                         </div>
                         <div class="col-md-6">
                             <div class="text-md-end footer-links d-none d-sm-block">

@@ -8,8 +8,8 @@
 
 @section('content')
 <div class="container">
-    @can('crear familias')
-        <a href="{{ route('familias.create') }}" class="btn btn-primary mb-3">Nueva Familia</a>
+    @can('crear coordinaciones')
+        <a href="{{ route('familias.create') }}" class="btn btn-primary mb-3">Nueva Coordinacion</a>
     @endcan
 
     <table class="table table-bordered">
@@ -28,11 +28,11 @@
                     <td>{{ $familia->ver_entre_hermanos ? 'Sí' : 'No' }}</td>
                     <td>{{ $familia->usuarios_count }}</td>
                     <td>
-                        @can('editar familias')
+                        @can('editar coordinaciones')
                             <a href="{{ route('familias.edit', $familia) }}" class="btn btn-sm btn-warning">Editar</a>
                         @endcan
 
-                        @can('eliminar familias')
+                        @can('eliminar coordinaciones')
                             <form action="{{ route('familias.destroy', $familia) }}" method="POST" class="d-inline form-eliminar">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>

@@ -1,3 +1,11 @@
-#RewriteEngine On
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteRule ^(.*)$ /public/$1 [L]
+RewriteEngine On
+RewriteBase /caminosseguros/
+
+# Si la URL no contiene /public, redirige hacia /caminosseguros/public/
+RewriteCond %{REQUEST_URI} !^/caminosseguros/public
+RewriteRule ^(.*)$ /caminosseguros/public/$1 [L]
+
+
+
+
+

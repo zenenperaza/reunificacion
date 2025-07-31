@@ -20,6 +20,7 @@ class ConfiguracionController extends Controller
             'conf_fecha_actual' => 'required|in:si,no',
             'sistema_deshabilitado' => 'required|in:si,no',
             'periodo' => 'required|date_format:Y-m',
+            'prefijo_caso' => 'nullable|string|max:10',
             'nombre_sistema' => 'nullable|string|max:255',
             'texto_portada' => 'nullable|string',
             'logo_sistema' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -31,6 +32,7 @@ class ConfiguracionController extends Controller
         $config->conf_fecha_actual = $request->conf_fecha_actual;
         $config->sistema_deshabilitado = $request->sistema_deshabilitado;
         $config->periodo = $request->periodo;
+        $config->prefijo_caso = $request->prefijo_caso;
         $config->nombre_sistema = $request->nombre_sistema;
         $config->texto_portada = $request->texto_portada;
 

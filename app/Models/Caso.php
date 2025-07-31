@@ -40,6 +40,7 @@ class Caso extends Model
         'otras_organizaciones',
         'tipo_atencion_programa',
         'tipo_atencion',
+        'fecha_nacimiento',
         'beneficiario',
         'estado_mujer',
         'edad_beneficiario',

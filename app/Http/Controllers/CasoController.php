@@ -305,6 +305,7 @@ class CasoController extends Controller
             'numero_contacto' => $request->numero_contacto,
             'elaborado_por' => $request->elaborado_por,
             'tipo_atencion' => $request->tipo_atencion,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
             'beneficiario' => $request->beneficiario,
             'edad_beneficiario' => $request->edad_beneficiario,
             'poblacion_lgbti' => $request->poblacion_lgbti,
@@ -314,7 +315,7 @@ class CasoController extends Controller
             'nacionalidad_solicitante' => $request->nacionalidad_solicitante,
             'tipo_documento' => $request->tipo_documento,
             'pais_nacimiento' => $request->pais_nacimiento,
-            'otro_pais_nacimiento' => $request->otro_pais_nacimientos,
+            'otro_pais_nacimiento' => $request->otro_pais_nacimiento,
             'etnia_indigena' => $request->etnia_indigena,
             'otra_etnia' => $request->otra_etnia,
             'discapacidad' => $request->discapacidad,
@@ -353,7 +354,7 @@ class CasoController extends Controller
         $caso->servicio_brindado_cosude = is_array($request->servicio_brindado_cosude) ? implode(',', $request->servicio_brindado_cosude) : $request->servicio_brindado_cosude;
         $caso->servicio_brindado_unicef = is_array($request->servicio_brindado_unicef) ? implode(',', $request->servicio_brindado_unicef) : $request->servicio_brindado_unicef;
         $caso->tipo_actuacion = is_array($request->tipo_actuacion) ? implode(',', $request->tipo_actuacion) : $request->tipo_actuacion;
-        $caso->otro_tipo_actuacion = $request->otros_actuacion_descripcion;
+        $caso->otro_tipo_actuacion = $request->otro_tipo_actuacion;
         $caso->vulnerabilidades = json_encode($request->vulnerabilidades);
         $caso->derechos_vulnerados = json_encode($request->derechos_vulnerados);
         $caso->identificacion_violencia = json_encode($request->identificacion_violencia);
@@ -442,6 +443,7 @@ class CasoController extends Controller
             'elaborado_por' => $request->elaborado_por,
             'numero_caso' => $request->numero_caso,
             'tipo_atencion' => $request->tipo_atencion,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
             'beneficiario' => $request->beneficiario,
             'edad_beneficiario' => $request->edad_beneficiario,
             'poblacion_lgbti' => $request->poblacion_lgbti,
@@ -456,7 +458,7 @@ class CasoController extends Controller
             'nacionalidad_solicitante' => $request->nacionalidad_solicitante,
             'tipo_documento' => $request->tipo_documento,
             'pais_nacimiento' => $request->pais_nacimiento,
-            'otro_pais_nacimientos' => $request->otro_pais_nacimientos,
+            'otro_pais_nacimiento' => $request->otro_pais_nacimiento,
             'etnia_indigena' => $request->etnia_indigena,
             'otra_etnia' => $request->otra_etnia,
             'discapacidad' => $request->discapacidad,
@@ -467,7 +469,7 @@ class CasoController extends Controller
             'servicio_brindado_cosude' => implode(',', $request->servicio_brindado_cosude ?? []),
             'servicio_brindado_unicef' => implode(',', $request->servicio_brindado_unicef ?? []),
             'tipo_actuacion' => implode(',', $request->tipo_actuacion ?? []),
-            'otros_actuacion_descripcion' => $request->otros_actuacion_descripcion,
+            'otro_tipo_actuacion' => $request->otro_tipo_actuacion,
             'vulnerabilidades' => json_encode($request->vulnerabilidades ?? []),
             'derechos_vulnerados' => json_encode($request->derechos_vulnerados ?? []),
             'identificacion_violencia' => json_encode($request->identificacion_violencia ?? []),

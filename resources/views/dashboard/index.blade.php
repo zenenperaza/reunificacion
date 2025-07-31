@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard RLF')
+@section('title', 'Dashboard Caminos seguros')
 
 @section('styles')
     <style>

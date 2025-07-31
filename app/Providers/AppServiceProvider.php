@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
 
         // ✅ Cargar nombre del sistema desde la base de datos
         if (Schema::hasTable('configuraciones')) {
-            $nombreSistema = Configuracion::first()?->nombre_sistema ?? 'Sistema RLF';
+            $nombreSistema = Configuracion::first()?->nombre_sistema ?? 'Sistema Caminos seguros';
             config(['app.name' => $nombreSistema]);
         }
 

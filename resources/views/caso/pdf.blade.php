@@ -101,7 +101,7 @@
     <header>
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="{{ public_path('images/logo.png') }}" width="120" alt="Logo ASONACOP">
-            <h3 style="margin-top: 10px;">Sistema RLF - Detalle del Caso</h3>
+            <h3 style="margin-top: 10px;">{{ configuracion('nombre_sistema') ?? ' Caminos seguros' }} - Detalle del Caso</h3>
         </div>
     </header>
 

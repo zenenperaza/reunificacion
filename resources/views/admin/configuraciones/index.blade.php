@@ -49,6 +49,15 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Prefijo para número de caso</label>
+                            <input type="text" name="prefijo_caso" class="form-control"
+                                value="{{ old('prefijo_caso', $config->prefijo_caso) }}" placeholder="Ej: LRF">
+                            <small class="text-muted">Ejemplo: LRF, CAM, RLF, etc.</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
 
                         <div class="col-md-6">
                             <label class="form-label">Nombre del sistema</label>
