@@ -35,7 +35,7 @@ return new class extends Migration
         $table->date('fecha_nacimiento')->nullable();
         $table->string('beneficiario')->nullable();
         $table->string('estado_mujer')->nullable();
-        $table->integer('edad_beneficiario')->nullable();
+        $table->string('edad_beneficiario')->nullable();
         $table->string('poblacion_lgbti')->nullable();
 
         $table->string('acompanante')->nullable();

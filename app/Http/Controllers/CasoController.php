@@ -373,7 +373,15 @@ class CasoController extends Controller
         ) {
             for ($i = 0; $i < $request->numero_integrantes; $i++) {
                 $nuevo = $caso->replicate();
-                $nuevo->tipo_atencion = 'Individual';
+                $nuevo->tipo_atencion = 'Grupo familiar';
+                // 🧼 Limpiar campos individuales que no deben clonarse
+                $nuevo->fecha_nacimiento = null;
+                $nuevo->beneficiario = null;
+                $nuevo->edad_beneficiario = null;
+                $nuevo->educacion = null;
+                $nuevo->nivel_educativo = null;
+                $nuevo->tipo_institucion = null;
+                $nuevo->estado_mujer = null;
                 $nuevo->save();
             }
         }

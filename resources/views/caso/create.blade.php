@@ -337,9 +337,8 @@
                                             </div>
                                             <div class="col-md-6 mt-0">
                                                 <label class="form-label mb-2">Edad del beneficiario</label>
-                                                <input type="number" class="form-control" name="edad_beneficiario"
-                                                    id="edad-beneficiario-input" min="0" max="120" readonly>
-
+                                                <input type="text" class="form-control" name="edad_beneficiario"
+                                                    id="edad-beneficiario-input" readonly>
                                             </div>
                                         </div>
 
@@ -2667,25 +2666,42 @@
             }
 
             function calcularEdadDesdeFecha(fechaStr) {
-                const fecha = new Date(fechaStr);
+                const fechaNacimiento = new Date(fechaStr);
                 const hoy = new Date();
-                let edad = hoy.getFullYear() - fecha.getFullYear();
-                const m = hoy.getMonth() - fecha.getMonth();
-                if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
-                    edad--;
+
+                let años = hoy.getFullYear() - fechaNacimiento.getFullYear();
+                let meses = hoy.getMonth() - fechaNacimiento.getMonth();
+                let dias = hoy.getDate() - fechaNacimiento.getDate();
+
+                if (dias < 0) {
+                    meses--;
+                    dias += new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
                 }
-                return edad;
+
+                if (meses < 0) {
+                    años--;
+                    meses += 12;
+                }
+
+                if (años < 1) {
+                    return meses === 1 ? '1 mes' : `${meses} meses`;
+                } else {
+                    return años === 1 ? '1 año' : `${años} años`;
+                }
             }
+
 
             inputFecha.addEventListener('change', function() {
                 if (!this.value) return;
 
-                const edad = calcularEdadDesdeFecha(this.value);
-                inputEdad.value = edad;
+                const edadTexto = calcularEdadDesdeFecha(this.value);
+                inputEdad.value = edadTexto;
 
-                mostrarRadiosSegunEdad(edad);
+                // Extraer solo los años como número para lógica interna
+                const edadNumerica = edadTexto.includes('mes') ? 0 : parseInt(edadTexto);
 
-                // Si solo queda uno visible, lo seleccionamos automáticamente
+                mostrarRadiosSegunEdad(edadNumerica);
+
                 const visibles = Array.from(radiosBeneficiario).filter(radio =>
                     radio.closest('.form-check').style.display !== 'none'
                 );
@@ -2695,6 +2711,7 @@
                     actualizarVisibilidadBloques(visibles[0].id);
                 }
             });
+
 
 
             radiosBeneficiario.forEach(radio => {

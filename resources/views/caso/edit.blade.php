@@ -2617,7 +2617,7 @@
 
 
 
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const inputFecha = document.querySelector('input[name="fecha_nacimiento"]');
             const inputEdad = document.getElementById('edad-beneficiario-input');
@@ -2731,8 +2731,141 @@
                 }
             })();
         });
-    </script>
+    </script> --}}
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputFecha = document.querySelector('input[name="fecha_nacimiento"]');
+            const inputEdad = document.getElementById('edad-beneficiario-input');
+            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
+            const bloqueEducacion = document.getElementById('bloque_educacion');
+            const bloqueNivelTipo = document.getElementById('bloque_nivel_educativo_tipo_isntitucion');
+            const bloqueEstadoMujer = document.getElementById('estado-mujer-block');
+            const radioEducacion = document.querySelectorAll('input[name="educacion"]');
+
+            const mapToLabel = {
+                'niña_adolescente': 'nina_adolescente',
+                'niño_adolescente': 'nino_adolescente',
+                'mujer_joven': 'mujer_joven',
+                'hombre_joven': 'hombre_joven',
+                'mujer_adulta': 'mujer_adulta',
+                'hombre_adulto': 'hombre_adulto',
+            };
+
+            const rangos = {
+                'nina_adolescente': [0, 17],
+                'mujer_joven': [18, 21],
+                'mujer_adulta': [22, 100],
+                'nino_adolescente': [0, 17],
+                'hombre_joven': [18, 21],
+                'hombre_adulto': [22, 100]
+            };
+
+            function mostrarRadiosSegunEdad(edad) {
+                radiosBeneficiario.forEach(radio => {
+                    const key = radio.id;
+                    const rango = rangos[key];
+                    if (rango && edad >= rango[0] && edad <= rango[1]) {
+                        radio.closest('.form-check').style.display = 'block';
+                    } else {
+                        radio.closest('.form-check').style.display = 'none';
+                        radio.checked = false;
+                    }
+                });
+            }
+
+
+            const esAdolescente = (key) => ['nina_adolescente', 'nino_adolescente'].includes(key);
+            const esFemenina = (key) => ['nina_adolescente', 'mujer_joven', 'mujer_adulta'].includes(key);
+
+            function actualizarVisibilidadBloques(id) {
+                bloqueEducacion.style.display = esAdolescente(id) ? 'block' : 'none';
+                if (!esAdolescente(id)) bloqueNivelTipo.style.display = 'none';
+
+                bloqueEstadoMujer.style.display = esFemenina(id) ? 'block' : 'none';
+            }
+
+            function calcularEdadDesdeFecha(fechaStr) {
+                const fechaNacimiento = new Date(fechaStr);
+                const hoy = new Date();
+
+                let años = hoy.getFullYear() - fechaNacimiento.getFullYear();
+                let meses = hoy.getMonth() - fechaNacimiento.getMonth();
+                let dias = hoy.getDate() - fechaNacimiento.getDate();
+
+                if (dias < 0) {
+                    meses--;
+                    dias += new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
+                }
+
+                if (meses < 0) {
+                    años--;
+                    meses += 12;
+                }
+
+                if (años < 1) {
+                    return meses === 1 ? '1 mes' : `${meses} meses`;
+                } else {
+                    return años === 1 ? '1 año' : `${años} años`;
+                }
+            }
+
+
+            inputFecha.addEventListener('change', function() {
+                if (!this.value) return;
+
+                const edadTexto = calcularEdadDesdeFecha(this.value);
+                inputEdad.value = edadTexto;
+
+                // Extraer solo los años como número para lógica interna
+                const edadNumerica = edadTexto.includes('mes') ? 0 : parseInt(edadTexto);
+
+                mostrarRadiosSegunEdad(edadNumerica);
+
+                const visibles = Array.from(radiosBeneficiario).filter(radio =>
+                    radio.closest('.form-check').style.display !== 'none'
+                );
+
+                if (visibles.length === 1) {
+                    visibles[0].checked = true;
+                    actualizarVisibilidadBloques(visibles[0].id);
+                }
+            });
+
+
+
+            radiosBeneficiario.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    actualizarVisibilidadBloques(this.id);
+                });
+            });
+
+            radioEducacion.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    bloqueNivelTipo.style.display = this.value === 'Si estudia' ? 'flex' : 'none';
+                });
+            });
+
+            // ✅ Al cargar la página (modo edición)
+            (function inicializar() {
+                const radioSeleccionado = document.querySelector('input[name="beneficiario"]:checked');
+                if (radioSeleccionado) {
+                    actualizarVisibilidadBloques(radioSeleccionado.id);
+                }
+
+                const educacionSeleccionada = document.querySelector('input[name="educacion"]:checked');
+                if (educacionSeleccionada && educacionSeleccionada.value === 'Si estudia') {
+                    bloqueNivelTipo.style.display = 'flex';
+                }
+
+                // También calcula edad si hay fecha ya cargada
+                if (inputFecha.value && !inputEdad.value) {
+                    const edad = calcularEdadDesdeFecha(inputFecha.value);
+                    inputEdad.value = edad;
+                }
+            })();
+        });
+    </script>
 
 
 @endsection
