@@ -430,8 +430,8 @@
 
                                     <div class="col-md-6 mt-0">
                                         <label class="form-label mb-2">Edad del beneficiario</label>
-                                        <input type="number" class="form-control" name="edad_beneficiario"
-                                            id="edad-beneficiario-input" min="0" max="120"
+                                        <input type="text" class="form-control" name="edad_beneficiario"
+                                            id="edad-beneficiario-input" 
                                             value="{{ old('edad_beneficiario', $caso->edad_beneficiario) }}" readonly>
                                     </div>
                                 </div>
@@ -1857,9 +1857,14 @@
         });
 
 
+    </script>
+
+   <script>
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
+
+            const prefijo = @json(configuracion('prefijo_caso') ?? 'LRF');
 
             estadoSelect.addEventListener('change', function() {
                 const estadoId = this.value;
@@ -1873,11 +1878,11 @@
                     .then(response => response.json())
                     .then(data => {
                         let nombre = data.estado_nombre.trim().normalize("NFD").replace(
-                            /[\u0300-\u036f]/g, ""); // Quitar acentos
+                            /[\u0300-\u036f]/g, "");
                         let siglas = nombre.substring(0, 3).toUpperCase();
 
                         const numero = String(data.conteo + 1).padStart(3, '0');
-                        numeroCasoInput.value = `LRF-${siglas}-${numero}`;
+                        numeroCasoInput.value = `${prefijo}-${siglas}-${numero}`;
                     })
                     .catch(err => {
                         console.error('Error al obtener datos del estado:', err);
@@ -1885,6 +1890,11 @@
                     });
             });
         });
+    </script>
+
+    
+   <script>
+
 
         // document.addEventListener('DOMContentLoaded', function() {
         //     const estadoSelect = document.getElementById('estadoSelect');
@@ -2617,124 +2627,9 @@
 
 
 
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputFecha = document.querySelector('input[name="fecha_nacimiento"]');
-            const inputEdad = document.getElementById('edad-beneficiario-input');
-            const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
-            const bloqueEducacion = document.getElementById('bloque_educacion');
-            const bloqueNivelTipo = document.getElementById('bloque_nivel_educativo_tipo_isntitucion');
-            const bloqueEstadoMujer = document.getElementById('estado-mujer-block');
-            const radioEducacion = document.querySelectorAll('input[name="educacion"]');
-
-            const mapToLabel = {
-                'niña_adolescente': 'nina_adolescente',
-                'niño_adolescente': 'nino_adolescente',
-                'mujer_joven': 'mujer_joven',
-                'hombre_joven': 'hombre_joven',
-                'mujer_adulta': 'mujer_adulta',
-                'hombre_adulto': 'hombre_adulto',
-            };
-
-            const rangos = {
-                'nina_adolescente': [0, 17],
-                'mujer_joven': [18, 21],
-                'mujer_adulta': [22, 100],
-                'nino_adolescente': [0, 17],
-                'hombre_joven': [18, 21],
-                'hombre_adulto': [22, 100]
-            };
-
-            function mostrarRadiosSegunEdad(edad) {
-                radiosBeneficiario.forEach(radio => {
-                    const key = radio.id;
-                    const rango = rangos[key];
-                    if (rango && edad >= rango[0] && edad <= rango[1]) {
-                        radio.closest('.form-check').style.display = 'block';
-                    } else {
-                        radio.closest('.form-check').style.display = 'none';
-                        radio.checked = false;
-                    }
-                });
-            }
-
-
-            const esAdolescente = (key) => ['nina_adolescente', 'nino_adolescente'].includes(key);
-            const esFemenina = (key) => ['nina_adolescente', 'mujer_joven', 'mujer_adulta'].includes(key);
-
-            function actualizarVisibilidadBloques(id) {
-                bloqueEducacion.style.display = esAdolescente(id) ? 'block' : 'none';
-                if (!esAdolescente(id)) bloqueNivelTipo.style.display = 'none';
-
-                bloqueEstadoMujer.style.display = esFemenina(id) ? 'block' : 'none';
-            }
-
-            function calcularEdadDesdeFecha(fechaStr) {
-                const fecha = new Date(fechaStr);
-                const hoy = new Date();
-                let edad = hoy.getFullYear() - fecha.getFullYear();
-                const m = hoy.getMonth() - fecha.getMonth();
-                if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
-                    edad--;
-                }
-                return edad;
-            }
-
-            inputFecha.addEventListener('change', function() {
-                if (!this.value) return;
-
-                const edad = calcularEdadDesdeFecha(this.value);
-                inputEdad.value = edad;
-
-                mostrarRadiosSegunEdad(edad);
-
-                // Si solo queda uno visible, lo seleccionamos automáticamente
-                const visibles = Array.from(radiosBeneficiario).filter(radio =>
-                    radio.closest('.form-check').style.display !== 'none'
-                );
-
-                if (visibles.length === 1) {
-                    visibles[0].checked = true;
-                    actualizarVisibilidadBloques(visibles[0].id);
-                }
-            });
-
-
-            radiosBeneficiario.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    actualizarVisibilidadBloques(this.id);
-                });
-            });
-
-            radioEducacion.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    bloqueNivelTipo.style.display = this.value === 'Si estudia' ? 'flex' : 'none';
-                });
-            });
-
-            // ✅ Al cargar la página (modo edición)
-            (function inicializar() {
-                const radioSeleccionado = document.querySelector('input[name="beneficiario"]:checked');
-                if (radioSeleccionado) {
-                    actualizarVisibilidadBloques(radioSeleccionado.id);
-                }
-
-                const educacionSeleccionada = document.querySelector('input[name="educacion"]:checked');
-                if (educacionSeleccionada && educacionSeleccionada.value === 'Si estudia') {
-                    bloqueNivelTipo.style.display = 'flex';
-                }
-
-                // También calcula edad si hay fecha ya cargada
-                if (inputFecha.value && !inputEdad.value) {
-                    const edad = calcularEdadDesdeFecha(inputFecha.value);
-                    inputEdad.value = edad;
-                }
-            })();
-        });
-    </script> --}}
-
+   
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() {
             const inputFecha = document.querySelector('input[name="fecha_nacimiento"]');
             const inputEdad = document.getElementById('edad-beneficiario-input');
             const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
@@ -2865,7 +2760,7 @@
                 }
             })();
         });
-    </script>
+      </script>
 
 
 @endsection

@@ -42,7 +42,7 @@
 
 
                 <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data"
-                    class="modo-claro-forzado">
+                    class="modo-claro-forzado"  autocomplete="off">
                     @csrf
                     @method('PUT')
                     <div class="row">
@@ -61,7 +61,7 @@
                     <div class="row" id="bloque_jerarquia">
                         {{-- Selección de padre --}}
                         <div class="col-md-6 mb-3" id="parent-container">
-                            <label for="parent_id" class="form-label">Usuario Superior</label>
+                            <label for="parent_id" class="form-label">Usuario Principal</label>
                             <select name="parent_id" id="parent_id" class="form-select">
                                 <option value="">-- Ninguno --</option>
                                 @foreach ($usuarios_superiores as $superior)
@@ -82,7 +82,7 @@
                         {{-- Selección dinámica de familia(s) --}}
                         <div class="col-md-6 mb-3" id="bloque_familia"
                             style="{{ old('es_superior', $user->es_superior) ? 'display: none;' : '' }}">
-                            <label for="familia_select" class="form-label">Familia(s)</label>
+                            <label for="familia_select" class="form-label">Coordinacion(es)</label>
                             <select id="familia_select" class="form-select" name="familias[]" multiple>
                                 @foreach ($familias as $familia)
                                     <option value="{{ $familia->id }}"
@@ -164,7 +164,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Nueva contraseña (opcional)</label>
                             <input type="password" name="password" id="password" class="form-control"
-                                placeholder="Dejar en blanco para mantener la actual">
+                                placeholder="Dejar en blanco para mantener la actual"  autocomplete="new-password">
                         </div>
 
 

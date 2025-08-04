@@ -26,23 +26,23 @@
             <div class="card-body">
                 <h4 class="header-title mb-4">Registrar Nuevo Usuario</h4>
 
-                <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data" id="userForm">
+                <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data" id="userForm" autocomplete="off">
                     @csrf
 
                     <div class="mb-3">
                         <label for="es_superior" class="form-label">
                             <input type="checkbox" id="es_superior" name="es_superior" value="1"
                                 {{ old('es_superior') ? 'checked' : '' }}>
-                            Es superior (ver todos los casos)
+                            Es Superior (ver todos los casos)
                         </label>
                     </div>
 
                     <div id="bloque_familia" style="{{ old('es_superior') ? 'display: none;' : '' }}">
                         {{-- Selección de Padre --}}
                         <div class="mb-3" id="parent-container">
-                            <label for="parent_id" class="form-label">Usuario Padre</label>
+                            <label for="parent_id" class="form-label">Usuario Principal</label>
                             <select name="parent_id" id="parent_id" class="form-select">
-                                <option value="">-- Sin padre (será Padre principal) --</option>
+                                <option value="">-- Sin principal (será Usuario Principal) --</option>
                                 @foreach ($usuarios_superiores as $u)
                                     <option value="{{ $u->id }}" {{ old('parent_id') == $u->id ? 'selected' : '' }}>
                                         {{ $u->name }} ({{ $u->email }})
@@ -54,7 +54,7 @@
 
                         {{-- Selector único para familias (dinámico) --}}
                         <div class="mb-3" id="bloque_familias_dinamico">
-                            <label for="familia_select" class="form-label">Familia(s)</label>
+                            <label for="familia_select" class="form-label">Coordinacion(es)</label>
                             <select id="familia_select" class="form-select" name="familias[]" multiple>
                                 @foreach ($familias as $familia)
                                     <option value="{{ $familia->id }}"
@@ -67,35 +67,21 @@
                         </div>
                     </div>
 
-
-                    {{-- <div class="col-md-6 mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="ver_entre_hermanos"
-                                name="ver_entre_hermanos" {{ old('ver_entre_hermanos') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="ver_entre_hermanos">¿Puede ver casos de hermanos?</label>
-                        </div> --}}
-
-
-
                     <div class="row">
-
-
-
                         <div class="col-md-6 mb-3">
                             <label>Nombre completo</label>
                             <input type="text" name="name" class="form-control" required value="{{ old('name') }}">
                         </div>
-
                     </div>
-                    <div class="row">
 
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>Email</label>
                             <input type="email" name="email" class="form-control" required value="{{ old('email') }}">
                         </div>
-
                     </div>
-                    <div class="row">
 
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>Teléfono</label>
                             <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
@@ -105,13 +91,13 @@
                             <label>Dirección</label>
                             <input type="text" name="address" class="form-control" value="{{ old('address') }}">
                         </div>
-
                     </div>
+
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
                             <label>Contraseña</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <input type="password" name="password" class="form-control" required   autocomplete="new-password">
                         </div>
 
                         <div class="col-md-6 mb-3">

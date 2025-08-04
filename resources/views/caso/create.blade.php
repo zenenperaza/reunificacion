@@ -123,8 +123,7 @@
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de
-                                                Atención</label>
+                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de Atención</label>
                                             <input type="date" class="form-control" name="fecha_atencion">
                                         </div>
                                     </div>
@@ -300,21 +299,25 @@
                                     </div>
 
                                     @can('clonar casos')
-                                        <div class="col-md-4" id="integrantesFields" style="display: none;">
-                                            <div class="mb-2">
-                                                <label for="numero_integrantes" class="form-label">N° de integrantes</label>
-                                                <input type="number" name="numero_integrantes" id="numero_integrantes"
-                                                    class="form-control" min="1">
-                                            </div>
-                                            <div class="form-check">
+                                        {{-- Mostrar solo el checkbox inicialmente --}}
+                                        <div class="col-md-4" id="clonarCheckbox" style="display: none;">
+                                            <div class="form-check mt-2 mb-2">
                                                 <input class="form-check-input" type="checkbox" name="clonar_integrantes"
                                                     id="clonar_integrantes" value="1">
                                                 <label class="form-check-label" for="clonar_integrantes">
                                                     Clonar este registro para cada integrante
                                                 </label>
                                             </div>
+                                             <div class="mb-2"  id="integrantesFields" style="display: none;">
+                                                <label for="numero_integrantes" class="form-label">N° de integrantes</label>
+                                                <input type="number" name="numero_integrantes" id="numero_integrantes"
+                                                    class="form-control" min="1">
+                                            </div>
                                         </div>
+
+                                     
                                     @endcan
+
 
                                 </div>
 
@@ -330,8 +333,7 @@
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label for="fecha_nacimiento" class="form-label mb-2">Fecha de
-                                                        Nacimiento</label>
+                                                    <label for="fecha_nacimiento" class="form-label mb-2">Fecha de Nacimiento</label>
                                                     <input type="date" class="form-control" name="fecha_nacimiento">
                                                 </div>
                                             </div>
@@ -1846,16 +1848,14 @@
         });
     </script>
 
-    <script>
-        const prefijo = @json(configuracion('prefijo_caso') ?? 'LRF');
-    </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const estadoSelect = document.getElementById('estadoSelect');
             const numeroCasoInput = document.querySelector('input[name="numero_caso"]');
 
-            const prefijo = @json(configuracion('prefijo_caso') ?? 'LRF');
+            const prefijo = @json(configuracion('prefijo_caso') ?? 'RUSE');
 
             estadoSelect.addEventListener('change', function() {
                 const estadoId = this.value;
@@ -2195,92 +2195,7 @@
         });
 
 
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
-        //     const radiosEducacion = document.querySelectorAll('input[name="educacion"]');
-
-        //     const bloqueEducacion = document.getElementById("bloque_educacion");
-        //     const bloqueNivelTipo = document.getElementById("bloque_nivel_educativo_tipo_isntitucion");
-        //     const bloqueEstadoMujer = document.getElementById("estado-mujer-block");
-
-        //     function actualizarBloques() {
-        //         const beneficiario = document.querySelector('input[name="beneficiario"]:checked');
-        //         const educacion = document.querySelector('input[name="educacion"]:checked');
-        //         const valor = beneficiario ? beneficiario.value.trim() : "";
-
-        //         // Mostrar educación si es NNA
-        //         const esNNA = valor === "Niña adolescente" || valor === "Niño adolescente";
-        //         bloqueEducacion.style.display = esNNA ? "block" : "none";
-
-        //         // Mostrar nivel educativo + tipo institución si "Si estudia"
-        //         const estudia = educacion && educacion.value === "Si estudia";
-        //         bloqueNivelTipo.style.display = (esNNA && estudia) ? "flex" : "none";
-
-        //         // Mostrar bloque de estado si es mujer (niña adolescente, mujer joven o mujer adulta)
-        //         const esMujer = valor === "Niña adolescente" || valor === "Mujer joven" || valor === "Mujer adulta";
-        //         bloqueEstadoMujer.style.display = esMujer ? "block" : "none";
-        //     }
-
-        //     radiosBeneficiario.forEach(rb => rb.addEventListener("change", actualizarBloques));
-        //     radiosEducacion.forEach(rb => rb.addEventListener("change", actualizarBloques));
-
-        //     // Ejecutar al cargar por si hay datos precargados
-        //     actualizarBloques();
-        // });
-
-
-
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     const selectEdad = document.getElementById("edad-beneficiario-select");
-        //     const radiosBeneficiario = document.querySelectorAll('input[name="beneficiario"]');
-
-        //     const rangos = {
-        //         'nina_adolescente': [0, 17],
-        //         'mujer_joven': [18, 21],
-        //         'mujer_adulta': [22, 100],
-        //         'nino_adolescente': [0, 17],
-        //         'hombre_joven': [18, 21],
-        //         'hombre_adulto': [22, 100]
-        //     };
-
-        //     function normalizarTexto(texto) {
-        //         return texto
-        //             .toLowerCase()
-        //             .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
-        //             .replace(/\s+/g, '_'); // espacios a guión bajo
-        //     }
-
-        //     function cargarRangoDeEdad(valorNormalizado) {
-        //         selectEdad.innerHTML = '<option value="">Seleccione</option>';
-
-        //         if (!(valorNormalizado in rangos)) return;
-
-        //         const [min, max] = rangos[valorNormalizado];
-        //         for (let i = min; i <= max; i++) {
-        //             const option = document.createElement("option");
-        //             option.value = i;
-        //             option.textContent = `${i} años`;
-        //             selectEdad.appendChild(option);
-        //         }
-        //     }
-
-        //     radiosBeneficiario.forEach(radio => {
-        //         radio.addEventListener("change", function() {
-        //             const slug = normalizarTexto(this.value);
-        //             cargarRangoDeEdad(slug);
-        //         });
-        //     });
-
-        //     // Ejecutar al cargar si hay selección previa
-        //     const seleccionado = document.querySelector('input[name="beneficiario"]:checked');
-        //     if (seleccionado) {
-        //         const slug = normalizarTexto(seleccionado.value);
-        //         cargarRangoDeEdad(slug);
-        //     }
-        // });
-
-
-
+       
 
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoAplica = document.querySelector('input[name="estado_mujer[]"][value="No aplica estado"]');
@@ -2591,27 +2506,42 @@
 
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
-            const integrantesFields = document.getElementById('integrantesFields');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
+        const clonarCheckboxDiv = document.getElementById('clonarCheckbox');
+        const integrantesFields = document.getElementById('integrantesFields');
+        const clonarCheckbox = document.getElementById('clonar_integrantes');
 
-            if (!integrantesFields) return; // salir si el bloque no existe
+        if (!clonarCheckboxDiv || !integrantesFields) return;
 
-            tipoAtencionRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    integrantesFields.style.display = this.value === 'Grupo familiar' ? 'block' :
-                        'none';
-                });
-            });
-
-            // Mostrar al recargar si está preseleccionado
+        function toggleClonarFields() {
             const selected = document.querySelector('input[name="tipo_atencion"]:checked');
             if (selected && selected.value === 'Grupo familiar') {
-                integrantesFields.style.display = 'block';
+                clonarCheckboxDiv.style.display = 'block';
+            } else {
+                clonarCheckboxDiv.style.display = 'none';
+                integrantesFields.style.display = 'none';
+                clonarCheckbox.checked = false;
             }
+        }
+
+        function toggleIntegrantesField() {
+            integrantesFields.style.display = clonarCheckbox.checked ? 'block' : 'none';
+        }
+
+        tipoAtencionRadios.forEach(radio => {
+            radio.addEventListener('change', toggleClonarFields);
         });
-    </script>
+
+        clonarCheckbox.addEventListener('change', toggleIntegrantesField);
+
+        // Mostrar al recargar si está preseleccionado
+        toggleClonarFields();
+        toggleIntegrantesField();
+    });
+</script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

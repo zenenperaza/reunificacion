@@ -36,9 +36,10 @@ class CasosExport implements
     protected $estadoCompletado;
     protected $condicion;
     protected $user;
+    protected $periodo;
 
 
-    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null, $condicion = null, $user = null)
+    public function __construct($start = null, $end = null, $estadoId = null, $estatus = null, $search = null, $estadoCompletado = null, $condicion = null, $user = null, $periodo = null)
     {
         $this->start = $start;
         $this->end = $end;
@@ -48,6 +49,7 @@ class CasosExport implements
         $this->estadoCompletado = $estadoCompletado;
         $this->condicion = $condicion;
         $this->user = $user;
+        $this->periodo = $periodo;
     }
 
     public function collection()
@@ -112,6 +114,13 @@ class CasosExport implements
             $query->where('condicion', $this->condicion);
         }
 
+        if ($this->periodo) {
+            $query->where('periodo', $this->periodo);
+        }
+
+        if (!$this->periodo && $this->start && $this->end) {
+            $query->whereBetween('fecha_actual', [$this->start, $this->end]);
+        }
 
 
         if ($this->search) {
@@ -124,9 +133,18 @@ class CasosExport implements
                     ->orWhere('elaborado_por', 'like', $searchTerm)
                     ->orWhere('direccion_domicilio', 'like', $searchTerm)
                     ->orWhereRaw("DATE_FORMAT(fecha_actual, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("fecha_actual LIKE ?", [$searchTerm]); // por si viene en formato YYYY-MM-DD
+                    ->orWhereRaw("fecha_actual LIKE ?", [$searchTerm])
+                    // Buscar por nombre del estado
+                    ->orWhereHas('estado', function ($q2) use ($searchTerm) {
+                        $q2->where('nombre', 'like', $searchTerm);
+                    })
+                    // Buscar por nombre del municipio
+                    ->orWhereHas('municipio', function ($q2) use ($searchTerm) {
+                        $q2->where('nombre', 'like', $searchTerm);
+                    });
             });
         }
+
 
 
         // Ejecutar consulta

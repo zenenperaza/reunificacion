@@ -780,12 +780,22 @@ class CasoController extends Controller
         $estados = Estado::all();
         $estadoNombres = Estado::pluck('nombre', 'id');
 
+        $periodos = Caso::whereNotNull('periodo')
+            ->selectRaw('periodo, COUNT(*) as total')
+            ->groupBy('periodo')
+            ->orderBy('periodo', 'desc')
+            ->get();
+
+
+
+
         $query = Caso::query();
 
         // Filtros
-        if ($request->filled('start') && $request->filled('end')) {
+        if (!$request->filled('periodo') && $request->filled('start') && $request->filled('end')) {
             $query->whereBetween('fecha_actual', [$request->start, $request->end]);
         }
+
 
         if ($request->filled('estado_id')) {
             $query->where('estado_id', $request->estado_id);
@@ -811,6 +821,12 @@ class CasoController extends Controller
                     ->orWhere('beneficiario', 'like', $search);
             });
         }
+
+
+        if ($request->filled('periodo')) {
+            $query->where('periodo', $request->periodo);
+        }
+
 
         // Obtener resultados
         $casos = $query->get();
@@ -907,9 +923,12 @@ class CasoController extends Controller
             'porEstado',
             'porTipoAtencion',
             'resumenLocal',
-            'informeIA'
+            'informeIA',
+            'periodos'
         ));
     }
+
+
     public function exportInformes(Request $request)
     {
         $start = $request->input('start');
@@ -919,12 +938,24 @@ class CasoController extends Controller
         $search = $request->input('search');
         $estadoCompletado = $request->input('estadoCompletado');
         $condicion = $request->input('condicion');
+        $periodo = $request->input('periodo'); // ✅ Nuevo
 
         $user = auth()->user(); // ✅ Agrega esto
 
-        $export = new CasosExport($start, $end, $estadoId, $estatus, $search, $estadoCompletado, $condicion, $user);
+        $export = new CasosExport($start, $end, $estadoId, $estatus, $search, $estadoCompletado, $condicion, $user, $periodo);
 
-        return Excel::download($export, 'informe_casos.xlsx');
+        $nombreArchivo = 'informe_casos.xlsx';
+
+        if ($periodo) {
+            try {
+                $nombreMes = \Carbon\Carbon::parse($periodo . '-01')->translatedFormat('F_Y');
+                $nombreArchivo = 'casos_' . Str::slug($nombreMes, '_') . '.xlsx';
+            } catch (\Exception $e) {
+                // Dejar el nombre por defecto si el formato es inválido
+            }
+        }
+
+        return Excel::download($export, $nombreArchivo);
     }
 
 

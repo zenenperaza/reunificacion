@@ -145,12 +145,12 @@
                                     </li>
                                 @endcan
                                 @can('backups')
-                                    <li>
+                                    {{-- <li>
                                         <a href="{{ route('backup.index') }}">
                                             <i class="mdi mdi-database"></i>
                                             <span> Respaldos </span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 @endcan
 
 

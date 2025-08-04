@@ -53,7 +53,7 @@
                                 <th>Rol</th>
                                 <th>Superior</th> {{-- nueva columna --}}
                                 <th>Foto</th>
-                                <th>Familias</th>
+                                <th>Coordinaciones</th>
                                 <th>Estatus</th>
                                 <th>Acciones</th>
                             </tr>

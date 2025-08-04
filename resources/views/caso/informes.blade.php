@@ -23,14 +23,26 @@
                     <form action="{{ route('casos.informes') }}" method="GET" class="mb-3">
                         <div class="row">
                             {{-- Filtros como antes --}}
-                            <div class="col-md-3">
-                                <label>Desde:</label>
-                                <input type="date" name="start" value="{{ request('start') }}" class="form-control">
+                            <div class="col-md-3 ">
+                                <label>Buscar por fecha actual:</label>
+                                <div class="input-group flex-nowrap gap-1">
+                                    <button type="button"
+                                        class="btn btn-outline-primary w-100 d-flex justify-content-between align-items-center"
+                                        id="daterange-btn">
+                                        <span><i class="far fa-calendar-alt me-1"></i> <span
+                                                id="daterange-label">Seleccionar rango</span></span>
+                                        <i class="fas fa-caret-down ms-2"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="clear-daterange"
+                                        title="Limpiar rango">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <input type="hidden" name="start" id="start-date" value="{{ request('start') }}">
+                                <input type="hidden" name="end" id="end-date" value="{{ request('end') }}">
                             </div>
-                            <div class="col-md-3">
-                                <label>Hasta:</label>
-                                <input type="date" name="end" value="{{ request('end') }}" class="form-control">
-                            </div>
+
+
                             <div class="col-md-3">
                                 <label>Estado:</label>
                                 <select name="estado_id" class="form-control">
@@ -43,18 +55,23 @@
                                     @endforeach
                                 </select>
                             </div>
-                   <div class="col-md-3">
-    <label>Estatus:</label>
-    <select name="estatus" class="form-control">
-        <option value="">Todos</option>
-        <option value="En proceso" {{ request('estatus') == 'En proceso' ? 'selected' : '' }}>
-            En proceso</option>
-        <option value="En seguimiento" {{ request('estatus') == 'En seguimiento' ? 'selected' : '' }}>
-            En seguimiento</option>
-        <option value="Cierre de atención" {{ request('estatus') == 'Cierre de atención' ? 'selected' : '' }}>
-            Cierre de atención</option>
-    </select>
-</div>
+                            <div class="col-md-3">
+                                <label>Estatus:</label>
+                                <select name="estatus" class="form-control">
+                                    <option value="">Todos</option>
+                                    <option value="En proceso" {{ request('estatus') == 'En proceso' ? 'selected' : '' }}>
+                                        En proceso</option>
+                                    <option value="En seguimiento"
+                                        {{ request('estatus') == 'En seguimiento' ? 'selected' : '' }}>
+                                        En seguimiento</option>
+                                    <option value="Cierre de atención"
+                                        {{ request('estatus') == 'Cierre de atención' ? 'selected' : '' }}>
+                                        Cierre de atención</option>
+                                </select>
+                            </div>
+
+
+
 
 
                             <div class="col-md-4 mt-2">
@@ -87,6 +104,21 @@
                                         En espera</option>
                                 </select>
                             </div>
+
+                            <div class="col-md-4 mt-2">
+                                <label>Periodo:</label>
+                                <select name="periodo" class="form-control">
+                                    <option value="">Todos</option>
+                                    @foreach ($periodos as $p)
+                                        <option value="{{ $p->periodo }}"
+                                            {{ request('periodo') == $p->periodo ? 'selected' : '' }}>
+                                            {{ \Carbon\Carbon::parse($p->periodo . '-01')->translatedFormat('F Y') }}
+                                            ({{ $p->total }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
 
 
                             <div class="col-md-12 mb-2 mt-3">
@@ -214,6 +246,62 @@
         renderChart('graficoEstado', chartData.estado);
         renderChart('graficoTipo', chartData.tipo);
     </script>
+
+<script>
+    $(function () {
+        const startInput = $('#start-date');
+        const endInput = $('#end-date');
+        const labelSpan = $('#daterange-label');
+
+        function updateLabel(start, end) {
+            labelSpan.text(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+            startInput.val(start.format('YYYY-MM-DD'));
+            endInput.val(end.format('YYYY-MM-DD'));
+        }
+
+        let start = startInput.val() ? moment(startInput.val()) : null;
+        let end = endInput.val() ? moment(endInput.val()) : null;
+
+        $('#daterange-btn').daterangepicker({
+            startDate: start || moment(),
+            endDate: end || moment(),
+            autoUpdateInput: false,
+            locale: {
+                format: 'DD/MM/YYYY',
+                applyLabel: 'Aplicar',
+                cancelLabel: 'Cancelar',
+                customRangeLabel: "Personalizado",
+                daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                ],
+                firstDay: 1
+            },
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, updateLabel);
+
+        // ✅ Mostrar valores si ya estaban definidos, o "Seleccionar rango"
+        if (start && end) {
+            updateLabel(start, end);
+        } else {
+            labelSpan.text('Seleccionar rango');
+        }
+
+        // ✅ Limpiar botón
+        $('#clear-daterange').on('click', function () {
+            startInput.val('');
+            endInput.val('');
+            labelSpan.text('Seleccionar rango');
+        });
+    });
+</script>
+
 
 
 
