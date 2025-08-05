@@ -1734,7 +1734,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Error al guardar',
-                        text: 'No se pudo actualizar el caso. Por favor, intente nuevamente.',
+                        text: 'No se pudo actualizar el caso. Recuerda llenar los Campos obligatorios: Fecha atencion, Estado, Municipio, Parroquia...',
                         footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el Desarrollador</a>'
                     });
                 }
