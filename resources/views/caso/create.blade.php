@@ -19,6 +19,13 @@
 
     <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
 
+    <style>
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+    </style>
+
+
 @endsection
 
 @section('content')
@@ -43,7 +50,7 @@
 
                         <input type="hidden" name="caso_id" id="caso_id" value="">
                         <input type="hidden" name="paso_final" id="paso_final" value="0">
-
+                        <input type="hidden" name="paso_actual" id="paso_actual" value="1">
 
                         <ul class="nav nav-pills bg-light nav-justified form-wizard-header mb-3">
                             <li class="nav-item">
@@ -103,8 +110,8 @@
                                     <span class="d-none d-sm-inline">Observaciones - Finalizar</span>
                                 </a>
                         </ul>
-                        <div class="tab-content b-0 mb-0 pt-0">
 
+                        <div class="tab-content b-0 mb-0 pt-0">
 
                             <div id="bar" class="progress mb-3" style="height: 7px;">
                                 <div class="bar progress-bar progress-bar-striped progress-bar-animated bg-success"></div>
@@ -116,15 +123,33 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="periodo" class="form-label mb-2">Periodo</label>
-                                            <input type="text" class="form-control" name="periodo" id="periodo"
-                                                value="{{ configuracion('periodo') ?? date('Y-m') }}" readonly required>
+                                            <input type="hidden" name="periodo" value="{{ configuracion('periodo') }}">
+
+                                            @php
+                                                $periodoRaw = configuracion('periodo');
+                                                try {
+                                                    $carbon = \Carbon\Carbon::parse($periodoRaw);
+                                                    $periodoFormateado =
+                                                        $carbon->locale('es')->translatedFormat('F') .
+                                                        ' - ' .
+                                                        $carbon->year;
+                                                } catch (\Exception $e) {
+                                                    $periodoFormateado =
+                                                        $periodoRaw ?? \Carbon\Carbon::now()->format('Y-m');
+                                                }
+                                            @endphp
+
+                                            <input type="text" class="form-control" id="periodo"
+                                                value="{{ $periodoFormateado }}" readonly>
+
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de Atención</label>
-                                            <input type="date" class="form-control" name="fecha_atencion">
+                                            <label for="fecha_atencion" class="form-label mb-2">Fecha de Atención <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" name="fecha_atencion" max="{{ date('Y-m-d') }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -151,15 +176,17 @@
                                     </div>
 
                                     <div class="col-lg-4">
-                                        <label for="municipioSelect" class="form-label mb-2">Municipio</label>
-                                        <select id="municipioSelect" class="form-select" name="municipio_id">
+                                        <label for="municipioSelect" class="form-label mb-2">Municipio <span
+                                                class="text-danger">*</span></label>
+                                        <select id="municipioSelect" class="form-select" name="municipio_id" required>
                                             <option value="">Seleccione</option>
                                         </select>
                                     </div>
 
                                     <div class="col-lg-4">
-                                        <label for="parroquiaSelect" class="form-label mb-2">Parroquia</label>
-                                        <select id="parroquiaSelect" class="form-select" name="parroquia_id">
+                                        <label for="parroquiaSelect" class="form-label mb-2">Parroquia <span
+                                                class="text-danger">*</span></label>
+                                        <select id="parroquiaSelect" class="form-select" name="parroquia_id" required>
                                             <option value="">Seleccione</option>
                                         </select>
                                     </div>
@@ -308,14 +335,12 @@
                                                     Clonar este registro para cada integrante
                                                 </label>
                                             </div>
-                                             <div class="mb-2"  id="integrantesFields" style="display: none;">
+                                            <div class="mb-2" id="integrantesFields" style="display: none;">
                                                 <label for="numero_integrantes" class="form-label">N° de integrantes</label>
                                                 <input type="number" name="numero_integrantes" id="numero_integrantes"
                                                     class="form-control" min="1">
                                             </div>
                                         </div>
-
-                                     
                                     @endcan
 
 
@@ -333,14 +358,15 @@
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label for="fecha_nacimiento" class="form-label mb-2">Fecha de Nacimiento</label>
-                                                    <input type="date" class="form-control" name="fecha_nacimiento">
+                                                    <label for="fecha_nacimiento" class="form-label mb-2">Fecha de
+                                                        Nacimiento</label>
+                                                    <input type="date" class="form-control" name="fecha_nacimiento" max="{{ date('Y-m-d') }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mt-0">
                                                 <label class="form-label mb-2">Edad del beneficiario</label>
                                                 <input type="text" class="form-control" name="edad_beneficiario"
-                                                    id="edad-beneficiario-input" readonly>
+                                                    id="edad-beneficiario-input" readonly required>
                                             </div>
                                         </div>
 
@@ -1432,10 +1458,10 @@
 
                                             @if (configuracion('conf_fecha_actual') === 'si' && auth()->user()->can('cambiar fecha actual'))
                                                 <input type="date" class="form-control" name="fecha_actual"
-                                                    value="{{ date('Y-m-d') }}">
+                                                    value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
                                             @else
                                                 <input type="date" class="form-control" name="fecha_actual"
-                                                    value="{{ date('Y-m-d') }}" readonly>
+                                                    value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" readonly>
                                             @endif
 
                                         </div>
@@ -1541,8 +1567,7 @@
                                 @endcan
 
                                 <!-- Botón para finalizar y redirigir -->
-                                {{-- <button type="button" class="btn btn-success btn-guardar" data-final="true">Enviar y
-                                        finalizar</button> --}}
+
                                 <div class="row mt-3 finalizar">
                                     <ul class="list-inline mt-4 wizard d-flex justify-content-center">
 
@@ -1552,8 +1577,7 @@
                                                 class="btn btn-success waves-effect btn-guardar  float-end"
                                                 data-final="true">
                                                 <span class="btn-label"><i class="mdi mdi-check-all"></i></span>Guardar y
-                                                finalizar
-                                            </button>
+                                                finalizar</button>
 
                                         </li>
                                     </ul>
@@ -1567,35 +1591,23 @@
                                     <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
                                 </li>
 
-                                <li class="next list-inline-item float-end">
-                                    <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
+                                <li class="list-inline-item float-end">
+                                    <a href="#" class="btn btn-secondary btn-siguiente-tab">Siguiente</a>
                                 </li>
 
 
-                                <li class="next list-inline-item float-end">
 
-                                    {{-- <button type="button" id="btn-guardar-y-continuar" class="btn btn-primary">Enviar y
-                                        continuar</button> --}}
+                                <li class="next list-inline-item float-end">
 
                                     <!-- Botón para avanzar entre tabs -->
                                     @can('guardar continuar')
                                         <button type="button" class="btn btn-info waves-effect waves-light btn-guardar mx-2"
-                                            data-final="false"><i class="mdi mdi-cloud-outline me-1"></i> Guardar y
-                                            continuar</button>
+                                            data-final="false">
+                                            <i class="mdi mdi-cloud-outline me-1"></i> Guardar y continuar</button>
                                     @endcan
 
-                                    {{-- <button type="button" class="btn btn-primary btn-guardar" data-final="false">Enviar y continuar</button> --}}
-
                                 </li>
-
-
                             </ul>
-
-
-
-
-
-
                         </div>
                     </form>
                 </div>
@@ -1725,78 +1737,114 @@
         });
     </script>
 
-    <script>
-        $('.btn-guardar').on('click', function(e) {
-            e.preventDefault();
 
-            const esPasoFinal = $(this).data('final') === true || $(this).data('final') === 'true';
-            $('#paso_final').val(esPasoFinal ? '1' : '0');
+<script>
+    $('.btn-guardar').on('click', function (e) {
+        e.preventDefault();
 
-            const form = $('#formCaso')[0];
-            const formData = new FormData(form);
+        const esPasoFinal = $(this).data('final') === true || $(this).data('final') === 'true';
+        $('#paso_final').val(esPasoFinal ? '1' : '0');
 
-            if (typeof imagenesDropzone !== 'undefined') {
-                imagenesDropzone.files.forEach(file => formData.append('fotos[]', file));
+        const activeTab = $('.tab-pane.active');
+        const activeTabId = activeTab.attr('id'); // tab1, tab2, etc.
+        const pasoActual = activeTabId ? activeTabId.replace('tab', '') : '1';
+        $('#paso_actual').val(pasoActual);
+
+        // 🔍 Validar campos requeridos visibles en esta pestaña
+        let camposVacios = false;
+        activeTab.find('input[required], select[required], textarea[required]').each(function () {
+            if ($(this).is(':visible') && !$(this).val()) {
+                $(this).addClass('is-invalid');
+                camposVacios = true;
+            } else {
+                $(this).removeClass('is-invalid');
             }
-
-            if (typeof documentosDropzone !== 'undefined') {
-                documentosDropzone.files.forEach(file => formData.append('archivos[]', file));
-            }
-
-            const originalText = $(this).html();
-            $(this).prop('disabled', true).text('Guardando...');
-
-            fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        $('#caso_id').val(data.id);
-
-                        Swal.fire({
-                            toast: true,
-                            position: 'center',
-                            icon: 'success',
-                            title: 'Datos guardados correctamente. Continue con la siguiente seccion.',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            customClass: {
-                                popup: 'swal2-toast-center'
-                            }
-                        });
-
-
-                        if (esPasoFinal) {
-                            window.location.href = "{{ route('casos.index') }}";
-                        } else {
-                            const activeTab = $('.nav-tabs .nav-link.active');
-                            const nextTab = activeTab.closest('li').next().find('.nav-link');
-                            if (nextTab.length) nextTab.tab('show');
-                        }
-                    } else {
-                        throw new Error('Error en la respuesta');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Hubo un problema al guardar el caso. Recuerda llenar los Campos obligatorios: Fecha atencion, Estado, Municipio, Parroquia...',
-                        footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el desarrollador</a>'
-                    });
-                })
-                .finally(() => {
-                    $(this).prop('disabled', false).html(originalText);
-                });
         });
-    </script>
+
+        if (camposVacios) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos obligatorios faltantes',
+                text: 'Por favor, complete todos los campos requeridos antes de continuar.'
+            });
+
+            // ⚠️ Detener aquí completamente
+            return false;
+        }
+
+        // Solo se ejecuta si todos los campos están completos
+        const form = $('#formCaso')[0];
+        const formData = new FormData(form);
+
+        if (typeof imagenesDropzone !== 'undefined') {
+            imagenesDropzone.files.forEach(file => formData.append('fotos[]', file));
+        }
+
+        if (typeof documentosDropzone !== 'undefined') {
+            documentosDropzone.files.forEach(file => formData.append('archivos[]', file));
+        }
+
+        const originalText = $(this).html();
+        $(this).prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin me-1"></i> Guardando...');
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                $('#caso_id').val(data.id);
+
+                Swal.fire({
+                    toast: true,
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Datos guardados correctamente. Continúe con la siguiente sección.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'swal2-toast-center'
+                    }
+                });
+
+                if (esPasoFinal) {
+                    window.location.href = "{{ route('casos.index') }}";
+                } else {
+                    const nextTab = $('.nav-tabs .nav-link.active').closest('li').next().find('.nav-link');
+                    if (nextTab.length) {
+                        const tabInstance = new bootstrap.Tab(nextTab[0]);
+                        tabInstance.show();
+
+                        $('html, body').animate({
+                            scrollTop: $("#formCaso").offset().top
+                        }, 500);
+                    }
+                }
+            } else {
+                throw new Error('Error en la respuesta');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un problema al guardar el caso. Revisa los campos obligatorios del paso actual.',
+                footer: '<a href="https://wa.me/584245034999" target="_blank">Contacta con el desarrollador</a>'
+            });
+        })
+        .finally(() => {
+            $(this).prop('disabled', false).html(originalText);
+        });
+    });
+</script>
+
+
 
 
     <script>
@@ -2195,7 +2243,7 @@
         });
 
 
-       
+
 
         document.addEventListener("DOMContentLoaded", function() {
             const checkNoAplica = document.querySelector('input[name="estado_mujer[]"][value="No aplica estado"]');
@@ -2506,41 +2554,41 @@
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
-        const clonarCheckboxDiv = document.getElementById('clonarCheckbox');
-        const integrantesFields = document.getElementById('integrantesFields');
-        const clonarCheckbox = document.getElementById('clonar_integrantes');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoAtencionRadios = document.querySelectorAll('input[name="tipo_atencion"]');
+            const clonarCheckboxDiv = document.getElementById('clonarCheckbox');
+            const integrantesFields = document.getElementById('integrantesFields');
+            const clonarCheckbox = document.getElementById('clonar_integrantes');
 
-        if (!clonarCheckboxDiv || !integrantesFields) return;
+            if (!clonarCheckboxDiv || !integrantesFields) return;
 
-        function toggleClonarFields() {
-            const selected = document.querySelector('input[name="tipo_atencion"]:checked');
-            if (selected && selected.value === 'Grupo familiar') {
-                clonarCheckboxDiv.style.display = 'block';
-            } else {
-                clonarCheckboxDiv.style.display = 'none';
-                integrantesFields.style.display = 'none';
-                clonarCheckbox.checked = false;
+            function toggleClonarFields() {
+                const selected = document.querySelector('input[name="tipo_atencion"]:checked');
+                if (selected && selected.value === 'Grupo familiar') {
+                    clonarCheckboxDiv.style.display = 'block';
+                } else {
+                    clonarCheckboxDiv.style.display = 'none';
+                    integrantesFields.style.display = 'none';
+                    clonarCheckbox.checked = false;
+                }
             }
-        }
 
-        function toggleIntegrantesField() {
-            integrantesFields.style.display = clonarCheckbox.checked ? 'block' : 'none';
-        }
+            function toggleIntegrantesField() {
+                integrantesFields.style.display = clonarCheckbox.checked ? 'block' : 'none';
+            }
 
-        tipoAtencionRadios.forEach(radio => {
-            radio.addEventListener('change', toggleClonarFields);
+            tipoAtencionRadios.forEach(radio => {
+                radio.addEventListener('change', toggleClonarFields);
+            });
+
+            clonarCheckbox.addEventListener('change', toggleIntegrantesField);
+
+            // Mostrar al recargar si está preseleccionado
+            toggleClonarFields();
+            toggleIntegrantesField();
         });
-
-        clonarCheckbox.addEventListener('change', toggleIntegrantesField);
-
-        // Mostrar al recargar si está preseleccionado
-        toggleClonarFields();
-        toggleIntegrantesField();
-    });
-</script>
+    </script>
 
 
     <script>
@@ -2678,6 +2726,66 @@
     </script>
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wizard = document.getElementById('progressbarwizard');
+            const nextButtons = wizard.querySelectorAll('.btn-siguiente-tab');
+
+            // Botón "Siguiente"
+            nextButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const currentTab = wizard.querySelector('.tab-pane.active');
+                    const inputs = currentTab.querySelectorAll('input, select, textarea');
+
+                    let valid = true;
+
+                    inputs.forEach(input => {
+                        if (
+                            input.offsetParent !== null &&
+                            input.hasAttribute('required') &&
+                            !input.value.trim()
+                        ) {
+                            input.classList.add('is-invalid');
+                            valid = false;
+                        } else {
+                            input.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (valid) {
+                        const activeTab = wizard.querySelector('.nav-link.active');
+                        const nextTab = activeTab.closest('li').nextElementSibling;
+                        if (nextTab) {
+                            const nextLink = nextTab.querySelector('.nav-link');
+                            new bootstrap.Tab(nextLink).show();
+                        }
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            position: 'center',
+                            icon: 'error',
+                            title: 'Hubo un problema al guardar el caso. Recuerda llenar los Campos obligatorios.',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'swal2-toast-center'
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Elimina la clase is-invalid al escribir
+            wizard.querySelectorAll('input, select, textarea').forEach(input => {
+                input.addEventListener('input', () => {
+                    input.classList.remove('is-invalid');
+                });
+            });
+        });
+    </script>
 
 
 @endsection

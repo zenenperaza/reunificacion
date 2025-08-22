@@ -19,7 +19,8 @@ class ConfiguracionController extends Controller
         $request->validate([
             'conf_fecha_actual' => 'required|in:si,no',
             'sistema_deshabilitado' => 'required|in:si,no',
-            'periodo' => 'required|date_format:Y-m',
+            'mes' => 'required|in:01,02,03,04,05,06,07,08,09,10,11,12',
+            'anio' => 'required|digits:4|integer|min:2020',
             'prefijo_caso' => 'nullable|string|max:10',
             'nombre_sistema' => 'nullable|string|max:255',
             'texto_portada' => 'nullable|string',
@@ -31,12 +32,15 @@ class ConfiguracionController extends Controller
 
         $config->conf_fecha_actual = $request->conf_fecha_actual;
         $config->sistema_deshabilitado = $request->sistema_deshabilitado;
-        $config->periodo = $request->periodo;
+
+        // ✅ Guardar periodo como "2025-08" (Y-m) para uso lógico
+        $config->periodo = "{$request->anio}-{$request->mes}";
+
         $config->prefijo_caso = $request->prefijo_caso;
         $config->nombre_sistema = $request->nombre_sistema;
         $config->texto_portada = $request->texto_portada;
 
-        // ✔️ Cargar nuevo logo si se subió
+        // ✔️ Procesar nuevo logo
         if ($request->hasFile('logo_sistema')) {
             if ($config->logo_sistema && Storage::disk('public')->exists($config->logo_sistema)) {
                 Storage::disk('public')->delete($config->logo_sistema);
@@ -44,7 +48,7 @@ class ConfiguracionController extends Controller
             $config->logo_sistema = $request->file('logo_sistema')->store('logos', 'public');
         }
 
-        // ✔️ Cargar nueva imagen de portada si se subió
+        // ✔️ Procesar nueva portada
         if ($request->hasFile('imagen_portada')) {
             if ($config->imagen_portada && Storage::disk('public')->exists($config->imagen_portada)) {
                 Storage::disk('public')->delete($config->imagen_portada);

@@ -54,7 +54,7 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
         }
         return back()->with('error', 'Archivo no encontrado.');
     })->name('backup.descargar');
-  
+
 
     Route::get('/', function () {
         return view('welcome');
@@ -121,6 +121,9 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
 
 
         // Rutas con permisos específicos (fuera del grupo "Gestion casos")
+        Route::post('/casos/eliminar-masivo', [CasoController::class, 'eliminarMasivo'])->name('casos.eliminar-masivo');
+        Route::post('/casos/cambiar-condicion', [CasoController::class, 'cambiarCondicion'])->name('casos.cambiar-condicion');
+
         Route::post('/casos/{id}/aprobar', [CasoController::class, 'aprobar'])
             ->name('casos.aprobar')
             ->middleware('can:aprobar casos');
@@ -170,9 +173,6 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
     });
 
     Route::resource('familias', FamiliaController::class)->middleware(['auth']);
-
-
-
 });
 
 

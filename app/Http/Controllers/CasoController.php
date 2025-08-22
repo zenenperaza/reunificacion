@@ -19,6 +19,8 @@ use App\Imports\CasosImport;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use App\Models\Configuracion;
+use Illuminate\Validation\Rule;
 
 
 
@@ -42,6 +44,8 @@ class CasoController extends Controller
 
     public function data(Request $request)
     {
+        $puedeEliminarOAprobar = auth()->user()->can('eliminar casos') || auth()->user()->can('aprobar casos');
+
         $query = Caso::with(['estado', 'municipio']);
         $user = auth()->user();
 
@@ -150,7 +154,7 @@ class CasoController extends Controller
         };
 
         $getAcciones = function ($caso) {
-            $botones = '<div class="btn-group" role="group">';
+        $botones = '<div class="acciones-btns d-flex justify-content-center gap-1">';
 
             if (auth()->user()->can('ver casos')) {
                 $botones .= '<a href="' . route('casos.show', $caso->id) . '" class="btn btn-sm btn-primary" title="Ver"><i class="mdi mdi-eye"></i></a>';
@@ -167,6 +171,7 @@ class CasoController extends Controller
             $botones .= '</div>';
             return $botones;
         };
+
 
         // Completado vs incompleto
         if (!$request->filled('estado_completado')) {
@@ -186,6 +191,7 @@ class CasoController extends Controller
 
 
                 ->rawColumns(['acciones', 'condicion', 'estado_completado'])
+                 ->with('puedeEliminarOAprobar', $puedeEliminarOAprobar)
                 ->make(true);
         }
 
@@ -237,37 +243,365 @@ class CasoController extends Controller
         ));
     }
 
+    // public function store(Request $request)
+    // {
+
+    //     $validated = $request->validate([
+    //         // 'periodo' => 'required|date_format:Y-m',
+    //         'fecha_atencion' => 'required|date',
+    //         'estado_id' => 'required|exists:estados,id',
+    //         'municipio_id' => 'required|exists:municipios,id',
+    //         'parroquia_id' => 'required|exists:parroquias,id',
+    //         // 'tipo_atencion' => 'required|string',
+    //         'beneficiario' => 'required|string',
+    //         // 'edad_beneficiario' => 'required|numeric|min:0|max:120',
+    //         // 'poblacion_lgbti' => 'required|in:Si,No',
+    //         // 'pais_procedencia' => 'required|string',
+    //         // 'nacionalidad_solicitante' => 'required|string',
+    //         // 'tipo_documento' => 'required|string',
+    //         // 'pais_nacimiento' => 'required|string',
+    //         // 'etnia_indigena' => 'required|string',
+    //         // 'discapacidad' => 'required|string',
+    //         // 'estatus' => 'required|string',
+    //         // 'fecha_actual' => 'required|date',
+    //     ]);
+
+    //     $periodoSeguro = configuracion('periodo'); // trae "2025-08" directamente de BD
+
+    //     $idCaso = $request->input('caso_id');
+    //     $pasoFinal = $request->input('paso_final') === '1';
+    //     $caso = null;
+
+    //     if ($idCaso) {
+    //         $caso = Caso::find($idCaso);
+    //     }
+
+    //     // Guardar imágenes
+    //     $fotos = [];
+    //     if ($request->hasFile('fotos')) {
+    //         foreach ($request->file('fotos') as $imagen) {
+    //             $path = $imagen->store('casos/imagenes', 'public');
+    //             $fotos[] = $path;
+    //         }
+    //     }
+
+    //     // Guardar documentos
+    //     $archivos = [];
+    //     if ($request->hasFile('archivos')) {
+    //         foreach ($request->file('archivos') as $archivo) {
+    //             $path = $archivo->store('casos/documentos', 'public');
+    //             $archivos[] = $path;
+    //         }
+    //     }
+
+    //     // Si el usuario no tiene permiso, forzamos la fecha_actual al día de hoy
+    //     if (!auth()->user()->can('cambiar fecha actual')) {
+    //         $request->merge(['fecha_actual' => now()->format('Y-m-d')]);
+    //     }
+
+
+    //     $data = [
+    //         'numero_caso' => $request->numero_caso,
+    //         'periodo' => $periodoSeguro,
+    //         'fecha_atencion' => $request->fecha_atencion,
+    //         'estado_id' => $request->estado_id,
+    //         'municipio_id' => $request->municipio_id,
+    //         'parroquia_id' => $request->parroquia_id,
+    //         'estado_destino_id' => $request->estado_destino_id,
+    //         'municipio_destino_id' => $request->municipio_destino_id,
+    //         'parroquia_destino_id' => $request->parroquia_destino_id,
+    //         'direccion_domicilio' => $request->direccion_domicilio,
+    //         'numero_contacto' => $request->numero_contacto,
+    //         'elaborado_por' => $request->elaborado_por,
+    //         'tipo_atencion' => $request->tipo_atencion,
+    //         'fecha_nacimiento' => $request->fecha_nacimiento,
+    //         'beneficiario' => $request->beneficiario,
+    //         'edad_beneficiario' => $request->edad_beneficiario,
+    //         'poblacion_lgbti' => $request->poblacion_lgbti,
+    //         'representante_legal' => $request->representante_legal,
+    //         'pais_procedencia' => $request->pais_procedencia,
+    //         'otro_pais' => $request->otro_pais,
+    //         'nacionalidad_solicitante' => $request->nacionalidad_solicitante,
+    //         'tipo_documento' => $request->tipo_documento,
+    //         'pais_nacimiento' => $request->pais_nacimiento,
+    //         'otro_pais_nacimiento' => $request->otro_pais_nacimiento,
+    //         'etnia_indigena' => $request->etnia_indigena,
+    //         'otra_etnia' => $request->otra_etnia,
+    //         'discapacidad' => $request->discapacidad,
+    //         'fecha_actual' => $request->fecha_actual,
+    //         'estatus' => $request->estatus,
+    //         'observaciones' => $request->observaciones,
+    //         'verificador' => $request->verificador,
+    //         'condicion' => auth()->user()->can('aprobar casos') ? $request->condicion : 'En espera',
+    //     ];
+
+    //     if (!empty($fotos)) {
+    //         $data['fotos'] = json_encode($fotos);
+    //     }
+
+    //     if (!empty($archivos)) {
+    //         $data['archivos'] = json_encode($archivos);
+    //     }
+
+    //     if ($caso) {
+    //         $caso->update($data);
+    //     } else {
+    //         $data['user_id'] = auth()->id();
+    //         $caso = Caso::create($data);
+    //     }
+
+    //     // Actualizar campos adicionales
+    //     $caso->organizacion_programa = is_array($request->organizacion_programas) ? implode(',', $request->organizacion_programas) : $request->organizacion_programas;
+    //     $caso->organizacion_solicitante = is_array($request->organizacion_solicitante) ? implode(',', $request->organizacion_solicitante) : $request->organizacion_solicitante;
+    //     $caso->otras_organizaciones = $request->otras_organizaciones;
+    //     $caso->tipo_atencion_programa = is_array($request->tipo_atencion_programa) ? implode(',', $request->tipo_atencion_programa) : $request->tipo_atencion_programa;
+    //     $caso->educacion = $request->educacion;
+    //     $caso->nivel_educativo = $request->nivel_educativo;
+    //     $caso->tipo_institucion = $request->tipo_institucion;
+    //     $caso->estado_mujer = is_array($request->estado_mujer) ? implode(',', $request->estado_mujer) : $request->estado_mujer;
+    //     $caso->acompanante = is_array($request->acompanante) ? implode(',', $request->acompanante) : $request->acompanante;
+    //     $caso->servicio_brindado_cosude = is_array($request->servicio_brindado_cosude) ? implode(',', $request->servicio_brindado_cosude) : $request->servicio_brindado_cosude;
+    //     $caso->servicio_brindado_unicef = is_array($request->servicio_brindado_unicef) ? implode(',', $request->servicio_brindado_unicef) : $request->servicio_brindado_unicef;
+    //     $caso->tipo_actuacion = is_array($request->tipo_actuacion) ? implode(',', $request->tipo_actuacion) : $request->tipo_actuacion;
+    //     $caso->otro_tipo_actuacion = $request->otro_tipo_actuacion;
+    //     $caso->vulnerabilidades = json_encode($request->vulnerabilidades);
+    //     $caso->derechos_vulnerados = json_encode($request->derechos_vulnerados);
+    //     $caso->identificacion_violencia = json_encode($request->identificacion_violencia);
+    //     $caso->tipos_violencia_vicaria = json_encode($request->tipos_violencia_vicaria);
+    //     $caso->remisiones = json_encode($request->remisiones);
+    //     $caso->otras_remisiones = $request->otras_remisiones;
+    //     $caso->indicadores = json_encode($request->indicadores);
+    //     $caso->save();
+
+    //     // Clonación solo si es el paso final
+    //     if (
+    //         $pasoFinal &&
+    //         $request->tipo_atencion === 'Grupo familiar' &&
+    //         $request->has('clonar_integrantes') &&
+    //         $request->numero_integrantes > 0
+    //     ) {
+    //         for ($i = 0; $i < $request->numero_integrantes; $i++) {
+    //             $nuevo = $caso->replicate();
+    //             $nuevo->tipo_atencion = 'Grupo familiar';
+    //             // 🧼 Limpiar campos individuales que no deben clonarse
+    //             $nuevo->fecha_nacimiento = null;
+    //             $nuevo->beneficiario = null;
+    //             $nuevo->edad_beneficiario = null;
+    //             $nuevo->educacion = null;
+    //             $nuevo->nivel_educativo = null;
+    //             $nuevo->tipo_institucion = null;
+    //             $nuevo->estado_mujer = null;
+    //             $nuevo->save();
+    //         }
+    //     }
+
+    //     return response()->json(['success' => true, 'id' => $caso->id]);
+    // }
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'periodo' => 'required|date_format:Y-m',
-            'fecha_atencion' => 'required|date',
-            'estado_id' => 'required|exists:estados,id',
-            'municipio_id' => 'required|exists:municipios,id',
-            'parroquia_id' => 'required|exists:parroquias,id',
-            // 'tipo_atencion' => 'required|string',
-            // 'beneficiario' => 'required|string',
-            // 'edad_beneficiario' => 'required|numeric|min:0|max:120',
-            // 'poblacion_lgbti' => 'required|in:Si,No',
-            // 'pais_procedencia' => 'required|string',
-            // 'nacionalidad_solicitante' => 'required|string',
-            // 'tipo_documento' => 'required|string',
-            // 'pais_nacimiento' => 'required|string',
-            // 'etnia_indigena' => 'required|string',
-            // 'discapacidad' => 'required|string',
-            // 'estatus' => 'required|string',
-            // 'fecha_actual' => 'required|date',
-        ]);
-
-        $idCaso = $request->input('caso_id');
+        $pasoActual = $request->input('paso_actual'); // Valor de 1 a 8
         $pasoFinal = $request->input('paso_final') === '1';
-        $caso = null;
 
-        if ($idCaso) {
-            $caso = Caso::find($idCaso);
-        }
+        // Paso 1
+        $reglasPaso1 = [
+            // 'periodo' => 'nullable', // Se guarda como '2025-08' aunque sea hidden
+            'fecha_atencion' => 'required|date|before_or_equal:today',
+            // 'estado_id' => 'required|exists:estados,id',
+            // 'municipio_id' => 'required|exists:municipios,id',
+            // 'parroquia_id' => 'required|exists:parroquias,id',
+            // 'elaborado_por' => 'required|string|max:255',
+            // 'numero_caso' => 'required|string|max:100',
 
-        // Guardar imágenes
+            // // Estos campos son arrays de checkboxes (pueden estar vacíos)
+            // 'organizacion_programas' => 'nullable|array',
+            // 'organizacion_programas.*' => 'string|max:100',
+
+            // 'organizacion_solicitante' => 'nullable|array',
+            // 'organizacion_solicitante.*' => 'string|max:100',
+
+            // // Solo es requerido si fue activado en JS
+            // 'otras_organizaciones' => 'nullable|string|max:255',
+
+            // 'tipo_atencion_programa' => 'nullable|array',
+            // 'tipo_atencion_programa.*' => 'string|max:100',
+
+            // 'tipo_atencion' => 'nullable|string|in:Individual,Grupo familiar',
+
+            // // Solo cuando clonar está marcado y hay número de integrantes
+            // 'clonar_integrantes' => 'nullable|boolean',
+            // 'numero_integrantes' => 'nullable|required_if:clonar_integrantes,1|integer|min:1|max:20',
+        ];
+
+
+        // Paso 2
+        $reglasPaso2 = [
+            'fecha_nacimiento' => 'nullable',
+            'edad_beneficiario' => 'required|string',
+
+            'beneficiario' => 'required',
+
+            'educacion' => 'nullable',
+            'nivel_educativo' => 'nullable',
+            'tipo_institucion' => 'nullable',
+
+            'estado_mujer' => 'nullable|array',
+            'estado_mujer.*' => 'nullable|string',
+
+            'poblacion_lgbti' => 'nullable',
+
+            'acompanante' => 'nullable',
+            'acompanante.*' => 'nullable',
+
+            'representante_legal' => 'nullable',
+
+            'pais_procedencia' => 'nullable',
+            'otro_pais' => 'nullable',
+
+            'nacionalidad_solicitante' => 'nullable',
+
+            'tipo_documento' =>  'nullable',
+
+            'pais_nacimiento' => 'nullable',
+            'otro_pais_nacimiento' => 'nullable',
+
+            'etnia_indigena' => 'nullable',
+            'otra_etnia' => 'nullable',
+
+            'discapacidad' => 'nullable',
+        ];
+
+
+        // Paso 3
+        $reglasPaso3 = [
+            // Servicios brindados (ambos pueden ser nulos)
+            'servicio_brindado_cosude' => 'nullable|array',
+            'servicio_brindado_cosude.*' => 'string|max:100',
+
+            'servicio_brindado_unicef' => 'nullable|array',
+            'servicio_brindado_unicef.*' => 'string|max:100',
+
+            // Ubicación destino (no obligatoria por ahora, pero puedes ajustar si lo deseas)
+            'estado_destino_id' => 'nullable|exists:estados,id',
+            'municipio_destino_id' => 'nullable|exists:municipios,id',
+            'parroquia_destino_id' => 'nullable|exists:parroquias,id',
+
+            // Dirección y contacto (opcionales)
+            'direccion_domicilio' => 'nullable|string|max:255',
+            'numero_contacto' => 'nullable|string|max:50',
+
+            // Tipo de actuación
+            'tipo_actuacion' => 'nullable|array',
+            'tipo_actuacion.*' => 'string|max:100',
+
+            // Campo adicional si se elige "Otros tipos de actuación"
+            'otro_tipo_actuacion' => 'nullable|string|max:255',
+        ];
+
+
+        // Paso 4
+        $reglasPaso4 = [
+            'vulnerabilidades' => 'required|array|min:1',
+            'vulnerabilidades.*' => 'string|max:255',
+        ];
+
+
+        // Paso 5
+        $reglasPaso5 = [
+            'derechos_vulnerados' => 'required|array|min:1',
+            'derechos_vulnerados.*' => 'string|max:255',
+        ];
+
+
+        // Paso 6
+        $reglasPaso6 = [
+            // ✅ Identificación de violencia basada en género
+            'identificacion_violencia' => 'required|array|min:1',
+            'identificacion_violencia.*' => 'string|max:255',
+
+            // ✅ Tipos de violencia vicaria (solo se muestra si se selecciona 'Violencia Vicaría')
+            'tipos_violencia_vicaria' => 'nullable|array',
+            'tipos_violencia_vicaria.*' => 'string|max:255',
+
+            // ✅ Remisiones
+            'remisiones' => 'nullable|array',
+            // 'remisiones.*' => 'string|max:255',
+
+            // ✅ Campo adicional si se marca "Otras Remisiones"
+            'otras_remisiones' => 'nullable|string|max:255',
+        ];
+
+
+        // Paso 7
+        $reglasPaso7 = [
+            // Fotos (opcional, múltiples)
+            'fotos' => 'nullable|array',
+            // 'fotos.*' => 'file|mimes:jpg,jpeg,png,gif|max:5120', // 5MB por imagen
+
+            // Documentos (opcional, múltiples)
+            'archivos' => 'nullable|array',
+            // 'archivos.*' => 'file|mimes:pdf,doc,docx|max:10240', // 10MB por documento
+        ];
+
+
+        // Paso 8 (final)
+        $reglasPaso8 = [
+            // Fecha actual (requerida siempre)
+            'fecha_actual' => 'required|date',
+
+            // Estatus de atención (requerido, con valores válidos)
+            'estatus' => 'required|in:En proceso,En seguimiento,Cierre de atención',
+
+            // Indicadores (opcional, pero si vienen deben ser válidos)
+            'indicadores' => 'nullable|array',
+            // 'indicadores.*' => 'string|in:PSEA.01,encuesta_satisfaccion,no_aplica',
+
+            // Observaciones (opcional)
+            'observaciones' => 'nullable|string',
+
+            // Condición solo si el usuario tiene el permiso
+            'condicion' => auth()->user()->can('aprobar casos')
+                ? 'required|in:En espera,No aprobado,Aprobado'
+                : 'nullable',
+        ];
+
+
+        // Combinar todas
+        $todasLasReglas = array_merge(
+            $reglasPaso1,
+            $reglasPaso2,
+            $reglasPaso3,
+            $reglasPaso4,
+            $reglasPaso5,
+            $reglasPaso6,
+            $reglasPaso7,
+            $reglasPaso8
+        );
+
+        // Selección según paso actual
+        $reglasPorPaso = match ($pasoActual) {
+            '1' => $reglasPaso1,
+            '2' => $reglasPaso2,
+            '3' => $reglasPaso3,
+            '4' => $reglasPaso4,
+            '5' => $reglasPaso5,
+            '6' => $reglasPaso6,
+            '7' => $reglasPaso7,
+            '8' => $reglasPaso8,
+            default => []
+        };
+
+        // Si está en el paso final, validamos todo
+        $rules = $pasoFinal ? $todasLasReglas : $reglasPorPaso;
+
+        // Validar
+        $validated = $request->validate($rules);
+
+        $periodoSeguro = configuracion('periodo'); // trae "2025-08" directamente de BD
+        // --- Resto de tu código permanece igual ---
+        $idCaso = $request->input('caso_id');
+        $caso = $idCaso ? Caso::find($idCaso) : null;
+
+        // Guardar imágenes y documentos
         $fotos = [];
         if ($request->hasFile('fotos')) {
             foreach ($request->file('fotos') as $imagen) {
@@ -276,7 +610,6 @@ class CasoController extends Controller
             }
         }
 
-        // Guardar documentos
         $archivos = [];
         if ($request->hasFile('archivos')) {
             foreach ($request->file('archivos') as $archivo) {
@@ -285,15 +618,13 @@ class CasoController extends Controller
             }
         }
 
-        // Si el usuario no tiene permiso, forzamos la fecha_actual al día de hoy
         if (!auth()->user()->can('cambiar fecha actual')) {
             $request->merge(['fecha_actual' => now()->format('Y-m-d')]);
         }
 
-
         $data = [
             'numero_caso' => $request->numero_caso,
-            'periodo' => $request->periodo,
+            'periodo' => $periodoSeguro,
             'fecha_atencion' => $request->fecha_atencion,
             'estado_id' => $request->estado_id,
             'municipio_id' => $request->municipio_id,
@@ -326,13 +657,8 @@ class CasoController extends Controller
             'condicion' => auth()->user()->can('aprobar casos') ? $request->condicion : 'En espera',
         ];
 
-        if (!empty($fotos)) {
-            $data['fotos'] = json_encode($fotos);
-        }
-
-        if (!empty($archivos)) {
-            $data['archivos'] = json_encode($archivos);
-        }
+        if (!empty($fotos)) $data['fotos'] = json_encode($fotos);
+        if (!empty($archivos)) $data['archivos'] = json_encode($archivos);
 
         if ($caso) {
             $caso->update($data);
@@ -341,7 +667,7 @@ class CasoController extends Controller
             $caso = Caso::create($data);
         }
 
-        // Actualizar campos adicionales
+        // Actualizar campos adicionales (sin cambios)
         $caso->organizacion_programa = is_array($request->organizacion_programas) ? implode(',', $request->organizacion_programas) : $request->organizacion_programas;
         $caso->organizacion_solicitante = is_array($request->organizacion_solicitante) ? implode(',', $request->organizacion_solicitante) : $request->organizacion_solicitante;
         $caso->otras_organizaciones = $request->otras_organizaciones;
@@ -364,7 +690,7 @@ class CasoController extends Controller
         $caso->indicadores = json_encode($request->indicadores);
         $caso->save();
 
-        // Clonación solo si es el paso final
+        // Clonación si aplica
         if (
             $pasoFinal &&
             $request->tipo_atencion === 'Grupo familiar' &&
@@ -374,7 +700,6 @@ class CasoController extends Controller
             for ($i = 0; $i < $request->numero_integrantes; $i++) {
                 $nuevo = $caso->replicate();
                 $nuevo->tipo_atencion = 'Grupo familiar';
-                // 🧼 Limpiar campos individuales que no deben clonarse
                 $nuevo->fecha_nacimiento = null;
                 $nuevo->beneficiario = null;
                 $nuevo->edad_beneficiario = null;
@@ -388,6 +713,7 @@ class CasoController extends Controller
 
         return response()->json(['success' => true, 'id' => $caso->id]);
     }
+
 
 
 
@@ -767,7 +1093,8 @@ class CasoController extends Controller
     public function aprobar(Request $request, $id)
     {
         $caso = Caso::findOrFail($id);
-        $caso->condicion = $request->input('Aprobado');
+        $caso->condicion = $request->input('aprobado'); // ✔ correcto
+
         $caso->save();
 
         return response()->json(['message' => 'Condición actualizada correctamente.']);
@@ -959,8 +1286,6 @@ class CasoController extends Controller
     }
 
 
-
-
     public function exportarInformePDF(Request $request)
     {
         // Puedes replicar parte de la lógica de resumenLocal e informeIA
@@ -972,27 +1297,15 @@ class CasoController extends Controller
         return $pdf->download('informe-casos-' . now()->format('Ymd_His') . '.pdf');
     }
 
+    public function eliminarMasivo(Request $request)
+    {
+        Caso::whereIn('id', $request->ids)->delete();
+        return response()->json(['message' => 'Casos eliminados.']);
+    }
 
-    // public function upload(Request $request)
-    // {
-    //     if ($request->hasFile('file')) {
-    //         $path = $request->file('file')->store('casos/imagenes', 'public');
-    //         return response()->json(['path' => $path], 200);
-    //     }
-
-    //     return response()->json(['error' => 'No se subió ningún archivo.'], 400);
-    // }
-
-    // public function uploadTemp(Request $request)
-    // {
-    //     if ($request->hasFile('file')) {
-    //         $file = $request->file('file');
-    //         $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-    //         $file->storeAs('temp_casos', $filename, 'public');
-
-    //         return response()->json(['filename' => $filename]);
-    //     }
-
-    //     return response()->json(['error' => 'No file uploaded'], 400);
-    // }
+    public function cambiarCondicion(Request $request)
+    {
+        Caso::whereIn('id', $request->ids)->update(['condicion' => $request->condicion]);
+        return response()->json(['message' => 'Condición actualizada.']);
+    }
 }

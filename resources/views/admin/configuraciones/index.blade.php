@@ -42,11 +42,48 @@
                     </div>
 
                     <div class="row mb-3">
+                        @php
+                            $carbonPeriodo = \Carbon\Carbon::parse($config->periodo);
+                            $mesActual = $carbonPeriodo->format('m');
+                            $anioActual = $carbonPeriodo->year;
+                        @endphp
+
                         <div class="col-md-6">
                             <label class="form-label">Periodo actual</label>
-                            <input type="month" name="periodo" class="form-control" value="{{ $config->periodo }}"
-                                required>
+                            <div class="input-group">
+                                {{-- Select de Mes --}}
+                                <select name="mes" class="form-select" required>
+                                    @foreach ([
+            '01' => 'enero',
+            '02' => 'febrero',
+            '03' => 'marzo',
+            '04' => 'abril',
+            '05' => 'mayo',
+            '06' => 'junio',
+            '07' => 'julio',
+            '08' => 'agosto',
+            '09' => 'septiembre',
+            '10' => 'octubre',
+            '11' => 'noviembre',
+            '12' => 'diciembre',
+        ] as $num => $nombre)
+                                        <option value="{{ $num }}" {{ $mesActual == $num ? 'selected' : '' }}>
+                                            {{ ucfirst($nombre) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                {{-- Select de Año --}}
+                                <select name="anio" class="form-select" required>
+                                    @for ($i = date('Y') - 5; $i <= date('Y') + 5; $i++)
+                                        <option value="{{ $i }}" {{ $anioActual == $i ? 'selected' : '' }}>
+                                            {{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
                         </div>
+
+
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">

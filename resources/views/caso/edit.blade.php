@@ -306,7 +306,7 @@
 
                                 <div class="row mt-3">
                                     <div class="col-md-4">
-                                        <label class="form-label mb-2">Tipo de atención</label><br>
+                                        <label class="form-label mb-2">Tipo de atención {{ $caso->tipo_atencion}}</label><br>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="tipo_atencion"
                                                 id="individual" value="Individual"
@@ -420,11 +420,8 @@
                                 <div class="row mt-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="fecha_nacimiento" class="form-label mb-2">Fecha de
-                                                Nacimiento </label>
-                                            <input type="date" class="form-control" name="fecha_nacimiento"
-                                                id="fecha_nacimiento"
-                                                value="{{ old('fecha_nacimiento', $caso->fecha_nacimiento ? date('Y-m-d', strtotime($caso->fecha_nacimiento)) : '') }}">
+                                            <label for="fecha_nacimiento" class="form-label mb-2">Fecha de Nacimiento </label>
+                                            <input type="date" class="form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="{{ old('fecha_nacimiento', $caso->fecha_nacimiento ? date('Y-m-d', strtotime($caso->fecha_nacimiento)) : '') }}"  max="{{ date('Y-m-d') }}" >
                                         </div>
                                     </div>
 
@@ -1431,11 +1428,10 @@
 
                                                 @if (configuracion('conf_fecha_actual') === 'si' && auth()->user()->can('cambiar fecha actual'))
                                                     <input type="date" class="form-control" name="fecha_actual"
-                                                        value="{{ old('fecha_actual', $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('Y-m-d') : date('Y-m-d')) }}">
+                                                        value="{{ old('fecha_actual', $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('Y-m-d') : date('Y-m-d')) }}"  max="{{ date('Y-m-d') }}" >
                                                 @else
                                                     <input type="date" class="form-control" name="fecha_actual"
-                                                        value="{{ old('fecha_actual', $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('Y-m-d') : date('Y-m-d')) }}"
-                                                        readonly>
+                                                        value="{{ old('fecha_actual', $caso->fecha_actual ? \Carbon\Carbon::parse($caso->fecha_actual)->format('Y-m-d') : date('Y-m-d')) }}"  max="{{ date('Y-m-d') }}"  readonly>
                                                 @endif
 
                                             </div>

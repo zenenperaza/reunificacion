@@ -150,30 +150,51 @@
                 Mostrando casos con condición: <strong>{{ request('condicion') }}</strong>
             </div>
         @endif
+        <div id="acciones-masivas" class="mb-3" style="display: none;">
+            @can('eliminar casos')
+                <button id="btn-eliminar" class="btn btn-danger btn-sm">
+                    <i class="mdi mdi-delete"></i> Eliminar seleccionados
+                </button>
+            @endcan
+            @can('aprobar casos')
+                <button id="btn-condicion" class="btn btn-warning btn-sm">
+                    <i class="mdi mdi-transfer"></i> Cambiar condición
+                </button>
+            @endcan
+        </div>
 
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Lista de Casos</h4>
-                <table id="casos-table" class="table table-bordered dt-responsive nowrap w-100">
+                <div style="overflow-x: auto;">
+                    <table id="casos-table" class="table table-bordered dt-responsive nowrap w-100">
 
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>N° Caso</th>
-                            <th>Elaborado por</th>
-                            <th>Beneficiario</th>
-                            <th>Tipo Atención</th>
-                            <th>Fecha actual</th>
-                            <th>Estado</th>
-                            <th>Condicion</th>
-                            <th>Estatus</th>
-                            <th>Fecha atencion</th>
-                            <th>Estado registrado</th>
-                            <th>Municipio</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                </table>
+                        <thead class="table-light">
+                            <tr>
+
+                                <th>ID</th>
+                                @canany(['eliminar casos', 'aprobar casos'])
+                                    <th>
+                                        <input type="checkbox" id="select-all">
+                                    </th>
+                                @endcanany
+
+                                <th>N° Caso</th>
+                                <th>Elaborado por</th>
+                                <th>Beneficiario</th>
+                                <th>Tipo Atención</th>
+                                <th>Fecha actual</th>
+                                <th>Estado</th>
+                                <th>Condicion</th>
+                                <th>Estatus</th>
+                                <th>Fecha atencion</th>
+                                <th>Estado registrado</th>
+                                <th>Municipio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -237,44 +258,32 @@
     <script>
         let startDate = null;
         let endDate = null;
+        let dataTable;
+        let yaInicializado = false;
 
-        // Inicializar DataTable
-        const dataTable = $('#casos-table').DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: {
-                details: {
-                    type: 'inline',
-                    target: 'tr'
-                }
-            },
-            ajax: {
-                url: '{{ route('casos.data') }}',
-                data: function(d) {
-                    d.start_date = startDate ?? '';
-                    d.end_date = endDate ?? '';
-                    d.estatus = $('#filtro_estatus').val();
-                    d.estado_completado = $('#filtro_estado_completado').val();
-                    // ✅ Capturar ?condicion= desde la URL si existe
-                    const urlParams = new URLSearchParams(window.location.search);
-                    if (urlParams.has('condicion')) {
-                        d.condicion = urlParams.get('condicion');
-                    }
-                }
-            },
+        function initDataTable(puedeEliminarOAprobar = false) {
+            // Destruir DataTable si ya está inicializado
+            if (dataTable) {
+                dataTable.destroy();
+                $('#casos-table').find('tbody').empty();
 
-            order: [
-                [0, 'desc']
-            ],
-            lengthMenu: [
-                [10, 25, 50, 100, -1],
-                [10, 25, 50, 100, "Todos"]
-            ],
-            columns: [{
+            }
+
+            const columnas = [{
                     data: 'id',
                     name: 'id',
                     className: 'all'
                 },
+                ...(puedeEliminarOAprobar ? [{
+                    data: 'id',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center',
+                    render: function(data) {
+                        return `<input type="checkbox" class="case-checkbox" value="${data}">`;
+                    }
+                }] : []),
+
                 {
                     data: 'numero_caso',
                     name: 'numero_caso',
@@ -283,10 +292,12 @@
                 {
                     data: 'elaborado_por',
                     name: 'elaborado_por',
+                    className: 'all'
                 },
                 {
                     data: 'beneficiario',
-                    name: 'beneficiario'
+                    name: 'beneficiario',
+                    className: 'all'
                 },
                 {
                     data: 'tipo_atencion',
@@ -294,33 +305,30 @@
                 },
                 {
                     data: 'fecha_actual',
-                    name: 'fecha_actual',
-                    searchable: true
+                    name: 'fecha_actual'
                 },
                 {
                     data: 'estado_completado',
                     name: 'estado_completado',
-                    className: 'text-center',
-                    orderable: true,
-                    searchable: true
+                    className: 'all text-center'
                 },
                 {
                     data: 'condicion',
                     name: 'condicion',
+                    className: 'all'
                 },
                 {
                     data: 'estatus',
-                    name: 'estatus'
+                    name: 'estatus',
+                    className: 'all'
                 },
                 {
                     data: 'fecha_atencion',
                     name: 'fecha_atencion'
                 },
-
                 {
                     data: 'estado.nombre',
-                    name: 'estado.nombre',
-                    className: 'none'
+                    name: 'estado.nombre'
                 },
                 {
                     data: 'municipio.nombre',
@@ -333,71 +341,110 @@
                     orderable: false,
                     searchable: false,
                     className: 'all text-center'
-                }
-            ],
+                },
+            ];
 
-            language: {
-                url: "{{ asset('assets/lang/datatables/es-ES.json') }}"
-            },
-            dom: 'lBfrtip',
-            buttons: [{
-                    extend: 'copy',
-                    text: '<i class="mdi mdi-content-copy"></i> Copiar',
-                    className: 'btn btn-sm btn-outline-secondary'
+            dataTable = $('#casos-table').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: {
+                    details: {
+                        type: 'inline',
+                        target: 'tr'
+                    }
                 },
-                {
-                    extend: 'excel',
-                    text: '<i class="mdi mdi-file-excel"></i> Excel',
-                    className: 'btn btn-sm btn-outline-success'
+                ajax: {
+                    url: '{{ route('casos.data') }}',
+                    data: function(d) {
+                        d.start_date = startDate ?? '';
+                        d.end_date = endDate ?? '';
+                        d.estatus = $('#filtro_estatus').val();
+                        d.estado_completado = $('#filtro_estado_completado').val();
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.has('condicion')) {
+                            d.condicion = urlParams.get('condicion');
+                        }
+                    },
+                    dataSrc: function(json) {
+                        if (!yaInicializado) {
+                            yaInicializado = true;
+                            initDataTable(json.puedeEliminarOAprobar);
+                            return [];
+                        }
+                        return json.data;
+                    }
                 },
-                {
-                    extend: 'pdf',
-                    text: '<i class="mdi mdi-file-pdf"></i> PDF',
-                    className: 'btn btn-sm btn-outline-danger'
+                order: [
+                    [0, 'desc']
+                ],
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "Todos"]
+                ],
+                columns: columnas,
+                language: {
+                    url: "{{ asset('assets/lang/datatables/es-ES.json') }}"
                 },
-                {
-                    extend: 'print',
-                    text: '<i class="mdi mdi-printer"></i> Imprimir',
-                    className: 'btn btn-sm btn-outline-dark'
-                }
-            ],
-            drawCallback: function() {
-                $('.switch-status').each(function() {
-                    new Switchery(this, {
-                        color: '#039cfd'
+                dom: 'lBfrtip',
+                buttons: [{
+                        extend: 'copy',
+                        text: '<i class="mdi mdi-content-copy"></i> Copiar',
+                        className: 'btn btn-sm btn-outline-secondary'
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="mdi mdi-file-excel"></i> Excel',
+                        className: 'btn btn-sm btn-outline-success'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="mdi mdi-file-pdf"></i> PDF',
+                        className: 'btn btn-sm btn-outline-danger'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="mdi mdi-printer"></i> Imprimir',
+                        className: 'btn btn-sm btn-outline-dark'
+                    }
+                ],
+                drawCallback: function() {
+                    $('.switch-status').each(function() {
+                        new Switchery(this, {
+                            color: '#039cfd'
+                        });
                     });
-                });
-            },
-            createdRow: function(row, data, dataIndex) {
-                let badgeClass = '';
-                switch (data.estatus) {
-                    case 'En proceso':
-                        badgeClass = 'bg-warning text-dark';
-                        break;
-                    case 'En seguimiento':
-                        badgeClass = 'bg-primary';
-                        break;
-                    case 'Cierre de atención':
-                        badgeClass = 'bg-success';
-                        break;
+                },
+                createdRow: function(row, data, dataIndex) {
+                    let badgeClass = '';
+                    switch (data.estatus) {
+                        case 'En proceso':
+                            badgeClass = 'bg-warning text-dark';
+                            break;
+                        case 'En seguimiento':
+                            badgeClass = 'bg-primary';
+                            break;
+                        case 'Cierre de atención':
+                            badgeClass = 'bg-success';
+                            break;
+                    }
+
+                    // Detectar índice de columna "estatus" según el array de columnas
+                    const indexEstatus = columnas.findIndex(c => c.name === 'estatus');
+                    if (indexEstatus !== -1 && badgeClass !== '') {
+                        $('td', row).eq(indexEstatus).html(
+                            `<span class="badge ${badgeClass}">${data.estatus}</span>`);
+                    }
                 }
+            });
+        }
 
-                if (badgeClass !== '') {
-                    const badgeHTML = `<span class="badge ${badgeClass}">${data.estatus}</span>`;
-                    $('td', row).eq(8).html(badgeHTML); // reemplaza contenido de la celda de estatus
-                }
-            }
-
-
-
-        });
-
-        $('#filtro_estatus').on('change', function() {
+        // Filtros
+        $('#filtro_estatus, #filtro_estado_completado').on('change', function() {
             dataTable.ajax.reload();
         });
-        $('#filtro_estado_completado').on('change', function() {
-            dataTable.ajax.reload();
-        });
+
+        // Iniciar
+        initDataTable(); // inicia "en blanco", se reinicia cuando `dataSrc` recibe el permiso real
     </script>
 
 
@@ -464,47 +511,47 @@
     </script>
 
 
-<script>
-    $('#exportExcel').on('click', function (e) {
-        e.preventDefault();
+    <script>
+        $('#exportExcel').on('click', function(e) {
+            e.preventDefault();
 
-        const dt = $('#casos-table').DataTable();
-        const searchInput = dt.search(); // forma correcta de obtener el filtro global
-        const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
+            const dt = $('#casos-table').DataTable();
+            const searchInput = dt.search(); // forma correcta de obtener el filtro global
+            const url = new URL('{{ route('casos.exportarExcel') }}', window.location.origin);
 
-        // Rango de fechas (deben estar definidos como variables globales o inputs)
-        if (startDate && endDate) {
-            url.searchParams.set('start_date', startDate);
-            url.searchParams.set('end_date', endDate);
-        }
+            // Rango de fechas (deben estar definidos como variables globales o inputs)
+            if (startDate && endDate) {
+                url.searchParams.set('start_date', startDate);
+                url.searchParams.set('end_date', endDate);
+            }
 
-        // Filtro estatus
-        const estatus = $('#filtro_estatus').val();
-        if (estatus) {
-            url.searchParams.set('estatus', estatus);
-        }
+            // Filtro estatus
+            const estatus = $('#filtro_estatus').val();
+            if (estatus) {
+                url.searchParams.set('estatus', estatus);
+            }
 
-        // Filtro estado completado
-        const estadoCompletado = $('#filtro_estado_completado').val();
-        if (estadoCompletado) {
-            url.searchParams.set('estado_completado', estadoCompletado);
-        }
+            // Filtro estado completado
+            const estadoCompletado = $('#filtro_estado_completado').val();
+            if (estadoCompletado) {
+                url.searchParams.set('estado_completado', estadoCompletado);
+            }
 
-        // Filtro por condicion (en URL)
-        const condicion = new URLSearchParams(window.location.search).get('condicion');
-        if (condicion) {
-            url.searchParams.set('condicion', condicion);
-        }
+            // Filtro por condicion (en URL)
+            const condicion = new URLSearchParams(window.location.search).get('condicion');
+            if (condicion) {
+                url.searchParams.set('condicion', condicion);
+            }
 
-        // Filtro de búsqueda global (barra de búsqueda)
-        if (searchInput) {
-            url.searchParams.set('search', searchInput);
-        }
+            // Filtro de búsqueda global (barra de búsqueda)
+            if (searchInput) {
+                url.searchParams.set('search', searchInput);
+            }
 
-        // Redirigir a la ruta de exportación
-        window.location.href = url.toString();
-    });
-</script>
+            // Redirigir a la ruta de exportación
+            window.location.href = url.toString();
+        });
+    </script>
 
 
 
@@ -667,6 +714,154 @@
             // Re-inicializar tooltips cada vez que se dibuje la tabla
             $('#casos-table').on('draw.dt', function() {
                 $('[data-bs-toggle="tooltip"]').tooltip();
+            });
+        });
+    </script>
+
+
+    <script>
+        // Mostrar u ocultar los botones
+        function toggleAccionesMasivas() {
+            let total = $('.case-checkbox:checked').length;
+            $('#acciones-masivas').toggle(total > 0);
+        }
+
+        // Seleccionar todos
+        $('#casos-table').on('change', '#select-all', function() {
+            const isChecked = $(this).is(':checked');
+            $('.case-checkbox').prop('checked', isChecked);
+            toggleAccionesMasivas();
+        });
+
+        // Detectar selección individual
+        $('#casos-table').on('change', '.case-checkbox', function() {
+            let allChecked = $('.case-checkbox').length === $('.case-checkbox:checked').length;
+            $('#select-all').prop('checked', allChecked);
+            toggleAccionesMasivas();
+        });
+    </script>
+
+    <script>
+        $('#btn-eliminar').on('click', function() {
+            let ids = $('.case-checkbox:checked').map(function() {
+                return $(this).val();
+            }).get();
+
+            if (ids.length === 0) return;
+
+            Swal.fire({
+                title: '¿Eliminar casos seleccionados?',
+                text: `Se eliminarán ${ids.length} caso(s) permanentemente.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('casos.eliminar-masivo') }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            ids: ids
+                        },
+                        success: function(response) {
+                            dataTable.ajax.reload();
+                            $('#select-all').prop('checked', false);
+                            toggleAccionesMasivas();
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Eliminado!',
+                                text: 'Los casos fueron eliminados correctamente.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un problema al eliminar los casos.'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $('#btn-condicion').on('click', function() {
+            let ids = $('.case-checkbox:checked').map(function() {
+                return $(this).val();
+            }).get();
+
+            if (ids.length === 0) return;
+
+            Swal.fire({
+                title: 'Cambiar condición',
+                html: `
+            <label class="form-label">Seleccione nueva condición:</label><br>
+            <input type="checkbox" id="condicion-toggle" class="js-switch">
+            <span id="condicion-label" class="ms-2">En espera</span>
+        `,
+                showCancelButton: true,
+                confirmButtonText: 'Aplicar',
+                cancelButtonText: 'Cancelar',
+                didOpen: () => {
+                    // Inicializar Switchery
+                    let elem = document.querySelector('#condicion-toggle');
+                    let switchery = new Switchery(elem, {
+                        color: '#039cfd',
+                        size: 'large'
+                    });
+
+                    // Escuchar cambios y mostrar texto
+                    elem.onchange = function() {
+                        $('#condicion-label').text(elem.checked ? 'Aprobado' : 'En espera');
+                    };
+                },
+                preConfirm: () => {
+                    const estado = $('#condicion-toggle').is(':checked') ? 'Aprobado' : 'En espera';
+                    return estado;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const nuevaCondicion = result.value;
+
+                    $.ajax({
+                        url: '{{ route('casos.cambiar-condicion') }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            ids: ids,
+                            condicion: nuevaCondicion
+                        },
+                        success: function() {
+                            dataTable.ajax.reload();
+                            $('#select-all').prop('checked', false);
+                            toggleAccionesMasivas();
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Condición actualizada',
+                                text: `Todos los casos fueron marcados como "${nuevaCondicion}"`,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se pudo actualizar la condición.'
+                            });
+                        }
+                    });
+                }
             });
         });
     </script>

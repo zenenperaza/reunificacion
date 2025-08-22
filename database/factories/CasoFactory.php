@@ -200,7 +200,8 @@ class CasoFactory extends Factory
 
         return [
             'user_id' => User::inRandomOrder()->value('id') ?? 1,
-            'periodo' => now()->format('Y-m'),
+            'periodo' => now()->locale('es')->translatedFormat('F') . ' - ' . now()->year,
+
             'fecha_atencion' => $this->faker->dateTimeBetween('-6 months', 'now'),
 
             'estado_id' => $estado->id,

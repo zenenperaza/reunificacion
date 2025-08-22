@@ -38,7 +38,7 @@ class ConfiguracionSeeder extends Seeder
                 'sistema_deshabilitado' => 'no',
                 'periodo' => now()->format('Y-m'),
                 'prefijo_caso' => 'RUSE',
-                'nombre_sistema' => 'Sistema Camino Seguro',
+                'nombre_sistema' => 'Sistema Ruta Segura',
                 'texto_portada' => 'Un esfuerzo de ASONACOP para reunir a niñas, niños y adolescentes con sus familias.',
                 'logo_sistema' => $logoSistema,
                 'imagen_portada' => $imagenPortada,

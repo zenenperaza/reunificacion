@@ -87,7 +87,9 @@
 
             <!-- Lado izquierdo -->
             <div class="lockscreen-left">
-                <img src="{{ asset('assets/images/rlf-landing-hero.png') }}" alt="Logo">
+                <img src="{{ configuracion('imagen_portada') 
+            ? Storage::url(configuracion('imagen_portada')) 
+            : asset('assets/images/imagen_rlf.png') }}" alt="Logo">
                 <p>{{ configuracion('nombre_sistema') ?? 'Caminos seguros' }}</p>
             </div>
 

@@ -7,48 +7,24 @@ File: Layout
 */
 
 class LeftSidebar {
-
     constructor() {
-        this.body = $('body');
-        this.window = $(window)
+        this.body = $("body");
+        this.window = $(window);
     }
 
     initMenu() {
         var self = this;
 
-        // var defaultSidebarSize = sidebar.size ? sidebar.size : 'default';
-
-        // resets everything
-
-        // Left menu collapse
-        // $('.button-menu-mobile').on('click', function (event) {
-        //     event.preventDefault();
-        //     var sidebarSize = self.body.attr('data-sidebar-size');
-        //     if (self.window.width() >= 993) {
-        //         if (sidebarSize === 'condensed') {
-        //             self.changeSize(defaultSidebarSize);
-        //             window.dispatchEvent(new Event('adminto.setFluid'));
-        //         } else {
-        //             self.changeSize('condensed');
-        //             window.dispatchEvent(new Event('adminto.setBoxed'));
-        //         }
-        //     } else {
-        //         self.changeSize(defaultSidebarSize);
-        //         self.body.toggleClass('sidebar-enable');
-        //         window.dispatchEvent(new Event('adminto.setFluid'));
-        //     }
-        // });
-
         // sidebar - main menu
         if ($("#side-menu").length) {
-            var navCollapse = $('#side-menu li .collapse');
+            var navCollapse = $("#side-menu li .collapse");
 
             // open one menu at a time only
             navCollapse.on({
-                'show.bs.collapse': function (event) {
-                    var parent = $(event.target).parents('.collapse.show');
-                    $('#side-menu .collapse.show').not(parent).collapse('hide');
-                }
+                "show.bs.collapse": function (event) {
+                    var parent = $(event.target).parents(".collapse.show");
+                    $("#side-menu .collapse.show").not(parent).collapse("hide");
+                },
             });
 
             // activate the menu in left side bar (Vertical Menu) based on url
@@ -58,22 +34,62 @@ class LeftSidebar {
                     $(this).addClass("active");
                     $(this).parent().addClass("menuitem-active");
                     $(this).parent().parent().parent().addClass("show");
-                    $(this).parent().parent().parent().parent().addClass("menuitem-active"); // add active to li of the current link
+                    $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .addClass("menuitem-active"); // add active to li of the current link
 
-                    var firstLevelParent = $(this).parent().parent().parent().parent().parent().parent();
-                    if (firstLevelParent.attr('id') !== 'sidebar-menu') firstLevelParent.addClass("show");
+                    var firstLevelParent = $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent();
+                    if (firstLevelParent.attr("id") !== "sidebar-menu")
+                        firstLevelParent.addClass("show");
 
-                    $(this).parent().parent().parent().parent().parent().parent().parent().addClass("menuitem-active");
+                    $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .addClass("menuitem-active");
 
-                    var secondLevelParent = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent();
-                    if (secondLevelParent.attr('id') !== 'wrapper') secondLevelParent.addClass("show");
+                    var secondLevelParent = $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent();
+                    if (secondLevelParent.attr("id") !== "wrapper")
+                        secondLevelParent.addClass("show");
 
-                    var upperLevelParent = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-                    if (!upperLevelParent.is('body')) upperLevelParent.addClass("menuitem-active");
+                    var upperLevelParent = $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent();
+                    if (!upperLevelParent.is("body"))
+                        upperLevelParent.addClass("menuitem-active");
                 }
             });
         }
-
 
         // handling two columns menu if present
         var twoColSideNav = $("#two-col-sidenav-main");
@@ -81,38 +97,36 @@ class LeftSidebar {
             var twoColSideNavItems = $("#two-col-sidenav-main .nav-link");
             var sideSubMenus = $(".twocolumn-menu-item");
 
-            // showing/displaying tooltip based on screen size
-            // if (this.window.width() >= 585) {
-            //     twoColSideNavItems.tooltip('enable');
-            // } else {
-            //     twoColSideNavItems.tooltip('disable');
-            // }
-
-            var nav = $('.twocolumn-menu-item .nav-second-level');
-            var navCollapse = $('#two-col-menu li .collapse');
+            var nav = $(".twocolumn-menu-item .nav-second-level");
+            var navCollapse = $("#two-col-menu li .collapse");
 
             // open one menu at a time only
             navCollapse.on({
-                'show.bs.collapse': function () {
-                    var nearestNav = $(this).closest(nav).closest(nav).find(navCollapse);
-                    if (nearestNav.length) nearestNav.not($(this)).collapse('hide'); else navCollapse.not($(this)).collapse('hide');
-                }
+                "show.bs.collapse": function () {
+                    var nearestNav = $(this)
+                        .closest(nav)
+                        .closest(nav)
+                        .find(navCollapse);
+                    if (nearestNav.length)
+                        nearestNav.not($(this)).collapse("hide");
+                    else navCollapse.not($(this)).collapse("hide");
+                },
             });
 
-            twoColSideNavItems.on('click', function (e) {
-                var target = $($(this).attr('href'));
+            twoColSideNavItems.on("click", function (e) {
+                var target = $($(this).attr("href"));
 
                 if (target.length) {
                     e.preventDefault();
 
-                    twoColSideNavItems.removeClass('active');
-                    $(this).addClass('active');
+                    twoColSideNavItems.removeClass("active");
+                    $(this).addClass("active");
 
                     sideSubMenus.removeClass("d-block");
                     target.addClass("d-block");
 
                     // showing full sidebar if menu item is clicked
-                    $.LayoutThemeApp.leftSidebar.changeSize('default');
+                    $.LayoutThemeApp.leftSidebar.changeSize("default");
                     return false;
                 }
                 return true;
@@ -122,10 +136,9 @@ class LeftSidebar {
             var pageUrl = window.location.href; //.split(/[?#]/)[0];
             twoColSideNavItems.each(function () {
                 if (this.href === pageUrl) {
-                    $(this).addClass('active');
+                    $(this).addClass("active");
                 }
             });
-
 
             // activate the menu in left side bar (Two column) based on url
             $("#two-col-menu a").each(function () {
@@ -133,28 +146,71 @@ class LeftSidebar {
                     $(this).addClass("active");
                     $(this).parent().addClass("menuitem-active");
                     $(this).parent().parent().parent().addClass("show");
-                    $(this).parent().parent().parent().parent().addClass("menuitem-active"); // add active to li of the current link
+                    $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .addClass("menuitem-active"); // add active to li of the current link
 
-                    var firstLevelParent = $(this).parent().parent().parent().parent().parent().parent();
-                    if (firstLevelParent.attr('id') !== 'sidebar-menu') firstLevelParent.addClass("show");
+                    var firstLevelParent = $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent();
+                    if (firstLevelParent.attr("id") !== "sidebar-menu")
+                        firstLevelParent.addClass("show");
 
-                    $(this).parent().parent().parent().parent().parent().parent().parent().addClass("menuitem-active");
+                    $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .addClass("menuitem-active");
 
-                    var secondLevelParent = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent();
-                    if (secondLevelParent.attr('id') !== 'wrapper') secondLevelParent.addClass("show");
+                    var secondLevelParent = $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent();
+                    if (secondLevelParent.attr("id") !== "wrapper")
+                        secondLevelParent.addClass("show");
 
-                    var upperLevelParent = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-                    if (!upperLevelParent.is('body')) upperLevelParent.addClass("menuitem-active");
+                    var upperLevelParent = $(this)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent()
+                        .parent();
+                    if (!upperLevelParent.is("body"))
+                        upperLevelParent.addClass("menuitem-active");
 
                     // opening menu
                     var matchingItem = null;
-                    var targetEl = '#' + $(this).parents('.twocolumn-menu-item').attr("id");
+                    var targetEl =
+                        "#" +
+                        $(this).parents(".twocolumn-menu-item").attr("id");
                     $("#two-col-sidenav-main .nav-link").each(function () {
-                        if ($(this).attr('href') === targetEl) {
+                        if ($(this).attr("href") === targetEl) {
                             matchingItem = $(this);
                         }
                     });
-                    if (matchingItem) matchingItem.trigger('click');
+                    if (matchingItem) matchingItem.trigger("click");
                 }
             });
         }
@@ -163,21 +219,19 @@ class LeftSidebar {
     init() {
         this.initMenu();
     }
-
-
 }
 
 class Topbar {
     constructor() {
-        this.body = $('body');
+        this.body = $("body");
         this.window = $(window);
     }
 
     toggleRightSideBar() {
-        if (document.body.classList.contains('right-bar-enabled')) {
-            document.body.classList.remove('right-bar-enabled');
+        if (document.body.classList.contains("right-bar-enabled")) {
+            document.body.classList.remove("right-bar-enabled");
         } else {
-            document.body.classList.add('right-bar-enabled');
+            document.body.classList.add("right-bar-enabled");
         }
     }
 
@@ -185,78 +239,103 @@ class Topbar {
         const self = this;
 
         // Toggle botón (abre/cierra barra lateral)
-        document.querySelectorAll('.right-bar-toggle').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
+        document.querySelectorAll(".right-bar-toggle").forEach(function (btn) {
+            btn.addEventListener("click", function (e) {
                 e.preventDefault();
                 self.toggleRightSideBar();
             });
         });
 
         // Ocultar barra lateral al hacer clic fuera
-        document.addEventListener('click', function (e) {
-            const isInsideRightBar = e.target.closest('.right-bar') || e.target.closest('.right-bar-toggle');
+        document.addEventListener("click", function (e) {
+            const isInsideRightBar =
+                e.target.closest(".right-bar") ||
+                e.target.closest(".right-bar-toggle");
             if (!isInsideRightBar) {
-                document.body.classList.remove('right-bar-enabled');
+                document.body.classList.remove("right-bar-enabled");
             }
         });
 
         // Toggle búsqueda
-        $('#top-search').on('click', function () {
-            $('#search-dropdown').addClass('d-block');
+        $("#top-search").on("click", function () {
+            $("#search-dropdown").addClass("d-block");
         });
 
         // Ocultar búsqueda al abrir otro dropdown
-        $('.topbar-dropdown').on('show.bs.dropdown', function () {
-            $('#search-dropdown').removeClass('d-block');
+        $(".topbar-dropdown").on("show.bs.dropdown", function () {
+            $("#search-dropdown").removeClass("d-block");
         });
 
         // Activar menú topbar basado en la URL
         $(".navbar-nav a").each(function () {
             const pageUrl = window.location.href.split(/[?#]/)[0];
             if (this.href === pageUrl) {
-                $(this).addClass("active")
-                    .parent().addClass("active")
-                    .parent().addClass("active")
-                    .parent().addClass("active")
-                    .parent().addClass("active");
+                $(this)
+                    .addClass("active")
+                    .parent()
+                    .addClass("active")
+                    .parent()
+                    .addClass("active")
+                    .parent()
+                    .addClass("active")
+                    .parent()
+                    .addClass("active");
 
-                if ($(this).closest('.mega-dropdown-menu').length) {
-                    $(this).parentsUntil('.navbar-nav').addClass("active");
+                if ($(this).closest(".mega-dropdown-menu").length) {
+                    $(this).parentsUntil(".navbar-nav").addClass("active");
                 } else {
-                    const child = $(this).parent().parent()[0].querySelector('.dropdown-item');
-                    if (child && (child.href === pageUrl || child.classList.contains('dropdown-toggle'))) {
+                    const child = $(this)
+                        .parent()
+                        .parent()[0]
+                        .querySelector(".dropdown-item");
+                    if (
+                        child &&
+                        (child.href === pageUrl ||
+                            child.classList.contains("dropdown-toggle"))
+                    ) {
                         child.classList.add("active");
                     }
                 }
 
-                const el = $(this).parent().parent().parent().parent().addClass("active").prev();
-                if (el.hasClass("nav-link")) el.addClass('active');
+                const el = $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("active")
+                    .prev();
+                if (el.hasClass("nav-link")) el.addClass("active");
             }
         });
 
         // Menú hamburguesa
-        $('.navbar-toggle').on('click', function () {
-            $(this).toggleClass('open');
-            $('#navigation').slideToggle(400);
+        $(".navbar-toggle").on("click", function () {
+            $(this).toggleClass("open");
+            $("#navigation").slideToggle(400);
         });
 
         // Menú horizontal en pantallas pequeñas
-        const AllNavs = document.querySelectorAll('ul.navbar-nav .dropdown .dropdown-toggle');
+        const AllNavs = document.querySelectorAll(
+            "ul.navbar-nav .dropdown .dropdown-toggle"
+        );
         let isInner = false;
 
         AllNavs.forEach(function (element) {
-            element.addEventListener('click', function () {
-                if (!element.parentElement.classList.contains('nav-item')) {
+            element.addEventListener("click", function () {
+                if (!element.parentElement.classList.contains("nav-item")) {
                     isInner = true;
-                    element.parentElement.parentElement.classList.add('show');
-                    const parent = element.parentElement.parentElement.parentElement.querySelector('.nav-link');
+                    element.parentElement.parentElement.classList.add("show");
+                    const parent =
+                        element.parentElement.parentElement.parentElement.querySelector(
+                            ".nav-link"
+                        );
                     parent.ariaExpanded = true;
                     parent.classList.add("show");
                     bootstrap.Dropdown.getInstance(element).show();
                 }
             });
 
-            element.addEventListener('hide.bs.dropdown', function (event) {
+            element.addEventListener("hide.bs.dropdown", function (event) {
                 if (isInner) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -272,59 +351,61 @@ class Topbar {
 }
 
 class RightSidebar {
-
     constructor() {
-        this.body = $('body');
+        this.body = $("body");
         this.window = $(window);
     }
 
     init() {
         var self = this;
 
-        $(document).on('click', 'body', function (e) {
+        $(document).on("click", "body", function (e) {
             // hiding search bar
-            if ($(e.target).closest('#top-search').length !== 1) {
-                $('#search-dropdown').removeClass('d-block');
+            if ($(e.target).closest("#top-search").length !== 1) {
+                $("#search-dropdown").removeClass("d-block");
             }
-            if ($(e.target).closest('.right-bar-toggle, .right-bar').length > 0) {
+            if (
+                $(e.target).closest(".right-bar-toggle, .right-bar").length > 0
+            ) {
                 return;
             }
 
-            if ($(e.target).closest('.left-side-menu, .side-nav').length > 0 || $(e.target).hasClass('button-menu-mobile') || $(e.target).closest('.button-menu-mobile').length > 0) {
+            if (
+                $(e.target).closest(".left-side-menu, .side-nav").length > 0 ||
+                $(e.target).hasClass("button-menu-mobile") ||
+                $(e.target).closest(".button-menu-mobile").length > 0
+            ) {
                 return;
             }
 
-            $('body').removeClass('right-bar-enabled');
-            $('body').removeClass('sidebar-enable');
-
+            $("body").removeClass("right-bar-enabled");
+            $("body").removeClass("sidebar-enable");
         });
     }
-
 }
 
 class ThemeCustomizer {
-
     constructor() {
         this.body = document.body;
-        this.storageKey = 'theme';
+        this.storageKey = "theme";
 
         this.defaultConfig = {
             leftbar: {
-                color: 'light',
-                size: 'default',
-                position: 'fixed'
+                color: "light",
+                size: "default",
+                position: "fixed",
             },
             layout: {
-                color: 'light',
-                size: 'fluid',
-                mode: 'default'
+                color: "light",
+                size: "fluid",
+                mode: "default",
             },
             topbar: {
-                color: 'light'
+                color: "light",
             },
             sidebar: {
-                user: true
-            }
+                user: true,
+            },
         };
     }
 
@@ -345,82 +426,83 @@ class ThemeCustomizer {
     }
 
     initConfig() {
-    const storedConfig = this.loadStoredConfig();
-    let config = storedConfig ? storedConfig : JSON.parse(JSON.stringify(this.defaultConfig));
+        const storedConfig = this.loadStoredConfig();
+        let config = storedConfig
+            ? storedConfig
+            : JSON.parse(JSON.stringify(this.defaultConfig));
 
-    // Guardamos la configuración cargada en el objeto de clase
-    this.config = config;
+        // Guardamos la configuración cargada en el objeto de clase
+        this.config = config;
 
-    // Aplicamos los atributos desde la config
-    this.setAttributesFromConfig();
+        // Aplicamos los atributos desde la config
+        this.setAttributesFromConfig();
 
-    // Aseguramos que los switches reflejen el estado actual
-    this.setSwitchFromConfig();
-}
-
- setAttributesFromConfig() {
-    const cfg = this.config;
-    this.body.setAttribute('data-leftbar-color', cfg.leftbar.color);
-    this.body.setAttribute('data-leftbar-size', cfg.leftbar.size);
-    this.body.setAttribute('data-leftbar-position', cfg.leftbar.position);
-    this.body.setAttribute('data-layout-color', cfg.layout.color);
-    this.body.setAttribute('data-layout-size', cfg.layout.size);
-    this.body.setAttribute('data-layout-mode', cfg.layout.mode);
-    this.body.setAttribute('data-topbar-color', cfg.topbar.color);
-
-    if (cfg.sidebar.user === true || cfg.sidebar.user === 'true') {
-        this.body.setAttribute('data-sidebar-user', 'true');
-    } else {
-        this.body.removeAttribute('data-sidebar-user');
+        // Aseguramos que los switches reflejen el estado actual
+        this.setSwitchFromConfig();
     }
-}
 
+    setAttributesFromConfig() {
+        const cfg = this.config;
+        this.body.setAttribute("data-leftbar-color", cfg.leftbar.color);
+        this.body.setAttribute("data-leftbar-size", cfg.leftbar.size);
+        this.body.setAttribute("data-leftbar-position", cfg.leftbar.position);
+        this.body.setAttribute("data-layout-color", cfg.layout.color);
+        this.body.setAttribute("data-layout-size", cfg.layout.size);
+        this.body.setAttribute("data-layout-mode", cfg.layout.mode);
+        this.body.setAttribute("data-topbar-color", cfg.topbar.color);
+
+        if (cfg.sidebar.user === true || cfg.sidebar.user === "true") {
+            this.body.setAttribute("data-sidebar-user", "true");
+        } else {
+            this.body.removeAttribute("data-sidebar-user");
+        }
+    }
 
     changeLeftbarColor(color) {
         this.config.leftbar.color = color;
-        this.body.setAttribute('data-leftbar-color', color);
+        this.body.setAttribute("data-leftbar-color", color);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
 
     changeLeftbarPosition(position) {
         this.config.leftbar.position = position;
-        this.body.setAttribute('data-leftbar-position', position);
+        this.body.setAttribute("data-leftbar-position", position);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
 
     changeLeftbarSize(size) {
         this.config.leftbar.size = size;
-        this.body.setAttribute('data-leftbar-size', size);
+        this.body.setAttribute("data-leftbar-size", size);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
 
     changeLayoutMode(mode) {
         this.config.layout.mode = mode;
-        this.body.setAttribute('data-layout-mode', mode);
+        this.body.setAttribute("data-layout-mode", mode);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
 
     changeLayoutColor(color) {
         this.config.layout.color = color;
-        this.body.setAttribute('data-layout-color', color);
+        this.body.setAttribute("data-layout-color", color);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
 
     changeLayoutSize(size) {
         this.config.layout.size = size;
-        this.body.setAttribute('data-layout-size', size);
+        this.body.setAttribute("data-layout-size", size);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
 
     changeTopbarColor(color) {
         this.config.topbar.color = color;
-        this.body.setAttribute('data-topbar-color', color);
+        this.body.setAttribute("data-topbar-color", color);
         this.setSwitchFromConfig();
         this.saveConfig();
     }
@@ -428,9 +510,9 @@ class ThemeCustomizer {
     changeSidebarUser(showUser) {
         this.config.sidebar.user = showUser;
         if (showUser) {
-            this.body.setAttribute('data-sidebar-user', 'true');
+            this.body.setAttribute("data-sidebar-user", "true");
         } else {
-            this.body.removeAttribute('data-sidebar-user');
+            this.body.removeAttribute("data-sidebar-user");
         }
         this.setSwitchFromConfig();
         this.saveConfig();
@@ -446,63 +528,137 @@ class ThemeCustomizer {
     initSwitchListener() {
         const self = this;
 
-        document.querySelectorAll('input[name=layout-color]').forEach(el =>
-            el.addEventListener('change', () => self.changeLeftbarColor(el.value))
-        );
+        document
+            .querySelectorAll("input[name=layout-color]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeLeftbarColor(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=leftbar-size]').forEach(el =>
-            el.addEventListener('change', () => self.changeLeftbarSize(el.value))
-        );
+        document
+            .querySelectorAll("input[name=leftbar-size]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeLeftbarSize(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=leftbar-position]').forEach(el =>
-            el.addEventListener('change', () => self.changeLeftbarPosition(el.value))
-        );
+        document
+            .querySelectorAll("input[name=leftbar-position]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeLeftbarPosition(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=layout-color]').forEach(el =>
-            el.addEventListener('change', () => self.changeLayoutColor(el.value))
-        );
-        document.querySelectorAll('input[name=topbar-color]').forEach(el =>
-            el.addEventListener('change', () => self.changeTopbarColor(el.value))
-        );
+        document
+            .querySelectorAll("input[name=layout-color]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeLayoutColor(el.value)
+                )
+            );
+        document
+            .querySelectorAll("input[name=topbar-color]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeTopbarColor(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=layout-size]').forEach(el =>
-            el.addEventListener('change', () => self.changeLayoutSize(el.value))
-        );
+        document
+            .querySelectorAll("input[name=layout-size]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeLayoutSize(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=layout-mode]').forEach(el =>
-            el.addEventListener('change', () => self.changeLayoutMode(el.value))
-        );
+        document
+            .querySelectorAll("input[name=layout-mode]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeLayoutMode(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=layout-color]').forEach(el =>
-            el.addEventListener('change', () => self.changeTopbarColor(el.value))
-        );
+        document
+            .querySelectorAll("input[name=layout-color]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeTopbarColor(el.value)
+                )
+            );
 
-        document.querySelectorAll('input[name=sidebar-user]').forEach(el =>
-            el.addEventListener('change', () => self.changeSidebarUser(el.checked))
-        );
+        document
+            .querySelectorAll("input[name=sidebar-user]")
+            .forEach((el) =>
+                el.addEventListener("change", () =>
+                    self.changeSidebarUser(el.checked)
+                )
+            );
 
-        document.querySelector('#resetBtn')?.addEventListener('click', () => self.resetTheme());
+        document
+            .querySelector("#resetBtn")
+            ?.addEventListener("click", () => self.resetTheme());
 
-        document.querySelector('.button-menu-mobile')?.addEventListener('click', () => {
-            self.body.classList.toggle('sidebar-enable');
-        });
+        document
+            .querySelector(".button-menu-mobile")
+            ?.addEventListener("click", () => {
+                self.body.classList.toggle("sidebar-enable");
+            });
     }
 
     setSwitchFromConfig() {
-        document.querySelectorAll('.right-bar input[type=checkbox]').forEach(cb => cb.checked = false);
+        document
+            .querySelectorAll(".right-bar input[type=checkbox]")
+            .forEach((cb) => (cb.checked = false));
 
         const cfg = this.config;
 
-        document.querySelector(`input[name="leftbar-color"][value="${cfg.leftbar.color}"]`)?.setAttribute('checked', 'true');
-        document.querySelector(`input[name="leftbar-size"][value="${cfg.leftbar.size}"]`)?.setAttribute('checked', 'true');
-        document.querySelector(`input[name="leftbar-position"][value="${cfg.leftbar.position}"]`)?.setAttribute('checked', 'true');
-        document.querySelector(`input[name="layout-color"][value="${cfg.layout.color}"]`)?.setAttribute('checked', 'true');
-        document.querySelector(`input[name="layout-size"][value="${cfg.layout.size}"]`)?.setAttribute('checked', 'true');
-        document.querySelector(`input[name="layout-mode"][value="${cfg.layout.mode}"]`)?.setAttribute('checked', 'true');
-        document.querySelector(`input[name="topbar-color"][value="${cfg.topbar.color}"]`)?.setAttribute('checked', 'true');
+        document
+            .querySelector(
+                `input[name="leftbar-color"][value="${cfg.leftbar.color}"]`
+            )
+            ?.setAttribute("checked", "true");
+        document
+            .querySelector(
+                `input[name="leftbar-size"][value="${cfg.leftbar.size}"]`
+            )
+            ?.setAttribute("checked", "true");
+        document
+            .querySelector(
+                `input[name="leftbar-position"][value="${cfg.leftbar.position}"]`
+            )
+            ?.setAttribute("checked", "true");
+        document
+            .querySelector(
+                `input[name="layout-color"][value="${cfg.layout.color}"]`
+            )
+            ?.setAttribute("checked", "true");
+        document
+            .querySelector(
+                `input[name="layout-size"][value="${cfg.layout.size}"]`
+            )
+            ?.setAttribute("checked", "true");
+        document
+            .querySelector(
+                `input[name="layout-mode"][value="${cfg.layout.mode}"]`
+            )
+            ?.setAttribute("checked", "true");
+        document
+            .querySelector(
+                `input[name="topbar-color"][value="${cfg.topbar.color}"]`
+            )
+            ?.setAttribute("checked", "true");
 
-        const sidebarUserSwitch = document.querySelector('input[name="sidebar-user"]');
-        if (sidebarUserSwitch) sidebarUserSwitch.checked = (cfg.sidebar.user === true || cfg.sidebar.user === 'true');
+        const sidebarUserSwitch = document.querySelector(
+            'input[name="sidebar-user"]'
+        );
+        if (sidebarUserSwitch)
+            sidebarUserSwitch.checked =
+                cfg.sidebar.user === true || cfg.sidebar.user === "true";
     }
 
     init() {
@@ -511,9 +667,7 @@ class ThemeCustomizer {
     }
 }
 
-
 class Layout {
-
     init() {
         this.themeCustomizer = new ThemeCustomizer();
         this.themeCustomizer.init();
@@ -523,15 +677,12 @@ class Layout {
         this.rightSidebar.init();
         this.topbar.init();
         this.leftSidebar.init();
-
-
     }
 }
 
-window.addEventListener('DOMContentLoaded', function (e) {
+window.addEventListener("DOMContentLoaded", function (e) {
     new Layout().init();
-})
-
+});
 
 /*
 Template Name: Adminto - Responsive Bootstrap 5 Admin Dashboard
@@ -541,32 +692,27 @@ Contact: support@coderthemes.com
 File: Main Js File
 */
 
-
-!function ($) {
+!(function ($) {
     "use strict";
 
-    var Components = function () {
-    };
+    var Components = function () {};
 
     //initializing tooltip
-    Components.prototype.initTooltipPlugin = function () {
-        $.fn.tooltip && $('[data-bs-toggle="tooltip"]').tooltip()
-    },
-
+    (Components.prototype.initTooltipPlugin = function () {
+        $.fn.tooltip && $('[data-bs-toggle="tooltip"]').tooltip();
+    }),
         //initializing popover
-        Components.prototype.initPopoverPlugin = function () {
-            $.fn.popover && $('[data-bs-toggle="popover"]').popover()
-        },
-
+        (Components.prototype.initPopoverPlugin = function () {
+            $.fn.popover && $('[data-bs-toggle="popover"]').popover();
+        }),
         //initializing toast
-        Components.prototype.initToastPlugin = function () {
-            $.fn.toast && $('[data-bs-toggle="toast"]').toast()
-        },
-
+        (Components.prototype.initToastPlugin = function () {
+            $.fn.toast && $('[data-bs-toggle="toast"]').toast();
+        }),
         //initializing form validation
-        Components.prototype.initFormValidation = function () {
-            $(".needs-validation").on('submit', function (event) {
-                $(this).addClass('was-validated');
+        (Components.prototype.initFormValidation = function () {
+            $(".needs-validation").on("submit", function (event) {
+                $(this).addClass("was-validated");
                 if ($(this)[0].checkValidity() === false) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -574,41 +720,55 @@ File: Main Js File
                 }
                 return true;
             });
-        },
-
+        }),
         // Counterup
-        Components.prototype.initCounterUp = function () {
-            var delay = $(this).attr('data-delay') ? $(this).attr('data-delay') : 100; //default is 100
-            var time = $(this).attr('data-time') ? $(this).attr('data-time') : 1200; //default is 1200
+        (Components.prototype.initCounterUp = function () {
+            var delay = $(this).attr("data-delay")
+                ? $(this).attr("data-delay")
+                : 100; //default is 100
+            var time = $(this).attr("data-time")
+                ? $(this).attr("data-time")
+                : 1200; //default is 1200
             $('[data-plugin="counterup"]').each(function (idx, obj) {
                 $(this).counterUp({
                     delay: delay,
-                    time: time
+                    time: time,
                 });
             });
-        },
-
+        }),
         //peity charts
-        Components.prototype.initPeityCharts = function () {
+        (Components.prototype.initPeityCharts = function () {
             $('[data-plugin="peity-pie"]').each(function (idx, obj) {
-                var colors = $(this).attr('data-colors') ? $(this).attr('data-colors').split(",") : [];
-                var width = $(this).attr('data-width') ? $(this).attr('data-width') : 20; //default is 20
-                var height = $(this).attr('data-height') ? $(this).attr('data-height') : 20; //default is 20
+                var colors = $(this).attr("data-colors")
+                    ? $(this).attr("data-colors").split(",")
+                    : [];
+                var width = $(this).attr("data-width")
+                    ? $(this).attr("data-width")
+                    : 20; //default is 20
+                var height = $(this).attr("data-height")
+                    ? $(this).attr("data-height")
+                    : 20; //default is 20
                 $(this).peity("pie", {
                     fill: colors,
                     width: width,
-                    height: height
+                    height: height,
                 });
             });
             //donut
             $('[data-plugin="peity-donut"]').each(function (idx, obj) {
-                var colors = $(this).attr('data-colors') ? $(this).attr('data-colors').split(",") : [];
-                var width = $(this).attr('data-width') ? $(this).attr('data-width') : 20; //default is 20
-                var height = $(this).attr('data-height') ? $(this).attr('data-height') : 20; //default is 20
+                var colors = $(this).attr("data-colors")
+                    ? $(this).attr("data-colors").split(",")
+                    : [];
+                var width = $(this).attr("data-width")
+                    ? $(this).attr("data-width")
+                    : 20; //default is 20
+                var height = $(this).attr("data-height")
+                    ? $(this).attr("data-height")
+                    : 20; //default is 20
                 $(this).peity("donut", {
                     fill: colors,
                     width: width,
-                    height: height
+                    height: height,
                 });
             });
 
@@ -623,57 +783,62 @@ File: Main Js File
 
             // bar
             $('[data-plugin="peity-bar"]').each(function (idx, obj) {
-                var colors = $(this).attr('data-colors') ? $(this).attr('data-colors').split(",") : [];
-                var width = $(this).attr('data-width') ? $(this).attr('data-width') : 20; //default is 20
-                var height = $(this).attr('data-height') ? $(this).attr('data-height') : 20; //default is 20
+                var colors = $(this).attr("data-colors")
+                    ? $(this).attr("data-colors").split(",")
+                    : [];
+                var width = $(this).attr("data-width")
+                    ? $(this).attr("data-width")
+                    : 20; //default is 20
+                var height = $(this).attr("data-height")
+                    ? $(this).attr("data-height")
+                    : 20; //default is 20
                 $(this).peity("bar", {
                     fill: colors,
                     width: width,
-                    height: height
+                    height: height,
                 });
             });
-        },
-
-        Components.prototype.initKnob = function () {
+        }),
+        (Components.prototype.initKnob = function () {
             $('[data-plugin="knob"]').each(function (idx, obj) {
                 $(this).knob();
             });
-        },
-
-        Components.prototype.initTippyTooltips = function () {
+        }),
+        (Components.prototype.initTippyTooltips = function () {
             if ($('[data-plugin="tippy"]').length > 0) {
                 tippy('[data-plugin="tippy"]');
             }
-        },
-
-        Components.prototype.initShowPassword = function () {
-            $("[data-password]").on('click', function () {
-                if ($(this).attr('data-password') == "false") {
+        }),
+        (Components.prototype.initShowPassword = function () {
+            $("[data-password]").on("click", function () {
+                if ($(this).attr("data-password") == "false") {
                     $(this).siblings("input").attr("type", "text");
-                    $(this).attr('data-password', 'true');
+                    $(this).attr("data-password", "true");
                     $(this).addClass("show-password");
                 } else {
                     $(this).siblings("input").attr("type", "password");
-                    $(this).attr('data-password', 'false');
+                    $(this).attr("data-password", "false");
                     $(this).removeClass("show-password");
                 }
             });
-        },
-
-        Components.prototype.initMultiDropdown = function () {
-            $('.dropdown-menu a.dropdown-toggle').on('click', function (e) {
-                if (!$(this).next().hasClass('show')) {
-                    $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
+        }),
+        (Components.prototype.initMultiDropdown = function () {
+            $(".dropdown-menu a.dropdown-toggle").on("click", function (e) {
+                if (!$(this).next().hasClass("show")) {
+                    $(this)
+                        .parents(".dropdown-menu")
+                        .first()
+                        .find(".show")
+                        .removeClass("show");
                 }
                 var $subMenu = $(this).next(".dropdown-menu");
-                $subMenu.toggleClass('show');
+                $subMenu.toggleClass("show");
 
                 return false;
             });
-        },
-
+        }),
         //initilizing
-        Components.prototype.init = function () {
+        (Components.prototype.init = function () {
             this.initTooltipPlugin(),
                 this.initPopoverPlugin(),
                 this.initToastPlugin(),
@@ -684,27 +849,25 @@ File: Main Js File
             this.initTippyTooltips();
             this.initShowPassword();
             this.initMultiDropdown();
-        },
-
-        $.Components = new Components, $.Components.Constructor = Components
-
-}(window.jQuery),
-
-    function ($) {
+        }),
+        ($.Components = new Components()),
+        ($.Components.Constructor = Components);
+})(window.jQuery),
+    (function ($) {
         "use strict";
 
         /**
          Portlet Widget
          */
         var Portlet = function () {
-            this.$body = $("body"),
-                this.$portletIdentifier = ".card",
-                this.$portletCloser = '.card a[data-toggle="remove"]',
-                this.$portletRefresher = '.card a[data-toggle="reload"]'
+            (this.$body = $("body")),
+                (this.$portletIdentifier = ".card"),
+                (this.$portletCloser = '.card a[data-toggle="remove"]'),
+                (this.$portletRefresher = '.card a[data-toggle="reload"]');
         };
 
         //on init
-        Portlet.prototype.init = function () {
+        (Portlet.prototype.init = function () {
             // Panel closest
             var $this = this;
             $(document).on("click", this.$portletCloser, function (ev) {
@@ -722,53 +885,62 @@ File: Main Js File
                 ev.preventDefault();
                 var $portlet = $(this).closest($this.$portletIdentifier);
                 // This is just a simulation, nothing is going to be reloaded
-                $portlet.append('<div class="card-disabled"><div class="card-portlets-loader"></div></div>');
-                var $pd = $portlet.find('.card-disabled');
+                $portlet.append(
+                    '<div class="card-disabled"><div class="card-portlets-loader"></div></div>'
+                );
+                var $pd = $portlet.find(".card-disabled");
                 setTimeout(function () {
-                    $pd.fadeOut('fast', function () {
+                    $pd.fadeOut("fast", function () {
                         $pd.remove();
                     });
                 }, 500 + 300 * (Math.random() * 5));
             });
-        },
+        }),
             //
-            $.Portlet = new Portlet, $.Portlet.Constructor = Portlet
-
-    }(window.jQuery),
-
-    function ($) {
-        'use strict';
+            ($.Portlet = new Portlet()),
+            ($.Portlet.Constructor = Portlet);
+    })(window.jQuery),
+    (function ($) {
+        "use strict";
 
         var App = function () {
-            this.$body = $('body'),
-                this.$window = $(window)
+            (this.$body = $("body")), (this.$window = $(window));
         };
 
         /**
          * Initlizes the controls
          */
-        App.prototype.initControls = function () {
+        (App.prototype.initControls = function () {
             // remove loading
             setTimeout(function () {
-                document.body.classList.remove('loading');
+                document.body.classList.remove("loading");
             }, 350);
 
             // Preloader
-            $(window).on('load', function () {
-                $('#status').fadeOut();
-                $('#preloader').delay(350).fadeOut('slow');
+            $(window).on("load", function () {
+                $("#status").fadeOut();
+                $("#preloader").delay(350).fadeOut("slow");
             });
 
             $('[data-toggle="fullscreen"]').on("click", function (e) {
                 e.preventDefault();
-                $('body').toggleClass('fullscreen-enable');
-                if (!document.fullscreenElement && /* alternative standard method */ !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+                $("body").toggleClass("fullscreen-enable");
+                if (
+                    !document.fullscreenElement &&
+                    /* alternative standard method */ !document.mozFullScreenElement &&
+                    !document.webkitFullscreenElement
+                ) {
+                    // current working methods
                     if (document.documentElement.requestFullscreen) {
                         document.documentElement.requestFullscreen();
                     } else if (document.documentElement.mozRequestFullScreen) {
                         document.documentElement.mozRequestFullScreen();
-                    } else if (document.documentElement.webkitRequestFullscreen) {
-                        document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    } else if (
+                        document.documentElement.webkitRequestFullscreen
+                    ) {
+                        document.documentElement.webkitRequestFullscreen(
+                            Element.ALLOW_KEYBOARD_INPUT
+                        );
                     }
                 } else {
                     if (document.cancelFullScreen) {
@@ -780,101 +952,118 @@ File: Main Js File
                     }
                 }
             });
-            document.addEventListener('fullscreenchange', exitHandler);
+            document.addEventListener("fullscreenchange", exitHandler);
             document.addEventListener("webkitfullscreenchange", exitHandler);
             document.addEventListener("mozfullscreenchange", exitHandler);
 
             function exitHandler() {
-                if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                    $('body').removeClass('fullscreen-enable');
+                if (
+                    !document.webkitIsFullScreen &&
+                    !document.mozFullScreen &&
+                    !document.msFullscreenElement
+                ) {
+                    $("body").removeClass("fullscreen-enable");
                 }
             }
-        },
-
+        }),
             //initilizing
-            App.prototype.init = function () {
+            (App.prototype.init = function () {
                 $.Portlet.init();
                 $.Components.init();
 
                 this.initControls();
 
-
-                // showing the sidebar on load if user is visiting the page first time only
-                // var bodyConfig = this.$body.data('layout');
-                // if (window.sessionStorage && bodyConfig && bodyConfig.hasOwnProperty('showRightSidebarOnPageLoad') && bodyConfig['showRightSidebarOnPageLoad']) {
-                //     var alreadyVisited = sessionStorage.getItem("_ADMINTO_VISITED_");
-                //     if (!alreadyVisited) {
-                //         $.RightBar.toggleRightSideBar();
-                //         sessionStorage.setItem("_ADMINTO_VISITED_", true);
-                //     }
-                // }
-
                 //Popovers
-                var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-                    return new bootstrap.Popover(popoverTriggerEl)
-                })
+                var popoverTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="popover"]')
+                );
+                var popoverList = popoverTriggerList.map(function (
+                    popoverTriggerEl
+                ) {
+                    return new bootstrap.Popover(popoverTriggerEl);
+                });
 
                 //Tooltips
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                })
+                var tooltipTriggerList = [].slice.call(
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+                );
+                var tooltipList = tooltipTriggerList.map(function (
+                    tooltipTriggerEl
+                ) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
 
                 //Toasts
-                var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+                var toastElList = [].slice.call(
+                    document.querySelectorAll(".toast")
+                );
                 var toastList = toastElList.map(function (toastEl) {
-                    return new bootstrap.Toast(toastEl)
-                })
+                    return new bootstrap.Toast(toastEl);
+                });
 
                 // Toasts Placement
                 var toastPlacement = document.getElementById("toastPlacement");
                 if (toastPlacement) {
-                    document.getElementById("selectToastPlacement").addEventListener("change", function () {
-                        if (!toastPlacement.dataset.originalClass) {
-                            toastPlacement.dataset.originalClass = toastPlacement.className;
-                        }
-                        toastPlacement.className = toastPlacement.dataset.originalClass + " " + this.value;
-                    });
+                    document
+                        .getElementById("selectToastPlacement")
+                        .addEventListener("change", function () {
+                            if (!toastPlacement.dataset.originalClass) {
+                                toastPlacement.dataset.originalClass =
+                                    toastPlacement.className;
+                            }
+                            toastPlacement.className =
+                                toastPlacement.dataset.originalClass +
+                                " " +
+                                this.value;
+                        });
                 }
 
                 // liveAlert
-                var alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-                var alertTrigger = document.getElementById('liveAlertBtn')
+                var alertPlaceholder = document.getElementById(
+                    "liveAlertPlaceholder"
+                );
+                var alertTrigger = document.getElementById("liveAlertBtn");
 
                 function alert(message, type) {
-                    var wrapper = document.createElement('div')
-                    wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+                    var wrapper = document.createElement("div");
+                    wrapper.innerHTML =
+                        '<div class="alert alert-' +
+                        type +
+                        ' alert-dismissible" role="alert">' +
+                        message +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 
-                    alertPlaceholder.append(wrapper)
+                    alertPlaceholder.append(wrapper);
                 }
 
                 if (alertTrigger) {
-                    alertTrigger.addEventListener('click', function () {
-                        alert('Nice, you triggered this alert message!', 'primary')
-                    })
+                    alertTrigger.addEventListener("click", function () {
+                        alert(
+                            "Nice, you triggered this alert message!",
+                            "primary"
+                        );
+                    });
                 }
 
-
-                if(document.getElementById('app-style').href.includes('rtl.min.css')){
-                    document.getElementsByTagName('html')[0].dir="rtl";
+                if (
+                    document
+                        .getElementById("app-style")
+                        .href.includes("rtl.min.css")
+                ) {
+                    document.getElementsByTagName("html")[0].dir = "rtl";
                 }
-            },
-
-            $.App = new App, $.App.Constructor = App
-
-
-    }(window.jQuery),
-//initializing main application module
-    function ($) {
+            }),
+            ($.App = new App()),
+            ($.App.Constructor = App);
+    })(window.jQuery),
+    //initializing main application module
+    (function ($) {
         "use strict";
         $.App.init();
-    }(window.jQuery);
-
-    
+    })(window.jQuery);
 
 // Waves Effect
 Waves.init();
 
 // Feather Icons
-feather.replace()
+feather.replace();
