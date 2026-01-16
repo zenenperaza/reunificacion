@@ -19,6 +19,31 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
+// borrar public/storage
+
+// ejecutar
+
+Route::get('/fix-permisos', function () {
+    $paths = [
+        storage_path(),
+        storage_path('framework'),
+        storage_path('framework/views'),
+        base_path('bootstrap/cache')
+    ];
+
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            chmod($path, 0775); // permisos rwxrwxr-x
+        }
+    }
+
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+
+    return '✔️ Permisos y cachés corregidos.';
+});
+
 Route::get('/fix-storage-link', function () {
     try {
         // Elimina el enlace si existe

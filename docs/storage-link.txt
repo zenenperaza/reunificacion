@@ -1,3 +1,4 @@
+
 borrar public/storage
 
 ejecutar
@@ -127,6 +128,7 @@ Route::get('/crear-storage-link', function () {
         return '❌ Error al crear el enlace simbólico: ' . $e->getMessage();
     }
 });
+
 // Route::get('/fix-storage-permisos', function () {
 //     try {
 //         $path = storage_path('app/public');
