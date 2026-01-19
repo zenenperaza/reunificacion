@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 
-
 class Caso extends Model
 {
 
