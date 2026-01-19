@@ -11,7 +11,7 @@ class FamiliaSeeder extends Seeder
     {
         $familias = [
             ['nombre' => 'Zulia', 'ver_entre_hermanos' => true],
-            ['nombre' => 'Táchira', 'ver_entre_hermanos' => false],
+            ['nombre' => 'Tachira', 'ver_entre_hermanos' => false],
             ['nombre' => 'Caracas', 'ver_entre_hermanos' => true],
             ['nombre' => 'Monagas', 'ver_entre_hermanos' => false],
         ];
