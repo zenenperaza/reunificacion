@@ -36,3 +36,106 @@ sist_zenen
 3317397jB.
 
 uHu@vf8rErILl2qo
+
+
+
+
+
+
+
+
+
+corrige ProyectoDemoSeeder.php <?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Donante;
+use App\Models\Proyecto;
+use App\Models\Indicador;
+use App\Models\Actividad;
+use App\Models\Servicio;
+use App\Models\IndicadorProyecto;
+use App\Models\ActividadIndicador;
+use App\Models\ServicioActividad;
+
+class ProyectoDemoSeeder extends Seeder
+{
+    public function run(): void
+    {
+        // =========================
+        // DONANTE
+        // =========================
+        $donante = Donante::create([
+            'nombre' => 'Banco Interamericano',
+            'enlaces' => [
+                'nombre_contacto' => 'María López',
+                'telefono' => '0414-0000000'
+            ]
+        ]);
+
+        // =========================
+        // PROYECTO
+        // =========================
+        $proyecto = Proyecto::create([
+            'donante_id' => $donante->id,
+            'codigo' => 1001,
+            'descripcion' => 'Proyecto Desarrollo Comunitario',
+            'inicio' => '2026-01-01',
+            'fin' => '2026-12-31',
+        ]);
+
+        // =========================
+        // INDICADORES
+        // =========================
+        for ($i = 1; $i <= 3; $i++) {
+
+            $indicador = Indicador::create([
+                'codigo' => 'IND-' . $i,
+                'descripcion' => 'Indicador número ' . $i,
+            ]);
+
+            // Pivot indicador_proyecto
+            $indicadorProyecto = IndicadorProyecto::create([
+                'proyecto_id' => $proyecto->id,
+                'indicador_id' => $indicador->id,
+                'meta_cuantitativa' => rand(50, 200),
+                'meta_cualitativa' => 'Meta cualitativa ' . $i,
+            ]);
+
+            // =========================
+            // ACTIVIDADES POR INDICADOR
+            // =========================
+            for ($j = 1; $j <= 2; $j++) {
+
+                $actividad = Actividad::create([
+                    'codigo' => 'ACT-' . $i . '-' . $j,
+                    'descripcion' => 'Actividad ' . $j . ' del indicador ' . $i,
+                ]);
+
+                $actividadIndicador = ActividadIndicador::create([
+                    'indicador_proyecto_id' => $indicadorProyecto->id,
+                    'actividad_id' => $actividad->id,
+                    'meta' => rand(10, 50),
+                ]);
+
+                // =========================
+                // SERVICIOS POR ACTIVIDAD
+                // =========================
+                for ($k = 1; $k <= 2; $k++) {
+
+                    $servicio = Servicio::create([
+                        'nombre' => 'Servicio ' . $i . '-' . $j . '-' . $k,
+                        'descripcion' => 'Servicio asociado a actividad',
+                    ]);
+
+                    ServicioActividad::create([
+                        'actividad_indicador_id' => $actividadIndicador->id,
+                        'servicio_id' => $servicio->id,
+                        'cantidad_disponible' => rand(5, 20),
+                    ]);
+                }
+            }
+        }
+    }
+} para que de Proyectos, Indicadores, Actividades, Servicios y proyectos asociados a indicadores con indicador_proyecto , actividades asociadas a indicadores con actividad_indicador y servicios asociados a actividad con servicio_actividad

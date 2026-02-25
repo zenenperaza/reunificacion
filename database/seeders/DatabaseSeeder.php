@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ParroquiaSeeder::class,
             ConfiguracionSeeder::class, 
             FamiliaSeeder::class,
+            ProyectoDemoSeeder::class,
         ]);
 
 
