@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ConfiguracionSeeder::class, 
             FamiliaSeeder::class,
             ProyectoDemoSeeder::class,
+            ProyectoUbicacionSeeder::class,
         ]);
 
 
