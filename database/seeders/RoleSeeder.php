@@ -53,8 +53,10 @@ class RoleSeeder extends Seeder
             'crear coordinaciones',
             'editar coordinaciones',
             'eliminar coordinaciones',
+
+            'Gestion donantes',
             
-            'dashboard-user',
+            'dashboard-user', 
         ];
 
            $permisosMonitor = [
@@ -99,6 +101,8 @@ class RoleSeeder extends Seeder
             'crear coordinaciones',
             'editar coordinaciones',
             'eliminar coordinaciones',
+
+            'Gestion donantes',
             
         ];
 

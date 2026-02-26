@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+// use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CasoController;
-use App\Http\Controllers\CasoUploadController;
+// use App\Http\Controllers\CasoUploadController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ConfiguracionController;
@@ -17,7 +17,8 @@ use App\Http\Controllers\BusquedaController;
 use App\Http\Controllers\FamiliaController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
+// use Illuminate\Support\Facades\File;
+use App\Http\Controllers\DonanteController;
 
 // borrar public/storage
 
@@ -194,6 +195,13 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
             Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
             Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
             Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
+
+            Route::resource('donantes', DonanteController::class);
+            // cambiar estatus (activo/inactivo)
+            Route::post('donantes/{donante}/estatus', [DonanteController::class, 'cambiarEstatus'])
+                ->name('donantes.estatus');
+            Route::get('donantes-data', [DonanteController::class, 'data'])->name('donantes.data');
+            
         });
     });
 

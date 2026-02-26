@@ -95,70 +95,80 @@
                             <span> Configuración </span>
                             <span class="menu-arrow"></span>
                         </a>
-                        <div class="collapse" id="contacts">
+                            <div class="collapse" id="contacts">
 
-                            <ul class="nav-second-level">
-                                @can('Gestion permisos')
-                                    <li>
-                                        <a href="{{ route('permission.index') }}">
-                                            <i class="fas fa-list-ul"></i>
-                                            <span> Permisos </span>
+                                <ul class="nav-second-level">
+                                    
+                                    @can('Gestion donantes')
+                                        <li>
+                                            <a href="{{ route('donantes.index') }}">
+                                               <i class="fas fa-hands-helping"></i>
+                                                <span> Donantes </span>
+                                            </a>
+                                        </li>
+                                    @endcan
+
+                                    @can('Gestion permisos')
+                                        <li>
+                                            <a href="{{ route('permission.index') }}">
+                                                <i class="fas fa-list-ul"></i>
+                                                <span> Permisos </span>
+                                            </a>
+                                        </li>
+                                    @endcan
+
+                                    @can('Gestion roles')
+                                        <li>
+                                            <a href="{{ route('role.index') }}">
+                                                <i class="fab fa-critical-role"></i>
+                                                <span> Roles </span></a>
+                                        </li>
+                                    @endcan
+                                    
+                                    
+                                    @can('ver coordinaciones')
+                                    <li class="menu-item">
+                                        <a href="{{ route('familias.index') }}" class="menu-link">
+                                            <i class="mdi mdi-account-group-outline"></i>
+                                            <span> Coordinaciones </span>
                                         </a>
-                                    </li>
-                                @endcan
+                                    </li>                                
+                                    @endcan
 
-                                @can('Gestion roles')
-                                    <li>
-                                        <a href="{{ route('role.index') }}">
-                                            <i class="fab fa-critical-role"></i>
-                                            <span> Roles </span></a>
-                                    </li>
-                                @endcan
-                                
-                                
-                                @can('ver coordinaciones')
-                                <li class="menu-item">
-                                    <a href="{{ route('familias.index') }}" class="menu-link">
-                                        <i class="mdi mdi-account-group-outline"></i>
-                                        <span> Coordinaciones </span>
-                                    </a>
-                                </li>                                
-                                @endcan
+                            
 
-                           
+                                    @can('configuracion')
+                                        <li class="nav-item">
+                                            <a href="{{ route('configuraciones.index') }}" class="nav-link">
+                                                <i class="fe-settings noti-icon" style="font-size: medium;"></i>
+                                                <span> Configuraciones </span>
+                                            </a>
+                                        </li>
+                                    @endcan
 
-                                @can('configuracion')
-                                    <li class="nav-item">
-                                        <a href="{{ route('configuraciones.index') }}" class="nav-link">
-                                            <i class="fe-settings noti-icon" style="font-size: medium;"></i>
-                                            <span> Configuraciones </span>
-                                        </a>
-                                    </li>
-                                @endcan
-
-                                @can('ver bitacora')
-                                    <li>
-                                        <a href="{{ route('bitacora.index') }}">
-                                            <i class="mdi mdi-history"></i>
-                                            <span> Bitácora </span>
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('backups')
-                                    {{-- <li>
-                                        <a href="{{ route('backup.index') }}">
-                                            <i class="mdi mdi-database"></i>
-                                            <span> Respaldos </span>
-                                        </a>
-                                    </li> --}}
-                                @endcan
+                                    @can('ver bitacora')
+                                        <li>
+                                            <a href="{{ route('bitacora.index') }}">
+                                                <i class="mdi mdi-history"></i>
+                                                <span> Bitácora </span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('backups')
+                                        {{-- <li>
+                                            <a href="{{ route('backup.index') }}">
+                                                <i class="mdi mdi-database"></i>
+                                                <span> Respaldos </span>
+                                            </a>
+                                        </li> --}}
+                                    @endcan
 
 
 
 
 
-                            </ul>
-                        </div>
+                                </ul>
+                            </div>
                     </li>
                 @endif
 
