@@ -4,7 +4,15 @@
 @section('content')
 <div class="page-content">
   <div class="container-fluid">
-            <x-breadcrumb title="Editar Donante" />
+           <x-breadcrumb
+    title="Detalle Donante"
+    icono="<i class='mdi mdi-domain'></i>"
+    :items="[
+        ['texto' => 'Inicio', 'url' => route('dashboard')],
+        ['texto' => 'Donantes', 'url' => route('donantes.index')],
+        ['texto' => 'Detalle', 'url' => '']
+    ]"
+/>
 
         <div class="row mb-3">
             <div class="col-md-12">

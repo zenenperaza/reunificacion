@@ -110,59 +110,85 @@ class DonanteController extends Controller
         ];
     }
 
+    public function show(Donante $donante)
+    {
+        $donante->load([
+            'proyectos.indicadorProyecto.indicador',
+            'proyectos.indicadorProyecto.actividadIndicador.actividad',
+            'proyectos.indicadorProyecto.actividadIndicador.servicios'
+        ]);
 
-public function data(Request $request)
-{
-    $query = Donante::query()->select('donantes.*');
-
-    // filtros opcionales
-    if ($request->filled('estatus') && $request->estatus !== 'all') {
-        $query->where('estatus', (bool) $request->estatus);
+        return view('donantes.show', compact('donante'));
     }
 
-    if ($request->filled('q')) {
-        $q = $request->q;
-        $query->where('nombre', 'like', "%{$q}%");
-    }
 
-    return DataTables::of($query)
-        ->addColumn('contacto', fn($d) => $d->nombre_contacto ?? '-')
-        ->addColumn('telefono', fn($d) => $d->telefono_contacto ?? '-')
-        ->addColumn('estatus_badge', function ($d) {
-            return $d->estatus
-                ? '<span class="badge bg-success">Activo</span>'
-                : '<span class="badge bg-danger">Inactivo</span>';
-        })
-        ->addColumn('acciones', function ($d) {
-            $botones = '<div class="acciones-btns d-flex justify-content-center gap-1">';
+    public function data(Request $request)
+    {
+        $query = Donante::query()->select('donantes.*');
 
-            if (auth()->user()->can('Gestion donantes')) {
-                $botones .= '
-                    <form method="POST" action="'.route('donantes.estatus', $d->id).'" class="d-inline">
-                        '.csrf_field().'
-                        <button class="btn btn-sm btn-warning" title="Cambiar estatus">
+        // filtros opcionales
+        if ($request->filled('estatus') && $request->estatus !== 'all') {
+            $query->where('estatus', (bool) $request->estatus);
+        }
+
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where('nombre', 'like', "%{$q}%");
+        }
+
+        return DataTables::of($query)
+            ->addColumn('contacto', fn($d) => $d->nombre_contacto ?? '-')
+            ->addColumn('telefono', fn($d) => $d->telefono_contacto ?? '-')
+            ->addColumn('estatus_badge', function ($d) {
+                return $d->estatus
+                    ? '<span class="badge bg-success">Activo</span>'
+                    : '<span class="badge bg-danger">Inactivo</span>';
+            })
+            ->addColumn('acciones', function ($d) {
+
+                $puedeVer = auth()->user()->can('ver donantes');
+                $puedeEditar = auth()->user()->can('editar donantes');
+                $puedeEliminar = auth()->user()->can('eliminar donantes');
+
+                if (!$puedeVer && !$puedeEditar && !$puedeEliminar) {
+                    return '-';
+                }
+
+                $botones = '<div class="acciones-btns d-flex justify-content-center gap-1">';
+
+                if ($puedeVer) {
+                    $botones .= '<a href="' . route('donantes.show', $d->id) . '" class="btn btn-sm btn-primary" title="Ver">
+                        <i class="mdi mdi-eye"></i>
+                     </a>';
+                }
+
+                if ($puedeEditar) {
+                    $botones .= '<form method="POST" action="' . route('donantes.estatus', $d->id) . '" class="d-inline">
+                        ' . csrf_field() . '
+                        <button class="btn btn-sm btn-warning" title="Cambiar estatus" type="submit">
                             <i class="mdi mdi-refresh"></i>
                         </button>
-                    </form>';
+                     </form>';
 
-                $botones .= '
-                    <a href="'.route('donantes.edit', $d->id).'" class="btn btn-sm btn-info" title="Editar">
+                    $botones .= '<a href="' . route('donantes.edit', $d->id) . '" class="btn btn-sm btn-info" title="Editar">
                         <i class="mdi mdi-pencil"></i>
-                    </a>';
+                     </a>';
+                }
 
-                $botones .= '
-                    <button class="btn btn-sm btn-danger btn-delete"
+                if ($puedeEliminar) {
+                    $botones .= '<button class="btn btn-sm btn-danger btn-delete"
                             title="Eliminar"
-                            data-url="'.route('donantes.destroy', $d->id).'"
-                            data-nombre="'.e($d->nombre).'">
+                            data-url="' . route('donantes.destroy', $d->id) . '"
+                            data-nombre="' . e($d->nombre) . '">
                         <i class="mdi mdi-trash-can-outline"></i>
-                    </button>';
-            }
+                     </button>';
+                }
 
-            $botones .= '</div>';
-            return $botones;
-        })
-        ->rawColumns(['estatus_badge', 'acciones'])
-        ->make(true);
-}
+                $botones .= '</div>';
+
+                return $botones;
+            })
+            ->rawColumns(['estatus_badge', 'acciones'])
+            ->make(true);
+    }
 }

@@ -55,6 +55,10 @@ class RoleSeeder extends Seeder
             'eliminar coordinaciones',
 
             'Gestion donantes',
+            'ver donantes',
+            'editar donantes',
+            'crear donantes',
+            'eliminar donantes',
             
             'dashboard-user', 
         ];

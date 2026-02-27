@@ -12,6 +12,7 @@
 
     {{-- si quieres tu mismo estilo --}}
     <link href="{{ asset('assets/css/casos.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/donantes.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -28,7 +29,7 @@
 
             <x-boton.crear 
                 ruta="donantes.create" 
-                permiso="Gestion donantes" 
+                permiso="crear donantes" 
                 texto="Nuevo Donante" 
             />
 

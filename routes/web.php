@@ -195,13 +195,36 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
             Route::get('/casos/contador-estado/{estado}', [CasoController::class, 'contadorPorEstado']);
             Route::post('/casos/upload-temp', [CasoController::class, 'uploadTemp'])->name('casos.upload.temp');
             Route::post('/casos/{id}/eliminar-archivo', [CasoController::class, 'eliminarArchivo'])->name('casos.eliminar-archivo');
+        });
 
+        Route::middleware(['permission:Gestion donantes'])->group(function () {
             Route::resource('donantes', DonanteController::class);
             // cambiar estatus (activo/inactivo)
             Route::post('donantes/{donante}/estatus', [DonanteController::class, 'cambiarEstatus'])
                 ->name('donantes.estatus');
             Route::get('donantes-data', [DonanteController::class, 'data'])->name('donantes.data');
-            
+            Route::get('donantes', [DonanteController::class, 'index'])->name('donantes.index');
+
+
+            Route::middleware(['permission:ver donantes'])->group(function () {
+                Route::get('donantes-data', [DonanteController::class, 'data'])->name('donantes.data');
+                Route::get('donantes/{donante}', [DonanteController::class, 'show'])->name('donantes.show');
+            });
+
+            Route::middleware(['permission:crear donantes'])->group(function () {
+                Route::get('donantes/create', [DonanteController::class, 'create'])->name('donantes.create');
+                Route::post('donantes', [DonanteController::class, 'store'])->name('donantes.store');
+            });
+
+            Route::middleware(['permission:editar donantes'])->group(function () {
+                Route::get('donantes/{donante}/edit', [DonanteController::class, 'edit'])->name('donantes.edit');
+                Route::put('donantes/{donante}', [DonanteController::class, 'update'])->name('donantes.update');
+                Route::post('donantes/{donante}/estatus', [DonanteController::class, 'cambiarEstatus'])->name('donantes.estatus');
+            });
+
+            Route::middleware(['permission:eliminar donantes'])->group(function () {
+                Route::delete('donantes/{donante}', [DonanteController::class, 'destroy'])->name('donantes.destroy');
+            });
         });
     });
 
