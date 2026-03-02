@@ -207,7 +207,6 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
 
 
             Route::middleware(['permission:ver donantes'])->group(function () {
-                Route::get('donantes-data', [DonanteController::class, 'data'])->name('donantes.data');
                 Route::get('donantes/{donante}', [DonanteController::class, 'show'])->name('donantes.show');
             });
 

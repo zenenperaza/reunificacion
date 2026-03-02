@@ -74,10 +74,13 @@ class DonanteController extends Controller
 
     public function cambiarEstatus(Donante $donante)
     {
-        $donante->estatus = ! (bool) $donante->estatus;
+        $donante->estatus = !$donante->estatus;
         $donante->save();
 
-        return back()->with('success', 'Estatus actualizado.');
+        return response()->json([
+            'ok' => true,
+            'estatus' => $donante->estatus
+        ]);
     }
 
     private function validated(Request $request): array
@@ -139,10 +142,27 @@ class DonanteController extends Controller
         return DataTables::of($query)
             ->addColumn('contacto', fn($d) => $d->nombre_contacto ?? '-')
             ->addColumn('telefono', fn($d) => $d->telefono_contacto ?? '-')
-            ->addColumn('estatus_badge', function ($d) {
-                return $d->estatus
-                    ? '<span class="badge bg-success">Activo</span>'
-                    : '<span class="badge bg-danger">Inactivo</span>';
+            ->addColumn('estatus_html', function ($d) {
+
+                $puedeEditar = auth()->user()->can('editar donantes');
+
+                // Si no puede editar, mostrar solo texto simple
+                if (!$puedeEditar) {
+                    return $d->estatus
+                        ? '<span class="text-success fw-semibold">Activo</span>'
+                        : '<span class="text-danger fw-semibold">Inactivo</span>';
+                }
+
+                $checked = $d->estatus ? 'checked' : '';
+                $label = $d->estatus ? 'Activo' : 'Inactivo';
+
+                return '
+        <input type="checkbox"
+               class="switch-donante"
+               data-id="' . $d->id . '"
+               ' . $checked . ' />
+        <span class="ms-2 switch-label">' . $label . '</span>
+    ';
             })
             ->addColumn('acciones', function ($d) {
 
@@ -163,14 +183,7 @@ class DonanteController extends Controller
                 }
 
                 if ($puedeEditar) {
-                    $botones .= '<form method="POST" action="' . route('donantes.estatus', $d->id) . '" class="d-inline">
-                        ' . csrf_field() . '
-                        <button class="btn btn-sm btn-warning" title="Cambiar estatus" type="submit">
-                            <i class="mdi mdi-refresh"></i>
-                        </button>
-                     </form>';
-
-                    $botones .= '<a href="' . route('donantes.edit', $d->id) . '" class="btn btn-sm btn-info" title="Editar">
+                    $botones .= '<a href="' . route('donantes.edit', $d->id) . '" class="btn btn-sm btn-warning" title="Editar">
                         <i class="mdi mdi-pencil"></i>
                      </a>';
                 }
@@ -188,7 +201,7 @@ class DonanteController extends Controller
 
                 return $botones;
             })
-            ->rawColumns(['estatus_badge', 'acciones'])
+            ->rawColumns(['estatus_html', 'acciones'])
             ->make(true);
     }
 }

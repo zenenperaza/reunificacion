@@ -17,24 +17,17 @@
 
 @section('content')
     <div class="page-content">
-     <div class="container-fluid">
+        <div class="container-fluid">
 
-    <x-breadcrumb 
-        title="Gestión de Donantes" 
-        icono="<i class='mdi mdi-hand-holding-usd'></i>" 
-    />
+            <x-breadcrumb title="Gestión de Donantes" icono="<i class='mdi mdi-hand-holding-usd'></i>" />
 
-    <div class="row mb-3 d-flex my-2 justify-content-between">
-        <div class="col-sm-3">
+            <div class="row mb-3 d-flex my-2 justify-content-between">
+                <div class="col-sm-3">
 
-            <x-boton.crear 
-                ruta="donantes.create" 
-                permiso="crear donantes" 
-                texto="Nuevo Donante" 
-            />
+                    <x-boton.crear ruta="donantes.create" permiso="crear donantes" texto="Nuevo Donante" />
 
-        </div>
-    </div>
+                </div>
+            </div>
 
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -89,6 +82,8 @@
     <script src="{{ asset('assets/libs/pdfmake/build/vfs_fonts.js') }}"></script>
     <script src="{{ asset('assets/libs/jszip/jszip.min.js') }}"></script>
 
+    <script src="{{ asset('assets/libs/mohithg-switchery/switchery.min.js') }}"></script>
+
     <script>
         let donantesTable;
 
@@ -142,7 +137,7 @@
                         className: 'all'
                     },
                     {
-                        data: 'estatus_badge',
+                        data: 'estatus_html',
                         name: 'estatus',
                         className: 'all text-center',
                         orderable: false,
@@ -181,18 +176,32 @@
                         className: 'btn btn-sm btn-outline-dark'
                     },
                 ],
+
+                // ✅ Importante para Switchery (se vuelve a dibujar por AJAX)
+                drawCallback: function() {
+                    document.querySelectorAll('.switch-donante').forEach(function(el) {
+                        // evita duplicar Switchery
+                        if (!el.dataset.switchery) {
+                            new Switchery(el, {
+                                color: '#039cfd',
+                                size: 'small'
+                            });
+                        }
+                    });
+                }
             });
         }
 
-        // filtro estatus
-        $('#filtro_estatus').on('change', function() {
-            donantesTable.ajax.reload();
+        // ✅ filtro estatus
+        $(document).on('change', '#filtro_estatus', function() {
+            if (donantesTable) donantesTable.ajax.reload();
         });
-
-        // SweetAlert eliminar (mismo patrón que tus módulos)
+   
+        // ✅ SweetAlert eliminar (versión corregida y limpia)
         $(document).on('click', '.btn-delete', function() {
-            let url = $(this).data('url');
-            let nombre = $(this).data('nombre');
+
+            const url = $(this).data('url');
+            const nombre = $(this).data('nombre');
 
             Swal.fire({
                 title: '¿Eliminar donante?',
@@ -203,20 +212,83 @@
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#d33'
             }).then((result) => {
+
                 if (result.isConfirmed) {
-                    let form = $('<form>', {
+
+                    const form = $('<form>', {
                         method: 'POST',
                         action: url
                     });
-                    form.append('@csrf');
-                    form.append('@method('DELETE')');
+
+                    // CSRF
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: '_token',
+                        value: $('meta[name="csrf-token"]').attr('content')
+                    }));
+
+                    // METHOD DELETE
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: '_method',
+                        value: 'DELETE'
+                    }));
+
                     $('body').append(form);
                     form.submit();
                 }
             });
         });
 
-        // iniciar
-        initDonantesTable();
+        // ✅ Toggle estatus con Switchery (la clase correcta)
+        $(document).on('change', '.switch-donante', function() {
+
+            const checkbox = $(this);
+            const id = checkbox.data('id');
+            const url = "{{ url('donantes') }}/" + id + "/estatus";
+
+            checkbox.prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Estatus actualizado',
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+
+                    // recargar sin resetear paginación
+                    donantesTable.ajax.reload(null, false);
+                },
+                error: function() {
+                    // revertir si falla
+                    checkbox.prop('checked', !checkbox.prop('checked'));
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo cambiar el estatus'
+                    });
+
+                    // si el switch visual se desincroniza, recarga
+                    if (donantesTable) donantesTable.ajax.reload(null, false);
+                },
+                complete: function() {
+                    checkbox.prop('disabled', false);
+                }
+            });
+        });
+
+        // ✅ iniciar
+        $(function() {
+            initDonantesTable();
+        });
     </script>
+
 @endsection
