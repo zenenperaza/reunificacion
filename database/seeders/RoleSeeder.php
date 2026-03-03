@@ -59,6 +59,12 @@ class RoleSeeder extends Seeder
             'editar donantes',
             'crear donantes',
             'eliminar donantes',
+
+            'Gestion proyectos',
+            'ver proyectos',
+            'editar proyectos',
+            'crear proyectos',
+            'eliminar proyectos',
             
             'dashboard-user', 
         ];

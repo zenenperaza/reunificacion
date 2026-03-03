@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 // use Illuminate\Support\Facades\File;
 use App\Http\Controllers\DonanteController;
+use App\Http\Controllers\ProyectoController;
 
 // borrar public/storage
 
@@ -225,6 +226,42 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
                 Route::delete('donantes/{donante}', [DonanteController::class, 'destroy'])->name('donantes.destroy');
             });
         });
+
+
+
+        Route::middleware(['auth', 'permission:Gestion proyectos'])->group(function () {
+
+            // listado + datatable (si quieres que solo Gestion proyectos vea el listado)
+            Route::get('proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');
+            Route::get('proyectos-data', [ProyectoController::class, 'data'])->name('proyectos.data');
+
+            // crear (NO depende de ver proyectos)
+            Route::middleware(['permission:crear proyectos'])->group(function () {
+                Route::get('proyectos/create', [ProyectoController::class, 'create'])->name('proyectos.create');
+                Route::post('proyectos', [ProyectoController::class, 'store'])->name('proyectos.store');
+            });
+
+            // editar + estatus
+            Route::middleware(['permission:editar proyectos'])->group(function () {
+                Route::get('proyectos/{proyecto}/edit', [ProyectoController::class, 'edit'])->name('proyectos.edit');
+                Route::put('proyectos/{proyecto}', [ProyectoController::class, 'update'])->name('proyectos.update');
+                Route::post('proyectos/{proyecto}/estatus', [ProyectoController::class, 'cambiarEstatus'])->name('proyectos.estatus');
+            });
+
+            // eliminar
+            Route::middleware(['permission:eliminar proyectos'])->group(function () {
+                Route::delete('proyectos/{proyecto}', [ProyectoController::class, 'destroy'])->name('proyectos.destroy');
+            });
+
+            // ⚠️ show SIEMPRE al final (para no “pisar” create/edit)
+            Route::middleware(['permission:ver proyectos'])->group(function () {
+                Route::get('proyectos/{proyecto}', [ProyectoController::class, 'show'])->name('proyectos.show');
+            });
+        });
+
+        // ajax municipios
+        Route::get('municipios-por-estados', [ProyectoController::class, 'municipiosPorEstados'])
+            ->name('municipios.por-estados');
     });
 
     Route::resource('familias', FamiliaController::class)->middleware(['auth']);

@@ -12,9 +12,10 @@ return new class extends Migration {
 
             $table->foreignId('donante_id')
                 ->constrained('donantes')
-                ->cascadeOnDelete();
+                ->restrictOnDelete()   // ✅ evita borrar donante con proyectos
+                ->cascadeOnUpdate();
 
-            
+
             $table->boolean('estatus')->default(true);
             $table->unsignedBigInteger('codigo')->nullable();
             $table->string('descripcion')->nullable();
@@ -25,7 +26,6 @@ return new class extends Migration {
 
             // opcional si deseas que el codigo no se repita
             $table->unique('codigo');
-            
         });
     }
 

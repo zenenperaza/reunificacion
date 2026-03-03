@@ -62,8 +62,12 @@ class DonanteController extends Controller
 
     public function destroy(Donante $donante)
     {
-        // si tiene proyectos, puedes bloquear borrado si quieres:
-        // if ($donante->proyectos()->exists()) { ... }
+        // Si tiene proyectos, no permitir eliminar
+        if ($donante->proyectos()->exists()) {
+            return redirect()
+                ->route('donantes.index')
+                ->with('error', 'No se puede eliminar el donante porque tiene proyectos asociados.');
+        }
 
         $donante->delete();
 

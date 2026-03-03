@@ -18,7 +18,7 @@ class Proyecto extends Model
 
     protected $fillable = [
         'donante_id',
-        'estatus',      // ✅ nuevo
+        'estatus',
         'codigo',
         'descripcion',
         'inicio',
