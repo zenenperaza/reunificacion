@@ -65,6 +65,12 @@ class RoleSeeder extends Seeder
             'editar proyectos',
             'crear proyectos',
             'eliminar proyectos',
+
+            'Gestion indicadores',
+            'ver indicadores',
+            'editar indicadores',
+            'crear indicadores',
+            'eliminar indicadores',
             
             'dashboard-user', 
         ];

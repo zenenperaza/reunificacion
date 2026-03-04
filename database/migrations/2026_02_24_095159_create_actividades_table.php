@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('actividades', function (Blueprint $table) {
             $table->id();
 
-            $table->string('codigo')->nullable();   // varchar
+            $table->string('codigo')->unique();   // varchar
             $table->string('descripcion')->nullable();
 
             $table->timestamps();

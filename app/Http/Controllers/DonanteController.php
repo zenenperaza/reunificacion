@@ -62,11 +62,11 @@ class DonanteController extends Controller
 
     public function destroy(Donante $donante)
     {
-        // Si tiene proyectos, no permitir eliminar
+        // verificar si tiene proyectos
         if ($donante->proyectos()->exists()) {
             return redirect()
                 ->route('donantes.index')
-                ->with('error', 'No se puede eliminar el donante porque tiene proyectos asociados.');
+                ->with('error', 'No se puede eliminar este donante porque tiene proyectos asociados.');
         }
 
         $donante->delete();
@@ -131,13 +131,16 @@ class DonanteController extends Controller
 
     public function data(Request $request)
     {
-        $query = Donante::query()->select('donantes.*');
+        $query = Donante::query()
+            ->select('donantes.*')
+            ->withCount('proyectos'); // ✅ para saber si tiene proyectos sin N+1
 
-        // filtros opcionales
+        // filtro estatus
         if ($request->filled('estatus') && $request->estatus !== 'all') {
             $query->where('estatus', (bool) $request->estatus);
         }
 
+        // búsqueda
         if ($request->filled('q')) {
             $q = $request->q;
             $query->where('nombre', 'like', "%{$q}%");
@@ -146,11 +149,12 @@ class DonanteController extends Controller
         return DataTables::of($query)
             ->addColumn('contacto', fn($d) => $d->nombre_contacto ?? '-')
             ->addColumn('telefono', fn($d) => $d->telefono_contacto ?? '-')
+
             ->addColumn('estatus_html', function ($d) {
 
                 $puedeEditar = auth()->user()->can('editar donantes');
 
-                // Si no puede editar, mostrar solo texto simple
+                // Si no puede editar, mostrar solo texto
                 if (!$puedeEditar) {
                     return $d->estatus
                         ? '<span class="text-success fw-semibold">Activo</span>'
@@ -158,20 +162,24 @@ class DonanteController extends Controller
                 }
 
                 $checked = $d->estatus ? 'checked' : '';
-                $label = $d->estatus ? 'Activo' : 'Inactivo';
+                $label   = $d->estatus ? 'Activo' : 'Inactivo';
+                $labelClass = $d->estatus ? 'text-success' : 'text-danger';
 
                 return '
-        <input type="checkbox"
-               class="switch-donante"
-               data-id="' . $d->id . '"
-               ' . $checked . ' />
-        <span class="ms-2 switch-label">' . $label . '</span>
-    ';
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <input type="checkbox"
+                        class="switch-donante"
+                        data-id="' . $d->id . '"
+                        ' . $checked . ' />
+                    <span class="ms-2 switch-label ' . $labelClass . '">' . $label . '</span>
+                </div>
+            ';
             })
+
             ->addColumn('acciones', function ($d) {
 
-                $puedeVer = auth()->user()->can('ver donantes');
-                $puedeEditar = auth()->user()->can('editar donantes');
+                $puedeVer      = auth()->user()->can('ver donantes');
+                $puedeEditar   = auth()->user()->can('editar donantes');
                 $puedeEliminar = auth()->user()->can('eliminar donantes');
 
                 if (!$puedeVer && !$puedeEditar && !$puedeEliminar) {
@@ -181,30 +189,45 @@ class DonanteController extends Controller
                 $botones = '<div class="acciones-btns d-flex justify-content-center gap-1">';
 
                 if ($puedeVer) {
-                    $botones .= '<a href="' . route('donantes.show', $d->id) . '" class="btn btn-sm btn-primary" title="Ver">
-                        <i class="mdi mdi-eye"></i>
-                     </a>';
+                    $botones .= '<a href="' . route('donantes.show', $d->id) . '"
+                                class="btn btn-sm btn-primary"
+                                title="Ver">
+                                <i class="mdi mdi-eye"></i>
+                             </a>';
                 }
 
                 if ($puedeEditar) {
-                    $botones .= '<a href="' . route('donantes.edit', $d->id) . '" class="btn btn-sm btn-warning" title="Editar">
-                        <i class="mdi mdi-pencil"></i>
-                     </a>';
+                    $botones .= '<a href="' . route('donantes.edit', $d->id) . '"
+                                class="btn btn-sm btn-warning"
+                                title="Editar">
+                                <i class="mdi mdi-pencil"></i>
+                             </a>';
                 }
 
+                // ✅ Si tiene proyectos, NO permitir eliminar (botón bloqueado)
                 if ($puedeEliminar) {
-                    $botones .= '<button class="btn btn-sm btn-danger btn-delete"
-                            title="Eliminar"
-                            data-url="' . route('donantes.destroy', $d->id) . '"
-                            data-nombre="' . e($d->nombre) . '">
-                        <i class="mdi mdi-trash-can-outline"></i>
-                     </button>';
+                    if ((int)$d->proyectos_count > 0) {
+                        $botones .= '<button class="btn btn-sm btn-secondary"
+                                        type="button"
+                                        disabled
+                                        title="No se puede eliminar: tiene proyectos asociados">
+                                        <i class="mdi mdi-lock"></i>
+                                 </button>';
+                    } else {
+                        $botones .= '<button class="btn btn-sm btn-danger btn-delete"
+                                        title="Eliminar"
+                                        data-url="' . route('donantes.destroy', $d->id) . '"
+                                        data-nombre="' . e($d->nombre) . '">
+                                        <i class="mdi mdi-trash-can-outline"></i>
+                                 </button>';
+                    }
                 }
 
                 $botones .= '</div>';
 
                 return $botones;
             })
+
             ->rawColumns(['estatus_html', 'acciones'])
             ->make(true);
     }

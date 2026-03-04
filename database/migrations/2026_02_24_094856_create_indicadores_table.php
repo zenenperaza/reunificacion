@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('indicadores', function (Blueprint $table) {
             $table->id();
 
-            $table->string('codigo')->nullable();
+            $table->string('codigo')->unique();
             $table->string('descripcion')->nullable();
 
             $table->timestamps();

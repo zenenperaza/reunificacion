@@ -4,10 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IndicadorProyecto;
-use App\Models\Actividad;
-use App\Models\Servicio;
-use App\Models\ServicioActividad;
 
 class ActividadIndicador extends Model
 {
@@ -19,11 +15,11 @@ class ActividadIndicador extends Model
         'indicador_proyecto_id',
         'actividad_id',
         'meta',
-        'estatus', // ✅ nuevo
+        'estatus',
     ];
 
     protected $casts = [
-        'estatus' => 'boolean', // ✅ nuevo
+        'estatus' => 'boolean',
     ];
 
     /*
@@ -31,7 +27,6 @@ class ActividadIndicador extends Model
     | SCOPES
     |--------------------------------------------------------------------------
     */
-
     public function scopeActivos($query)
     {
         return $query->where('estatus', true);
@@ -45,17 +40,17 @@ class ActividadIndicador extends Model
 
     public function indicadorProyecto()
     {
-        return $this->belongsTo(IndicadorProyecto::class);
+        return $this->belongsTo(IndicadorProyecto::class, 'indicador_proyecto_id');
     }
 
     public function actividad()
     {
-        return $this->belongsTo(Actividad::class);
+        return $this->belongsTo(Actividad::class, 'actividad_id');
     }
 
     /**
-     * Servicios relacionados (via servicio_actividad)
-     * OJO: el estatus está en la pivote servicio_actividad
+     * Servicios relacionados (N:N) vía servicio_actividad
+     * El estatus/cantidad_disponible están en la pivote.
      */
     public function servicios()
     {
@@ -65,11 +60,16 @@ class ActividadIndicador extends Model
             'actividad_indicador_id',
             'servicio_id'
         )
-        ->withPivot(['cantidad_disponible', 'estatus']) // ✅ cantidad + estatus pivote
+        ->withPivot(['id', 'cantidad_disponible', 'estatus']) // 'id' opcional pero útil
         ->withTimestamps();
+    }
 
-        // Si quieres traer SOLO servicios activos (por estatus de la pivote):
-        // ->wherePivot('estatus', true);
+    /**
+     * Solo servicios activos según estatus de la pivote servicio_actividad
+     */
+    public function serviciosActivos()
+    {
+        return $this->servicios()->wherePivot('estatus', true);
     }
 
     /**
@@ -78,8 +78,13 @@ class ActividadIndicador extends Model
     public function servicioActividad()
     {
         return $this->hasMany(ServicioActividad::class, 'actividad_indicador_id');
+    }
 
-        // Si quieres SOLO activos:
-        // return $this->hasMany(ServicioActividad::class, 'actividad_indicador_id')->where('estatus', true);
+    /**
+     * Solo pivotes activos (servicio_actividad.estatus = true)
+     */
+    public function servicioActividadActivas()
+    {
+        return $this->servicioActividad()->where('estatus', true);
     }
 }

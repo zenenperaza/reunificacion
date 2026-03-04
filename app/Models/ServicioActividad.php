@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ActividadIndicador;
-use App\Models\Servicio;
 
 class ServicioActividad extends Model
 {
@@ -17,11 +15,12 @@ class ServicioActividad extends Model
         'actividad_indicador_id',
         'servicio_id',
         'cantidad_disponible',
-        'estatus', // ✅ nuevo
+        'estatus',
     ];
 
     protected $casts = [
-        'estatus' => 'boolean', // ✅ nuevo
+        'estatus' => 'boolean',
+        'cantidad_disponible' => 'integer',
     ];
 
     /*
@@ -29,10 +28,14 @@ class ServicioActividad extends Model
     | SCOPES
     |--------------------------------------------------------------------------
     */
-
     public function scopeActivos($query)
     {
         return $query->where('estatus', true);
+    }
+
+    public function scopeInactivos($query)
+    {
+        return $query->where('estatus', false);
     }
 
     /*
@@ -40,14 +43,13 @@ class ServicioActividad extends Model
     | RELACIONES
     |--------------------------------------------------------------------------
     */
-
     public function actividadIndicador()
     {
-        return $this->belongsTo(ActividadIndicador::class);
+        return $this->belongsTo(ActividadIndicador::class, 'actividad_indicador_id');
     }
 
     public function servicio()
     {
-        return $this->belongsTo(Servicio::class);
+        return $this->belongsTo(Servicio::class, 'servicio_id');
     }
 }

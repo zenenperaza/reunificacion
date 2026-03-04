@@ -4,10 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Proyecto;
-use App\Models\Indicador;
-use App\Models\Actividad;
-use App\Models\ActividadIndicador;
 
 class IndicadorProyecto extends Model
 {
@@ -18,13 +14,13 @@ class IndicadorProyecto extends Model
     protected $fillable = [
         'proyecto_id',
         'indicador_id',
-        'estatus',           // ✅ nuevo
+        'estatus',
         'meta_cuantitativa',
         'meta_cualitativa',
     ];
 
     protected $casts = [
-        'estatus' => 'boolean', // ✅ nuevo
+        'estatus' => 'boolean',
     ];
 
     /*
@@ -54,8 +50,8 @@ class IndicadorProyecto extends Model
     }
 
     /**
-     * Actividades relacionadas (via actividad_indicador)
-     * OJO: aquí el estatus está en actividad_indicador, no en actividades.
+     * Actividades relacionadas (N:N) vía actividad_indicador
+     * El estatus/meta están en la pivote (actividad_indicador).
      */
     public function actividades()
     {
@@ -65,21 +61,31 @@ class IndicadorProyecto extends Model
             'indicador_proyecto_id',
             'actividad_id'
         )
-        ->withPivot(['meta', 'estatus'])  // ✅ meta + estatus de la pivote
+        ->withPivot(['id', 'meta', 'estatus']) // 'id' opcional pero útil
         ->withTimestamps();
-
-        // Si quieres traer SOLO actividades activas (por estatus de la pivote), usa esto:
-        // ->wherePivot('estatus', true);
     }
 
     /**
-     * Acceso directo a la pivote actividad_indicador
+     * Solo actividades activas según estatus de la pivote
+     */
+    public function actividadesActivas()
+    {
+        return $this->actividades()->wherePivot('estatus', true);
+    }
+
+    /**
+     * Acceso directo a los registros de la pivote actividad_indicador
      */
     public function actividadIndicador()
     {
-        return $this->hasMany(ActividadIndicador::class);
+        return $this->hasMany(ActividadIndicador::class, 'indicador_proyecto_id');
+    }
 
-        // Si quieres SOLO activas:
-        // return $this->hasMany(ActividadIndicador::class)->where('estatus', true);
+    /**
+     * Solo registros activos de actividad_indicador
+     */
+    public function actividadIndicadorActivas()
+    {
+        return $this->actividadIndicador()->where('estatus', true);
     }
 }

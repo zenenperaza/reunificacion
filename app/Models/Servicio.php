@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ActividadIndicador;
 
 class Servicio extends Model
 {
@@ -17,14 +16,21 @@ class Servicio extends Model
         'descripcion',
     ];
 
-    public function actividadesIndicador()
+    /**
+     * ActividadesIndicador relacionadas (N:N) vía servicio_actividad
+     */
+    public function actividadIndicador()
     {
-        return $this->belongsToMany(
-            ActividadIndicador::class,
-            'servicio_actividad',
-            'servicio_id',
-            'actividad_indicador_id'
-        )->withTimestamps()
-         ->withPivot(['cantidad_disponible']);
+        return $this->belongsToMany(ActividadIndicador::class, 'servicio_actividad')
+            ->withPivot(['id', 'estatus', 'cantidad_disponible'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Acceso directo a los registros de la pivote servicio_actividad
+     */
+    public function servicioActividad()
+    {
+        return $this->hasMany(ServicioActividad::class, 'servicio_id');
     }
 }

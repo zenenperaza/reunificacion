@@ -116,6 +116,15 @@
                                     </li>
                                 @endcan
 
+                                @can('Gestion indicadores')
+                                    <li>
+                                        <a href="{{ route('indicadores.index') }}">
+                                            <i class="fas fa-chart-line"></i>
+                                            <span> Indicadores </span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @can('Gestion permisos')
                                     <li>
                                         <a href="{{ route('permission.index') }}">

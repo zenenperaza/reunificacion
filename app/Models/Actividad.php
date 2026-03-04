@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IndicadorProyecto;
 
 class Actividad extends Model
 {
@@ -17,14 +16,21 @@ class Actividad extends Model
         'descripcion',
     ];
 
-    public function indicadoresProyecto()
+    /**
+     * IndicadoresProyecto relacionados (N:N) vía actividad_indicador
+     */
+    public function indicadorProyecto()
     {
-        return $this->belongsToMany(
-            IndicadorProyecto::class,
-            'actividad_indicador',
-            'actividad_id',
-            'indicador_proyecto_id'
-        )->withTimestamps()
-         ->withPivot(['meta']);
+        return $this->belongsToMany(IndicadorProyecto::class, 'actividad_indicador')
+            ->withPivot(['id', 'estatus', 'meta'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Acceso directo a los registros de la pivote actividad_indicador
+     */
+    public function actividadIndicador()
+    {
+        return $this->hasMany(ActividadIndicador::class, 'actividad_id');
     }
 }

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 // use Illuminate\Support\Facades\File;
 use App\Http\Controllers\DonanteController;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\IndicadorController;
 
 // borrar public/storage
 
@@ -69,6 +70,7 @@ Route::get('/busqueda', [BusquedaController::class, 'resultados'])->name('busque
 Route::get('/busqueda/ajax', [App\Http\Controllers\BusquedaController::class, 'ajax'])->name('busqueda.ajax');
 
 Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
+
     Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('configuraciones', [\App\Http\Controllers\ConfiguracionController::class, 'index'])->name('configuraciones.index');
         Route::post('configuraciones', [\App\Http\Controllers\ConfiguracionController::class, 'update'])->name('configuraciones.update');
@@ -265,6 +267,37 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
     });
 
     Route::resource('familias', FamiliaController::class)->middleware(['auth']);
+
+    Route::middleware(['auth'])->group(function () {
+
+        // Listado + datatable (solo para Gestion indicadores)
+        Route::middleware(['permission:Gestion indicadores'])->group(function () {
+            Route::get('indicadores', [IndicadorController::class, 'index'])->name('indicadores.index');
+            Route::get('indicadores-data', [IndicadorController::class, 'data'])->name('indicadores.data');
+        });
+
+        // Ver detalle (solo ver indicadores)
+        Route::middleware(['permission:ver indicadores'])->group(function () {
+            Route::get('indicadores/{indicador}', [IndicadorController::class, 'show'])->name('indicadores.show');
+        });
+
+        // Crear
+        Route::middleware(['permission:crear indicadores'])->group(function () {
+            Route::get('indicadores/create', [IndicadorController::class, 'create'])->name('indicadores.create');
+            Route::post('indicadores', [IndicadorController::class, 'store'])->name('indicadores.store');
+        });
+
+        // Editar
+        Route::middleware(['permission:editar indicadores'])->group(function () {
+            Route::get('indicadores/{indicador}/edit', [IndicadorController::class, 'edit'])->name('indicadores.edit');
+            Route::put('indicadores/{indicador}', [IndicadorController::class, 'update'])->name('indicadores.update');
+        });
+
+        // Eliminar
+        Route::middleware(['permission:eliminar indicadores'])->group(function () {
+            Route::delete('indicadores/{indicador}', [IndicadorController::class, 'destroy'])->name('indicadores.destroy');
+        });
+    });
 });
 
 
