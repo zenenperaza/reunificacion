@@ -22,6 +22,11 @@ use App\Http\Controllers\DonanteController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\IndicadorController;
 use App\Http\Controllers\ActividadController;
+use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\ProyectoIndicadorController;
+use App\Http\Controllers\IndicadorProyectoActividadController;
+use App\Http\Controllers\ActividadIndicadorServicioController;
+
 
 // borrar public/storage
 
@@ -316,11 +321,6 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
             Route::post('actividades', [ActividadController::class, 'store'])->name('actividades.store');
         });
 
-        // Ver detalle
-        Route::middleware(['permission:ver actividades'])->group(function () {
-            Route::get('actividades/{actividad}', [ActividadController::class, 'show'])->name('actividades.show');
-        });
-
         // Editar
         Route::middleware(['permission:editar actividades'])->group(function () {
             Route::get('actividades/{actividad}/edit', [ActividadController::class, 'edit'])->name('actividades.edit');
@@ -330,6 +330,109 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
         // Eliminar
         Route::middleware(['permission:eliminar actividades'])->group(function () {
             Route::delete('actividades/{actividad}', [ActividadController::class, 'destroy'])->name('actividades.destroy');
+        });
+
+        // Ver detalle
+        Route::middleware(['permission:ver actividades'])->group(function () {
+            Route::get('actividades/{actividad}', [ActividadController::class, 'show'])->name('actividades.show');
+        });
+    });
+
+
+    Route::middleware(['auth'])->group(function () {
+
+        // Menú / listado
+        Route::middleware(['permission:Gestion servicios'])->group(function () {
+            Route::get('servicios', [ServicioController::class, 'index'])->name('servicios.index');
+            Route::get('servicios-data', [ServicioController::class, 'data'])->name('servicios.data');
+        });
+
+        // Crear
+        Route::middleware(['permission:crear servicios'])->group(function () {
+            Route::get('servicios/create', [ServicioController::class, 'create'])->name('servicios.create');
+            Route::post('servicios', [ServicioController::class, 'store'])->name('servicios.store');
+        });
+        // Editar
+        Route::middleware(['permission:editar servicios'])->group(function () {
+            Route::get('servicios/{servicio}/edit', [ServicioController::class, 'edit'])->name('servicios.edit');
+            Route::put('servicios/{servicio}', [ServicioController::class, 'update'])->name('servicios.update');
+        });
+
+        // Data + show
+        Route::middleware(['permission:ver servicios'])->group(function () {
+            Route::get('servicios/{servicio}', [ServicioController::class, 'show'])->name('servicios.show');
+        });
+
+        // Eliminar
+        Route::middleware(['permission:eliminar servicios'])->group(function () {
+            Route::delete('servicios/{servicio}', [ServicioController::class, 'destroy'])->name('servicios.destroy');
+        });
+    });
+
+
+    Route::middleware(['auth'])->group(function () {
+
+        // 1) Proyecto -> Indicadores (indicador_proyecto)
+        Route::middleware(['permission:editar proyectos'])->group(function () {
+            Route::get('proyectos/{proyecto}/indicadores', [ProyectoIndicadorController::class, 'index'])
+                ->name('proyectos.indicadores.index');
+
+            Route::get('proyectos/{proyecto}/indicadores-data', [ProyectoIndicadorController::class, 'data'])
+                ->name('proyectos.indicadores.data');
+
+            Route::post('proyectos/{proyecto}/indicadores', [ProyectoIndicadorController::class, 'store'])
+                ->name('proyectos.indicadores.store');
+
+            Route::put('indicador-proyecto/{indicadorProyecto}', [ProyectoIndicadorController::class, 'update'])
+                ->name('proyectos.indicadores.update');
+
+            Route::post('indicador-proyecto/{indicadorProyecto}/estatus', [ProyectoIndicadorController::class, 'toggleEstatus'])
+                ->name('proyectos.indicadores.estatus');
+
+            Route::delete('indicador-proyecto/{indicadorProyecto}', [ProyectoIndicadorController::class, 'destroy'])
+                ->name('proyectos.indicadores.destroy');
+        });
+
+        // 2) IndicadorProyecto -> Actividades (actividad_indicador)
+        Route::middleware(['permission:editar proyectos'])->group(function () {
+            Route::get('indicador-proyecto/{indicadorProyecto}/actividades', [IndicadorProyectoActividadController::class, 'index'])
+                ->name('indicadorproyecto.actividades.index');
+
+            Route::get('indicador-proyecto/{indicadorProyecto}/actividades-data', [IndicadorProyectoActividadController::class, 'data'])
+                ->name('indicadorproyecto.actividades.data');
+
+            Route::post('indicador-proyecto/{indicadorProyecto}/actividades', [IndicadorProyectoActividadController::class, 'store'])
+                ->name('indicadorproyecto.actividades.store');
+
+            Route::put('actividad-indicador/{actividadIndicador}', [IndicadorProyectoActividadController::class, 'update'])
+                ->name('indicadorproyecto.actividades.update');
+
+            Route::post('actividad-indicador/{actividadIndicador}/estatus', [IndicadorProyectoActividadController::class, 'toggleEstatus'])
+                ->name('indicadorproyecto.actividades.estatus');
+
+            Route::delete('actividad-indicador/{actividadIndicador}', [IndicadorProyectoActividadController::class, 'destroy'])
+                ->name('indicadorproyecto.actividades.destroy');
+        });
+
+        // 3) ActividadIndicador -> Servicios (servicio_actividad)
+        Route::middleware(['permission:editar proyectos'])->group(function () {
+            Route::get('actividad-indicador/{actividadIndicador}/servicios', [ActividadIndicadorServicioController::class, 'index'])
+                ->name('actividadindicador.servicios.index');
+
+            Route::get('actividad-indicador/{actividadIndicador}/servicios-data', [ActividadIndicadorServicioController::class, 'data'])
+                ->name('actividadindicador.servicios.data');
+
+            Route::post('actividad-indicador/{actividadIndicador}/servicios', [ActividadIndicadorServicioController::class, 'store'])
+                ->name('actividadindicador.servicios.store');
+
+            Route::put('servicio-actividad/{servicioActividad}', [ActividadIndicadorServicioController::class, 'update'])
+                ->name('actividadindicador.servicios.update');
+
+            Route::post('servicio-actividad/{servicioActividad}/estatus', [ActividadIndicadorServicioController::class, 'toggleEstatus'])
+                ->name('actividadindicador.servicios.estatus');
+
+            Route::delete('servicio-actividad/{servicioActividad}', [ActividadIndicadorServicioController::class, 'destroy'])
+                ->name('actividadindicador.servicios.destroy');
         });
     });
 });

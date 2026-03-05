@@ -134,6 +134,15 @@
                                     </li>
                                 @endcan
 
+                                @can('Gestion servicios')
+                                    <li>
+                                        <a href="{{ route('servicios.index') }}">
+                                            <i class="fas fa-concierge-bell"></i>
+                                            <span> Servicios </span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @can('Gestion permisos')
                                     <li>
                                         <a href="{{ route('permission.index') }}">

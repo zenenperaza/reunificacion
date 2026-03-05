@@ -77,6 +77,12 @@ class RoleSeeder extends Seeder
             'editar actividades',
             'crear actividades',
             'eliminar actividades',
+
+            'Gestion servicios',
+            'ver servicios',
+            'editar servicios',
+            'crear servicios',
+            'eliminar servicios',
             
             'dashboard-user', 
         ];

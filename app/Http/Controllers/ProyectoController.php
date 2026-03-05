@@ -38,24 +38,16 @@ class ProyectoController extends Controller
 
             ->addColumn('donante_nombre', fn($p) => $p->donante?->nombre ?? '-')
 
-            ->addColumn(
-                'inicio_fmt',
-                fn($p) =>
-                $p->inicio ? Carbon::parse($p->inicio)->format('d/m/Y') : '-'
-            )
+            ->addColumn('inicio_fmt', fn($p) => $p->inicio ? Carbon::parse($p->inicio)->format('d/m/Y') : '-')
+            ->addColumn('fin_fmt', fn($p) => $p->fin ? Carbon::parse($p->fin)->format('d/m/Y') : '-')
 
-            ->addColumn(
-                'fin_fmt',
-                fn($p) =>
-                $p->fin ? Carbon::parse($p->fin)->format('d/m/Y') : '-'
-            )
-
-            // ✅ NUEVO: estados
+            // ✅ estados
             ->addColumn('estados_info', function ($p) {
                 if ($p->estados->isEmpty()) return '-';
 
-                $nombres = $p->estados->pluck('nombre')->unique()->take(3)->values();
-                $extra = $p->estados->pluck('nombre')->unique()->count() - $nombres->count();
+                $unique = $p->estados->pluck('nombre')->unique()->values();
+                $nombres = $unique->take(3);
+                $extra = $unique->count() - $nombres->count();
 
                 $html = $nombres->map(fn($e) => '<span class="badge bg-secondary me-1">' . $e . '</span>')->implode('');
                 if ($extra > 0) $html .= '<span class="badge bg-dark">+' . $extra . '</span>';
@@ -63,12 +55,13 @@ class ProyectoController extends Controller
                 return $html;
             })
 
-            // ✅ NUEVO: municipios
+            // ✅ municipios
             ->addColumn('municipios_info', function ($p) {
                 if ($p->municipios->isEmpty()) return '-';
 
-                $nombres = $p->municipios->pluck('nombre')->unique()->take(3)->values();
-                $extra = $p->municipios->pluck('nombre')->unique()->count() - $nombres->count();
+                $unique = $p->municipios->pluck('nombre')->unique()->values();
+                $nombres = $unique->take(3);
+                $extra = $unique->count() - $nombres->count();
 
                 $html = $nombres->map(fn($m) => '<span class="badge bg-info me-1">' . $m . '</span>')->implode('');
                 if ($extra > 0) $html .= '<span class="badge bg-dark">+' . $extra . '</span>';
@@ -93,27 +86,52 @@ class ProyectoController extends Controller
 
             ->addColumn('acciones', function ($p) {
 
+                $puedeVer       = auth()->user()->can('ver proyectos');
+                $puedeEditar    = auth()->user()->can('editar proyectos');
+                $puedeEliminar  = auth()->user()->can('eliminar proyectos');
+
+                // ✅ para administrar indicadores del proyecto
+                // (puedes cambiar el permiso si quieres uno específico como "Gestion indicadores proyecto")
+                $puedeIndicadores = $puedeEditar || $puedeVer;
+
+                if (!$puedeVer && !$puedeEditar && !$puedeEliminar && !$puedeIndicadores) {
+                    return '-';
+                }
+
                 $botones = '<div class="d-flex justify-content-center gap-1">';
 
-                if (auth()->user()->can('ver proyectos')) {
-                    $botones .= '<a href="' . route('proyectos.show', $p->id) . '" class="btn btn-sm btn-primary" title="Ver">
+                if ($puedeVer) {
+                    $botones .= '<a href="' . route('proyectos.show', $p->id) . '"
+                                class="btn btn-sm btn-primary"
+                                title="Ver">
                                 <i class="mdi mdi-eye"></i>
-                            </a>';
+                             </a>';
                 }
 
-                if (auth()->user()->can('editar proyectos')) {
-                    $botones .= '<a href="' . route('proyectos.edit', $p->id) . '" class="btn btn-sm btn-warning" title="Editar">
+                // ✅ BOTÓN NUEVO: Indicadores del Proyecto
+                if ($puedeIndicadores) {
+                    $botones .= '<a href="' . route('proyectos.indicadores.index', $p->id) . '"
+                                class="btn btn-sm btn-secondary"
+                                title="Indicadores del proyecto">
+                                <i class="mdi mdi-chart-line"></i>
+                             </a>';
+                }
+
+                if ($puedeEditar) {
+                    $botones .= '<a href="' . route('proyectos.edit', $p->id) . '"
+                                class="btn btn-sm btn-warning"
+                                title="Editar">
                                 <i class="mdi mdi-pencil"></i>
-                            </a>';
+                             </a>';
                 }
 
-                if (auth()->user()->can('eliminar proyectos')) {
+                if ($puedeEliminar) {
                     $botones .= '<button class="btn btn-sm btn-danger btn-delete"
-                                title="Eliminar"
-                                data-url="' . route('proyectos.destroy', $p->id) . '"
-                                data-nombre="Proyecto ' . $p->codigo . '">
-                                <i class="mdi mdi-trash-can-outline"></i>
-                            </button>';
+                                    title="Eliminar"
+                                    data-url="' . route('proyectos.destroy', $p->id) . '"
+                                    data-nombre="Proyecto ' . e($p->codigo) . '">
+                                    <i class="mdi mdi-trash-can-outline"></i>
+                             </button>';
                 }
 
                 $botones .= '</div>';
@@ -194,11 +212,15 @@ class ProyectoController extends Controller
             'donante:id,nombre',
             'estados:id,nombre',
             'municipios:id,nombre,estado_id',
+
+            // árbol: proyecto -> indicadorProyecto -> indicador -> actividadIndicador -> actividad -> servicios
+            'indicadorProyecto.indicador:id,codigo,descripcion',
+            'indicadorProyecto.actividadIndicador.actividad:id,codigo,descripcion',
+            'indicadorProyecto.actividadIndicador.servicios:id,nombre,descripcion',
         ]);
 
-        // Agrupar municipios por estado para mostrar ordenado
-        $municipiosPorEstado = $proyecto->municipios
-            ->groupBy('estado_id');
+        // Municipios agrupados por estado (para tu bloque de ubicación)
+        $municipiosPorEstado = $proyecto->municipios->groupBy('estado_id');
 
         return view('proyectos.show', compact('proyecto', 'municipiosPorEstado'));
     }
@@ -267,7 +289,7 @@ class ProyectoController extends Controller
             ->with('success', 'Proyecto actualizado correctamente');
     }
 
-    
+
     public function destroy(Proyecto $proyecto)
     {
         $proyecto->delete();
