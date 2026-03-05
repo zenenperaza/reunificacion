@@ -125,6 +125,15 @@
                                     </li>
                                 @endcan
 
+                                @can('Gestion actividades')
+                                    <li>
+                                        <a href="{{ route('actividades.index') }}">
+                                            <i class="mdi mdi-format-list-checks"></i>
+                                            <span> Actividades </span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @can('Gestion permisos')
                                     <li>
                                         <a href="{{ route('permission.index') }}">

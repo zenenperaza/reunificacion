@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\DonanteController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\IndicadorController;
+use App\Http\Controllers\ActividadController;
 
 // borrar public/storage
 
@@ -296,6 +297,39 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
         // Eliminar
         Route::middleware(['permission:eliminar indicadores'])->group(function () {
             Route::delete('indicadores/{indicador}', [IndicadorController::class, 'destroy'])->name('indicadores.destroy');
+        });
+    });
+
+
+
+    Route::middleware(['auth'])->group(function () {
+
+        // Menú/listado + datatable
+        Route::middleware(['permission:Gestion actividades'])->group(function () {
+            Route::get('actividades', [ActividadController::class, 'index'])->name('actividades.index');
+            Route::get('actividades-data', [ActividadController::class, 'data'])->name('actividades.data');
+        });
+
+        // Crear
+        Route::middleware(['permission:crear actividades'])->group(function () {
+            Route::get('actividades/create', [ActividadController::class, 'create'])->name('actividades.create');
+            Route::post('actividades', [ActividadController::class, 'store'])->name('actividades.store');
+        });
+
+        // Ver detalle
+        Route::middleware(['permission:ver actividades'])->group(function () {
+            Route::get('actividades/{actividad}', [ActividadController::class, 'show'])->name('actividades.show');
+        });
+
+        // Editar
+        Route::middleware(['permission:editar actividades'])->group(function () {
+            Route::get('actividades/{actividad}/edit', [ActividadController::class, 'edit'])->name('actividades.edit');
+            Route::put('actividades/{actividad}', [ActividadController::class, 'update'])->name('actividades.update');
+        });
+
+        // Eliminar
+        Route::middleware(['permission:eliminar actividades'])->group(function () {
+            Route::delete('actividades/{actividad}', [ActividadController::class, 'destroy'])->name('actividades.destroy');
         });
     });
 });
