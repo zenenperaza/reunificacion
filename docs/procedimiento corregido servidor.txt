@@ -1,0 +1,176 @@
+La idea es que uses rutas temporales de soporte, en este orden:
+
+preparar .env
+
+reconstruir carpetas de Laravel
+
+limpiar cachés
+
+crear enlace storage si aplica
+
+correr migraciones
+
+borrar rutas temporales
+
+1) Antes de subir o apenas subas el proyecto
+
+En tu .env del servidor deja temporalmente esto:
+
+APP_ENV=production
+APP_DEBUG=true
+
+CACHE_STORE=file
+SESSION_DRIVER=file
+QUEUE_CONNECTION=sync
+
+
+Y confirma bien estos datos:
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=asonacop_caminoseguro
+DB_USERNAME=TU_USUARIO_BD
+DB_PASSWORD=TU_PASSWORD_BD
+
+Route::get('/server-repair-temp', function () {
+    $token = request('token');
+    abort_unless($token === 'CAMBIO_ESTE_TOKEN_POR_UNO_LARGO_Y_PRIVADO', 403);
+
+    $paths = [
+        storage_path(),
+        storage_path('app'),
+        storage_path('framework'),
+        storage_path('framework/cache'),
+        storage_path('framework/cache/data'),
+        storage_path('framework/sessions'),
+        storage_path('framework/views'),
+        storage_path('logs'),
+        base_path('bootstrap'),
+        base_path('bootstrap/cache'),
+    ];
+
+    $out = [];
+
+    foreach ($paths as $path) {
+        if (!file_exists($path)) {
+            if (@mkdir($path, 0775, true)) {
+                $out[] = "✅ Creada: {$path}";
+            } else {
+                $out[] = "❌ No se pudo crear: {$path}";
+                continue;
+            }
+        } else {
+            $out[] = "✔ Ya existe: {$path}";
+        }
+
+        if (@chmod($path, 0775)) {
+            $out[] = "✔ Permisos aplicados: {$path}";
+        } else {
+            $out[] = "⚠ No se pudieron cambiar permisos: {$path}";
+        }
+    }
+
+    try {
+        Artisan::call('optimize:clear');
+        $out[] = "✅ optimize:clear ejecutado";
+        $out[] = trim(Artisan::output());
+    } catch (\Throwable $e) {
+        $out[] = "❌ Error en optimize:clear: " . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n", $out) . '</pre>';
+});
+
+Route::get('/server-storage-link-temp', function () {
+    $token = request('token');
+    abort_unless($token === 'CAMBIO_ESTE_TOKEN_POR_UNO_LARGO_Y_PRIVADO', 403);
+
+    $out = [];
+    $publicStorage = public_path('storage');
+
+    try {
+        if (is_link($publicStorage)) {
+            if (@unlink($publicStorage)) {
+                $out[] = "✅ Symlink anterior eliminado: {$publicStorage}";
+            } else {
+                $out[] = "⚠ No se pudo eliminar el symlink anterior: {$publicStorage}";
+            }
+        } elseif (file_exists($publicStorage)) {
+            $out[] = "⚠ public/storage existe pero no es symlink. No se eliminó automáticamente.";
+        }
+
+        Artisan::call('storage:link');
+        $out[] = "✅ storage:link ejecutado";
+        $out[] = trim(Artisan::output());
+
+    } catch (\Throwable $e) {
+        $out[] = "❌ Error al crear el enlace simbólico: " . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n", $out) . '</pre>';
+});
+
+Route::get('/server-clear-temp', function () {
+    $token = request('token');
+    abort_unless($token === 'CAMBIO_ESTE_TOKEN_POR_UNO_LARGO_Y_PRIVADO', 403);
+
+    $out = [];
+
+    try {
+        Artisan::call('optimize:clear');
+        $out[] = "✅ optimize:clear ejecutado";
+        $out[] = trim(Artisan::output());
+    } catch (\Throwable $e) {
+        $out[] = "❌ Error en optimize:clear: " . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n", $out) . '</pre>';
+});
+
+Route::get('/server-migrate-temp', function () {
+    $token = request('token');
+    abort_unless($token === 'CAMBIO_ESTE_TOKEN_POR_UNO_LARGO_Y_PRIVADO', 403);
+
+    $out = [];
+
+    try {
+        Artisan::call('migrate', [
+            '--force' => true,
+        ]);
+        $out[] = "✅ migrate ejecutado";
+        $out[] = trim(Artisan::output());
+
+        Artisan::call('db:seed', [
+            '--force' => true,
+        ]);
+        $out[] = "✅ db:seed ejecutado";
+        $out[] = trim(Artisan::output());
+
+    } catch (\Throwable $e) {
+        $out[] = "❌ Error en migraciones/seeders: " . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n\n", $out) . '</pre>';
+});
+
+Route::get('/server-migrate-fresh-temp', function () {
+    $token = request('token');
+    abort_unless($token === 'CAMBIO_ESTE_TOKEN_POR_UNO_LARGO_Y_PRIVADO', 403);
+
+    $out = [];
+
+    try {
+        Artisan::call('migrate:fresh', [
+            '--seed' => true,
+            '--force' => true,
+        ]);
+        $out[] = "✅ migrate:fresh --seed ejecutado";
+        $out[] = trim(Artisan::output());
+
+    } catch (\Throwable $e) {
+        $out[] = "❌ Error en migrate:fresh: " . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n\n", $out) . '</pre>';
+});

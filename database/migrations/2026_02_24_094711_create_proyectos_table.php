@@ -17,7 +17,7 @@ return new class extends Migration {
 
 
             $table->boolean('estatus')->default(true);
-            $table->unsignedBigInteger('codigo')->nullable();
+            $table->string('codigo')->unique();
             $table->string('descripcion')->nullable();
             $table->date('inicio')->nullable();
             $table->date('fin')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->timestamps();
 
             // opcional si deseas que el codigo no se repita
-            $table->unique('codigo');
+            // $table->unique('codigo');
         });
     }
 

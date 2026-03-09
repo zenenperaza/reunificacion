@@ -66,7 +66,35 @@ Route::get('/fix-storage-permisos', function () {
     }
 });
 
+Route::get('/clear-all-temp', function () {
+    Artisan::call('optimize:clear');
+    return nl2br(Artisan::output() . "\nOK");
+});
 
+Route::get('/fix-permisos', function () {
+    $paths = [
+        storage_path(),
+        storage_path('app'),
+        storage_path('framework'),
+        storage_path('framework/cache'),
+        storage_path('framework/sessions'),
+        storage_path('framework/views'),
+        storage_path('logs'),
+        base_path('bootstrap/cache'),
+    ];
+
+    foreach ($paths as $path) {
+        if (!file_exists($path)) {
+            @mkdir($path, 0775, true);
+        }
+
+        @chmod($path, 0775);
+    }
+
+    Artisan::call('optimize:clear');
+
+    return '✔️ Carpetas verificadas, permisos intentados y cachés limpiadas.';
+});
 
 Route::get('/run-migrate-fresh', function () {
     // SOLO USAR EN LOCAL O ENTORNOS CONTROLADOS
@@ -85,6 +113,63 @@ Route::get('/run-migrate-fresh', function () {
 
   #  abort(403, 'No autorizado');
 });
+
+Route::get('/fix-storage-link', function () {
+    try {
+        $publicStorage = public_path('storage');
+
+        if (is_link($publicStorage)) {
+            unlink($publicStorage);
+        }
+
+        Artisan::call('storage:link');
+
+        return nl2br(Artisan::output() . "\n✅ Enlace simbólico recreado con éxito.");
+    } catch (\Throwable $e) {
+        return "❌ Error al recrear el enlace: " . $e->getMessage();
+    }
+});
+
+
+Route::get('/fix-storage-structure', function () {
+    $paths = [
+        storage_path(),
+        storage_path('app'),
+        storage_path('framework'),
+        storage_path('framework/cache'),
+        storage_path('framework/cache/data'),
+        storage_path('framework/sessions'),
+        storage_path('framework/views'),
+        storage_path('logs'),
+        base_path('bootstrap/cache'),
+    ];
+
+    $result = [];
+
+    foreach ($paths as $path) {
+        if (!file_exists($path)) {
+            if (@mkdir($path, 0775, true)) {
+                $result[] = "Creada: {$path}";
+            } else {
+                $result[] = "No se pudo crear: {$path}";
+            }
+        } else {
+            $result[] = "Existe: {$path}";
+        }
+
+        @chmod($path, 0775);
+    }
+
+    try {
+        Artisan::call('optimize:clear');
+        $result[] = 'Cachés limpiadas correctamente.';
+    } catch (\Throwable $e) {
+        $result[] = 'Error limpiando cachés: ' . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n", $result) . '</pre>';
+});
+
 
 Route::get('/limpiar-config', function () {
     Artisan::call('config:clear');
@@ -293,3 +378,94 @@ Route::get('/run-migrate-fresh', function () {
         $res = $zip->open($path);
         return $res === true ? 'ZIP OK' : 'Error: ' . $res;
     });
+
+
+
+    ULTIMO QUE FUNCIONANBA ALGUNAS COSAS
+
+    
+Route::get('/fix-permisos', function () {
+    $paths = [
+        storage_path(),
+        storage_path('app'),
+        storage_path('framework'),
+        storage_path('framework/cache'),
+        storage_path('framework/sessions'),
+        storage_path('framework/views'),
+        storage_path('logs'),
+        base_path('bootstrap/cache'),
+    ];
+
+    foreach ($paths as $path) {
+        if (!file_exists($path)) {
+            @mkdir($path, 0775, true);
+        }
+
+        @chmod($path, 0775);
+    }
+
+    Artisan::call('optimize:clear');
+
+    return '✔️ Carpetas verificadas, permisos intentados y cachés limpiadas.';
+});
+
+Route::get('/fix-storage-link', function () {
+    try {
+        $publicStorage = public_path('storage');
+
+        if (is_link($publicStorage)) {
+            unlink($publicStorage);
+        }
+
+        Artisan::call('storage:link');
+
+        return nl2br(Artisan::output() . "\n✅ Enlace simbólico recreado con éxito.");
+    } catch (\Throwable $e) {
+        return "❌ Error al recrear el enlace: " . $e->getMessage();
+    }
+});
+
+Route::get('/clear-all-temp', function () {
+    Artisan::call('optimize:clear');
+    return nl2br(Artisan::output() . "\nOK");
+});
+
+
+Route::get('/fix-storage-structure', function () {
+    $paths = [
+        storage_path(),
+        storage_path('app'),
+        storage_path('framework'),
+        storage_path('framework/cache'),
+        storage_path('framework/cache/data'),
+        storage_path('framework/sessions'),
+        storage_path('framework/views'),
+        storage_path('logs'),
+        base_path('bootstrap/cache'),
+    ];
+
+    $result = [];
+
+    foreach ($paths as $path) {
+        if (!file_exists($path)) {
+            if (@mkdir($path, 0775, true)) {
+                $result[] = "Creada: {$path}";
+            } else {
+                $result[] = "No se pudo crear: {$path}";
+            }
+        } else {
+            $result[] = "Existe: {$path}";
+        }
+
+        @chmod($path, 0775);
+    }
+
+    try {
+        Artisan::call('optimize:clear');
+        $result[] = 'Cachés limpiadas correctamente.';
+    } catch (\Throwable $e) {
+        $result[] = 'Error limpiando cachés: ' . $e->getMessage();
+    }
+
+    return '<pre>' . implode("\n", $result) . '</pre>';
+});

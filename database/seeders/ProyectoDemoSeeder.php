@@ -21,9 +21,11 @@ class ProyectoDemoSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            // ==============================
-            // SERVICIOS REALES (catálogo)
-            // ==============================
+            /*
+            |--------------------------------------------------------------------------
+            | 1. CATÁLOGO DE SERVICIOS (se crean una sola vez)
+            |--------------------------------------------------------------------------
+            */
             $serviciosData = [
                 'Localización Familiar',
                 'Asistencia de Documentación',
@@ -43,103 +45,171 @@ class ProyectoDemoSeeder extends Seeder
 
             $servicios = [];
             foreach ($serviciosData as $nombre) {
-                $servicios[] = Servicio::create([
-                    'nombre' => $nombre,
-                    'descripcion' => $nombre,
-                ]);
+                $servicios[] = Servicio::firstOrCreate(
+                    ['nombre' => $nombre],
+                    ['descripcion' => $nombre]
+                );
             }
 
-            // ==============================
-            // DONANTES
-            // ==============================
+            /*
+            |--------------------------------------------------------------------------
+            | 2. CATÁLOGO DE INDICADORES (se crean una sola vez)
+            |--------------------------------------------------------------------------
+            */
+            $indicadoresCatalogo = [
+                [
+                    'codigo' => 'IND-1',
+                    'descripcion' => 'Número de NNA que acceden al registro civil',
+                ],
+                [
+                    'codigo' => 'IND-2',
+                    'descripcion' => 'Número de personas capacitadas en protección infantil',
+                ],
+                [
+                    'codigo' => 'IND-3',
+                    'descripcion' => 'Número de NNA que reciben asistencia legal especializada',
+                ],
+            ];
+
+            $indicadores = [];
+            foreach ($indicadoresCatalogo as $item) {
+                $indicadores[] = Indicador::firstOrCreate(
+                    ['codigo' => $item['codigo']],
+                    ['descripcion' => $item['descripcion']]
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. CATÁLOGO DE ACTIVIDADES (se crean una sola vez)
+            |--------------------------------------------------------------------------
+            | Como son reusables, les damos códigos únicos de catálogo.
+            |--------------------------------------------------------------------------
+            */
+            $actividadesCatalogo = [
+                [
+                    'codigo' => 'ACT-1',
+                    'descripcion' => 'Gestión y acompañamiento especializado',
+                ],
+                [
+                    'codigo' => 'ACT-2',
+                    'descripcion' => 'Sensibilización comunitaria',
+                ],
+                [
+                    'codigo' => 'ACT-3',
+                    'descripcion' => 'Asistencia legal especializada',
+                ],
+            ];
+
+            $actividades = [];
+            foreach ($actividadesCatalogo as $item) {
+                $actividades[] = Actividad::firstOrCreate(
+                    ['codigo' => $item['codigo']],
+                    ['descripcion' => $item['descripcion']]
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 4. DONANTES
+            |--------------------------------------------------------------------------
+            */
             $donantes = [
                 'UNICEF',
                 'ODISEF',
-                'Save the Children'
+                'Save the Children',
             ];
 
-            foreach ($donantes as $nombreDonante) {
+            foreach ($donantes as $indexDonante => $nombreDonante) {
 
-                $donante = Donante::create([
-                    'nombre' => $nombreDonante,
-                    'estatus' => true,
-                    'enlaces' => [
-                        'nombre_contacto' => 'Contacto ' . $nombreDonante,
-                        'telefono' => '0414-0000000'
-                    ]
-                ]);
-
-                // ==============================
-                // PROYECTO
-                // ==============================
-                $proyecto = Proyecto::create([
-                    'donante_id' => $donante->id,
-                    'estatus' => true,
-                    'codigo' => rand(1000, 9999),
-                    'descripcion' => 'Proyecto Protección Integral - ' . $nombreDonante,
-                    'inicio' => '2026-01-01',
-                    'fin' => '2026-12-31',
-                ]);
-
-                // ==============================
-                // INDICADORES REALES
-                // ==============================
-                $indicadoresTexto = [
-                    'Número de NNA que acceden al registro civil',
-                    'Número de personas capacitadas en protección infantil',
-                    'Número de NNA que reciben asistencia legal especializada',
-                ];
-
-                foreach ($indicadoresTexto as $index => $textoIndicador) {
-
-                    $indicador = Indicador::create([
-                        'codigo' => 'IND-' . ($index + 1),
-                        'descripcion' => $textoIndicador,
-                    ]);
-
-                    $indicadorProyecto = IndicadorProyecto::create([
-                        'proyecto_id' => $proyecto->id,
-                        'indicador_id' => $indicador->id,
+                $donante = Donante::firstOrCreate(
+                    ['nombre' => $nombreDonante],
+                    [
                         'estatus' => true,
-                        'meta_cuantitativa' => rand(50, 200),
-                        'meta_cualitativa' => 'Cumplimiento del indicador',
-                    ]);
+                        'enlaces' => [
+                            'nombre_contacto' => 'Contacto ' . $nombreDonante,
+                            'telefono' => '0414-0000000',
+                        ],
+                    ]
+                );
 
-                    // ==============================
-                    // ACTIVIDADES REALES
-                    // ==============================
-                    $actividadesTexto = [
-                        'Gestión y acompañamiento especializado',
-                        'Sensibilización comunitaria',
-                        'Asistencia legal especializada',
-                    ];
+                /*
+                |--------------------------------------------------------------------------
+                | 5. PROYECTO POR DONANTE
+                |--------------------------------------------------------------------------
+                | Evitamos usar rand() para que el seeder sea estable y repetible.
+                |--------------------------------------------------------------------------
+                */
+                $codigoProyecto = 'PROY-' . str_pad((string) ($indexDonante + 1), 3, '0', STR_PAD_LEFT);
 
-                    foreach ($actividadesTexto as $pos => $textoActividad) {
+                $proyecto = Proyecto::firstOrCreate(
+                    ['codigo' => $codigoProyecto],
+                    [
+                        'donante_id' => $donante->id,
+                        'estatus' => true,
+                        'descripcion' => 'Proyecto Protección Integral - ' . $nombreDonante,
+                        'inicio' => '2026-01-01',
+                        'fin' => '2026-12-31',
+                    ]
+                );
 
-                        $actividad = Actividad::create([
-                            'codigo' => ($index + 1) . '.' . ($pos + 1),
-                            'descripcion' => $textoActividad,
-                        ]);
+                /*
+                |--------------------------------------------------------------------------
+                | 6. ASOCIAR INDICADORES AL PROYECTO
+                |--------------------------------------------------------------------------
+                */
+                foreach ($indicadores as $indicador) {
 
-                        $actividadIndicador = ActividadIndicador::create([
-                            'indicador_proyecto_id' => $indicadorProyecto->id,
-                            'actividad_id' => $actividad->id,
-                            'meta' => rand(10, 50),
+                    $indicadorProyecto = IndicadorProyecto::firstOrCreate(
+                        [
+                            'proyecto_id' => $proyecto->id,
+                            'indicador_id' => $indicador->id,
+                        ],
+                        [
                             'estatus' => true,
-                        ]);
+                            'meta_cuantitativa' => rand(50, 200),
+                            'meta_cualitativa' => 'Cumplimiento del indicador',
+                        ]
+                    );
 
-                        // ==============================
-                        // SERVICIOS ALEATORIOS POR ACTIVIDAD
-                        // ==============================
-                        $serviciosAleatorios = collect($servicios)->random(3);
+                    /*
+                    |--------------------------------------------------------------------------
+                    | 7. ASOCIAR ACTIVIDADES AL INDICADOR DEL PROYECTO
+                    |--------------------------------------------------------------------------
+                    */
+                    foreach ($actividades as $actividad) {
+
+                        $actividadIndicador = ActividadIndicador::firstOrCreate(
+                            [
+                                'indicador_proyecto_id' => $indicadorProyecto->id,
+                                'actividad_id' => $actividad->id,
+                            ],
+                            [
+                                'meta' => rand(10, 50),
+                                'estatus' => true,
+                            ]
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | 8. ASOCIAR 3 SERVICIOS ALEATORIOS POR ACTIVIDAD
+                        |--------------------------------------------------------------------------
+                        */
+                        $serviciosAleatorios = collect($servicios)
+                            ->shuffle()
+                            ->take(3);
 
                         foreach ($serviciosAleatorios as $servicio) {
-                            ServicioActividad::create([
-                                'actividad_indicador_id' => $actividadIndicador->id,
-                                'servicio_id' => $servicio->id,
-                                'cantidad_disponible' => rand(5, 20),
-                                'estatus' => true,
-                            ]);
+                            ServicioActividad::firstOrCreate(
+                                [
+                                    'actividad_indicador_id' => $actividadIndicador->id,
+                                    'servicio_id' => $servicio->id,
+                                ],
+                                [
+                                    'cantidad_disponible' => rand(5, 20),
+                                    'estatus' => true,
+                                ]
+                            );
                         }
                     }
                 }
