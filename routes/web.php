@@ -384,15 +384,15 @@ Route::middleware(['auth', 'sistema-habilitado'])->group(function () {
             Route::get('indicadores-data', [IndicadorController::class, 'data'])->name('indicadores.data');
         });
 
-        // Ver detalle (solo ver indicadores)
-        Route::middleware(['permission:ver indicadores'])->group(function () {
-            Route::get('indicadores/{indicador}', [IndicadorController::class, 'show'])->name('indicadores.show');
-        });
-
         // Crear
         Route::middleware(['permission:crear indicadores'])->group(function () {
             Route::get('indicadores/create', [IndicadorController::class, 'create'])->name('indicadores.create');
             Route::post('indicadores', [IndicadorController::class, 'store'])->name('indicadores.store');
+        });
+
+        // Ver detalle (solo ver indicadores)
+        Route::middleware(['permission:ver indicadores'])->group(function () {
+            Route::get('indicadores/{indicador}', [IndicadorController::class, 'show'])->name('indicadores.show');
         });
 
         // Editar
